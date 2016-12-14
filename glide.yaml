@@ -1,0 +1,11 @@
+package: github.com/vektorlab/mesos-exec
+import:
+- package: github.com/gogo/protobuf
+  subpackages:
+  - proto
+- package: github.com/jawher/mow.cli
+- package: github.com/mesos/mesos-go
+  subpackages:
+  - mesosproto
+  - scheduler
+- package: github.com/tidwall/gjson

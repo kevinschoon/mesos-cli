@@ -1,0 +1,44 @@
+hash: f713ea9feb2c8a9c6199f6631c6700efb4679386e246b60aeda168ccf44fe97e
+updated: 2016-12-14T18:06:54.508228686-05:00
+imports:
+- name: github.com/gogo/protobuf
+  version: 06ec6c31ff1bac6ed4e205a547a3d72934813ef3
+  subpackages:
+  - proto
+- name: github.com/golang/glog
+  version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
+- name: github.com/jawher/mow.cli
+  version: 0de3d3b4ed00f261460d12ecde4efa90fbfcd8ed
+- name: github.com/mesos/mesos-go
+  version: 7228b13084ce3ea645dbf7c8ecb5704301a6eadf
+  subpackages:
+  - auth
+  - auth/callback
+  - auth/sasl
+  - auth/sasl/mech
+  - auth/sasl/mech/crammd5
+  - detector
+  - detector/zoo
+  - mesosproto
+  - mesosproto/scheduler
+  - mesosutil
+  - mesosutil/process
+  - messenger
+  - messenger/sessionid
+  - scheduler
+  - upid
+- name: github.com/pborman/uuid
+  version: 5007efa264d92316c43112bc573e754bc889b7b1
+- name: github.com/samuel/go-zookeeper
+  version: 1d7be4effb13d2d908342d349d71a284a7542693
+  subpackages:
+  - zk
+- name: github.com/tidwall/gjson
+  version: b0e589ad0b7ff467fad157cc07b1381ea0a9708e
+- name: github.com/tidwall/match
+  version: 173748da739a410c5b0b813b956f89ff94730b4c
+- name: golang.org/x/net
+  version: cfae461cedfdcab6e261a26eb77db53695623303
+  subpackages:
+  - context
+testImports: []
