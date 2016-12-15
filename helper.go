@@ -95,12 +95,7 @@ func NewTask() *mesos.TaskInfo {
 		},
 		Container: &mesos.ContainerInfo{
 			// Default to Mesos Containerizer
-			Type: mesos.ContainerInfo_MESOS.Enum(),
-			// Docker specific settings
-			//Docker: &mesos.ContainerInfo_DockerInfo{
-			//	Network: mesos.ContainerInfo_DockerInfo_BRIDGE.Enum(),
-			//},
-			// Mesos settings
+			Type:  mesos.ContainerInfo_MESOS.Enum(),
 			Mesos: &mesos.ContainerInfo_MesosInfo{},
 		},
 		Resources: []*mesos.Resource{
@@ -158,7 +153,7 @@ func (b bl) String() string {
 }
 
 func (b bl) Set(other string) error {
-	if other == "true" {
+	if other != "" {
 		*b.pt = true
 	}
 	return nil
