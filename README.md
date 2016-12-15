@@ -49,3 +49,11 @@ nor language specific bindings to the Mesos C library.
 #### From Source
 
     go get -u github.com/vektorlab/mesos-exec
+
+
+#### TODO
+
+  * Support full TaskInfo object
+  * Support multiple TaskInfos array
+  * Support JSON config file with "profiles"
+  * Improve logging output
