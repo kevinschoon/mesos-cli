@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/gogo/protobuf/proto"
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 // Agents returns a map of IDs to hostnames
@@ -78,4 +80,103 @@ func Sufficent(task *mesos.TaskInfo, offer *mesos.Offer) bool {
 		}
 	}
 	return true
+}
+
+// NewTask returns a mesos.TaskInfo with sensibly
+// populated default values.
+func NewTask() *mesos.TaskInfo {
+	task := &mesos.TaskInfo{
+		// TODO: Generate unique taskid
+		TaskId: &mesos.TaskID{Value: proto.String("mesos-exec")},
+		Name:   proto.String("mesos-exec"),
+		Command: &mesos.CommandInfo{
+			Shell: proto.Bool(false),
+			User:  proto.String("root"),
+		},
+		Container: &mesos.ContainerInfo{
+			// Default to Mesos Containerizer
+			Type: mesos.ContainerInfo_MESOS.Enum(),
+			// Docker specific settings
+			//Docker: &mesos.ContainerInfo_DockerInfo{
+			//	Network: mesos.ContainerInfo_DockerInfo_BRIDGE.Enum(),
+			//},
+			// Mesos settings
+			Mesos: &mesos.ContainerInfo_MesosInfo{},
+		},
+		Resources: []*mesos.Resource{
+			&mesos.Resource{
+				Name: proto.String("cpus"),
+				Type: mesos.Value_SCALAR.Enum(),
+				Scalar: &mesos.Value_Scalar{
+					Value: proto.Float64(0.1),
+				},
+			},
+			&mesos.Resource{
+				Name: proto.String("mem"),
+				Type: mesos.Value_SCALAR.Enum(),
+				Scalar: &mesos.Value_Scalar{
+					Value: proto.Float64(128.0),
+				},
+			},
+			&mesos.Resource{
+				Name: proto.String("disk"),
+				Type: mesos.Value_SCALAR.Enum(),
+				Scalar: &mesos.Value_Scalar{
+					Value: proto.Float64(32.0),
+				},
+			},
+		},
+	}
+	return task
+}
+
+// Convenience types for cli so we may
+// specify default values in one place
+// as pass them to the cli parser.
+type str struct {
+	pt *string
+}
+
+func (s str) String() string {
+	return *s.pt
+}
+
+func (s str) Set(other string) error {
+	*s.pt = other
+	return nil
+}
+
+type bl struct {
+	pt *bool
+}
+
+func (b bl) String() string {
+	if *b.pt {
+		return "true"
+	}
+	return "false"
+}
+
+func (b bl) Set(other string) error {
+	if other == "true" {
+		*b.pt = true
+	}
+	return nil
+}
+
+type flt struct {
+	pt *float64
+}
+
+func (f flt) String() string {
+	return fmt.Sprintf("%.1f", *f.pt)
+}
+
+func (f flt) Set(other string) error {
+	v, err := strconv.ParseFloat(other, 64)
+	if err != nil {
+		return err
+	}
+	*f.pt = v
+	return nil
 }
