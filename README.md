@@ -19,16 +19,21 @@ nor language specific bindings to the Mesos C library.
       ARG=[]       Command Arguments
 
     Options:
-      -v, --version               Show the version and exit
-      -i, --image=""              Docker image to run
-      --master="127.0.0.1:5050"   Master address <host:port>
-      -c, --cpus="0.1"            CPU Resources to allocate
-      -m, --mem="128.0"           Memory resources (mb) to allocate
-      -d, --disk="64.0"           Memory resources (mb) to allocate
-      --level="0"                 Logging level
-      -n, --name="mesos-exec"     Task Name
-      -s, --shell=false           Execute as shell command
-      -u, --user="root"           User to run as
+      --master="127.0.0.1:5050"    Master address <host:port>
+      --param=[]                   Docker parameters
+      -i, --image=""               Docker image to run
+      -l, --level=0                Level of verbosity
+      -v, --volume=[]              Volume mappings
+      -p, --ports=[]               Port mappings
+      -n, --name=mesos-exec        Task Name
+      -s, --shell=false            Execute as shell command
+      -u, --user=root              User to run as
+      -c, --cpus=0.1               CPU Resources to allocate
+      -m, --mem=128.0              Memory Resources (mb) to allocate
+      -d, --disk=32.0              Disk Resources (mb) to allocate
+      --privileged=false           Give extended privileges to this container
+      -f, --forcePullImage=false   Always pull the container image
+
 
     # In native mesos executor
     $ mesos-exec --shell 'for i in $(seq 1 5); do echo $(date); sleep 1; done'
