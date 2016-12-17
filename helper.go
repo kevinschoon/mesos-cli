@@ -24,14 +24,24 @@ func Agents(master string) (map[string]string, error) {
 	}
 	agents := map[string]string{}
 	for _, agent := range gjson.GetBytes(raw, "slaves").Array() {
-		agents[agent.Get("id").Str] = agent.Get("hostname").Str
+		hostname := agent.Get("hostname").Str
+		// Detect port agent is listening on
+		split := strings.Split(agent.Get("pid").Str, ":")
+		if len(split) != 2 {
+			return nil, fmt.Errorf("Cannot detect port")
+		}
+		port, err := strconv.ParseInt(split[1], 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		agents[agent.Get("id").Str] = fmt.Sprintf("%s:%d", hostname, port)
 	}
 	return agents, nil
 }
 
 // LogDir returns the directory path for following task output
 func LogDir(hostname, executorId string) (string, error) {
-	resp, err := http.Get(fmt.Sprintf("http://%s:5051/slave(1)/state", hostname))
+	resp, err := http.Get(fmt.Sprintf("http://%s/slave(1)/state", hostname))
 	if err != nil {
 		return "", err
 	}

@@ -25,7 +25,7 @@ type Pailer struct {
 func (p *Pailer) url() *url.URL {
 	return &url.URL{
 		Scheme: "http",
-		Host:   fmt.Sprintf("%s:%d", p.Hostname, 5051),
+		Host:   p.Hostname,
 		Path:   "/files/read",
 		RawQuery: url.Values{
 			"path":   []string{p.Path},
