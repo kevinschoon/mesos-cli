@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // Agents returns a map of IDs to hostnames
@@ -97,6 +98,13 @@ func NewTask() *mesos.TaskInfo {
 			// Default to Mesos Containerizer
 			Type:  mesos.ContainerInfo_MESOS.Enum(),
 			Mesos: &mesos.ContainerInfo_MesosInfo{},
+			Docker: &mesos.ContainerInfo_DockerInfo{
+				Privileged:     proto.Bool(false),
+				ForcePullImage: proto.Bool(false),
+				Parameters:     []*mesos.Parameter{},
+				PortMappings:   []*mesos.ContainerInfo_DockerInfo_PortMapping{},
+				Network:        mesos.ContainerInfo_DockerInfo_BRIDGE.Enum(),
+			},
 		},
 		Resources: []*mesos.Resource{
 			&mesos.Resource{
@@ -123,6 +131,111 @@ func NewTask() *mesos.TaskInfo {
 		},
 	}
 	return task
+}
+
+/* setPorts translates portMapping parameters into
+Docker portmappings. Mappings can be accepted in several formats:
+8000
+8000:80
+8000/tcp
+8000:80/tcp
+*/
+func setPorts(task *mesos.TaskInfo, ports []string) error {
+	for _, port := range ports {
+		mapping := &mesos.ContainerInfo_DockerInfo_PortMapping{
+			// Assume tcp
+			Protocol: proto.String("tcp"),
+		}
+		// Check protocol
+		split := strings.Split(port, "/")
+		if len(split) > 2 {
+			return fmt.Errorf("Bad port mapping %s", port)
+		}
+		if len(split) == 2 {
+			fmt.Println(split)
+			if !(split[1] == "tcp" || split[1] == "udp") {
+				return fmt.Errorf("Bad protocol %s", port)
+			}
+			*mapping.Protocol = split[1]
+			// Remove protocol
+			port = strings.Replace(port, "/"+split[1], "", 1)
+		}
+		split = strings.Split(port, ":")
+		if len(split) > 2 {
+			return fmt.Errorf("Bad port mapping %s", port)
+		}
+		// 8000:80
+		if len(split) == 2 {
+			host, err := strconv.ParseUint(split[0], 10, 32)
+			if err != nil {
+				return err
+			}
+			mapping.HostPort = proto.Uint32(uint32(host))
+			cont, err := strconv.ParseUint(split[1], 10, 32)
+			if err != nil {
+				return err
+			}
+			mapping.ContainerPort = proto.Uint32(uint32(cont))
+		}
+		// 8000
+		if len(split) == 1 {
+			host, err := strconv.ParseUint(split[0], 10, 32)
+			if err != nil {
+				return err
+			}
+			mapping.HostPort = proto.Uint32(uint32(host))
+			mapping.ContainerPort = proto.Uint32(uint32(host))
+		}
+	}
+	return nil
+}
+
+func setParameters(task *mesos.TaskInfo, params []string) error {
+	parameters := []*mesos.Parameter{}
+	for _, param := range params {
+		split := strings.Split(param, "=")
+		if len(split) != 2 {
+			return fmt.Errorf("Invalid parameter: %s", param)
+		}
+		parameters = append(parameters, &mesos.Parameter{
+			Key:   proto.String(split[0]),
+			Value: proto.String(split[1]),
+		})
+	}
+	task.Container.Docker.Parameters = parameters
+	return nil
+}
+
+func setVolumes(task *mesos.TaskInfo, vols []string) error {
+	volumes := []*mesos.Volume{}
+	for _, vol := range vols {
+		split := strings.Split(vol, ":")
+		if len(split) < 2 || len(split) > 3 {
+			return fmt.Errorf("Bad volume: %s", vol)
+		}
+		volume := &mesos.Volume{
+			HostPath:      proto.String(split[0]),
+			ContainerPath: proto.String(split[1]),
+			Mode:          mesos.Volume_RW.Enum(),
+		}
+		if len(split) == 3 {
+			switch split[2] {
+			case "RO":
+				volume.Mode = mesos.Volume_RO.Enum()
+			case "ro":
+				volume.Mode = mesos.Volume_RO.Enum()
+			case "RW":
+				volume.Mode = mesos.Volume_RW.Enum()
+			case "rw":
+				volume.Mode = mesos.Volume_RW.Enum()
+			default:
+				return fmt.Errorf("Bad volume: %s", vol)
+			}
+		}
+		volumes = append(volumes, volume)
+	}
+	task.Container.Volumes = volumes
+	return nil
 }
 
 // Convenience types for cli so we may

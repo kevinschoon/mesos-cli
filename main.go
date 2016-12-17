@@ -14,12 +14,14 @@ const Version = "0.0.1"
 func main() {
 	app := cli.App("mesos-exec", "Execute Commands on Apache Mesos")
 	app.Spec = "[OPTIONS] [ARG...]"
-	app.Version("v version", fmt.Sprintf("mesos-exec version %s", Version))
 	var (
-		image     = app.StringOpt("i image", "", "Docker image to run")
-		master    = app.StringOpt("master", "127.0.0.1:5050", "Master address <host:port>")
-		arguments = app.StringsArg("ARG", nil, "Command Arguments")
-		verbose   = app.IntOpt("V verbosity", 0, "Level of verbosity")
+		arguments  = app.StringsArg("ARG", nil, "Command Arguments")
+		master     = app.StringOpt("master", "127.0.0.1:5050", "Master address <host:port>")
+		parameters = app.StringsOpt("param", []string{}, "Docker parameters")
+		image      = app.StringOpt("i image", "", "Docker image to run")
+		level      = app.IntOpt("l level", 0, "Level of verbosity")
+		volumes    = app.StringsOpt("v volume", []string{}, "Volume mappings")
+		ports      = app.StringsOpt("p ports", []string{}, "Port mappings")
 	)
 	task := NewTask()
 	app.VarOpt(
@@ -52,6 +54,16 @@ func main() {
 		flt{pt: task.Resources[2].Scalar.Value},
 		"Disk Resources (mb) to allocate",
 	)
+	app.VarOpt(
+		"privileged",
+		bl{pt: task.Container.Docker.Privileged},
+		"Give extended privileges to this container",
+	)
+	app.VarOpt(
+		"f forcePullImage",
+		bl{pt: task.Container.Docker.ForcePullImage},
+		"Always pull the container image",
+	)
 	app.Before = func() {
 		args := *arguments
 		if *task.Command.Shell {
@@ -68,13 +80,19 @@ func main() {
 		} else {
 			task.Command.Arguments = args
 		}
+		failOnErr(setPorts(task, *ports))
+		failOnErr(setVolumes(task, *volumes))
+		failOnErr(setParameters(task, *parameters))
 		// Assuming that if image is specified the user wants
 		// to run with the Docker containerizer. This is
 		// not always the case as an image may be passed
 		// to the Mesos containerizer as well.
 		if *image != "" {
+			task.Container.Mesos = nil
 			task.Container.Type = mesos.ContainerInfo_DOCKER.Enum()
 			task.Container.Docker.Image = image
+		} else {
+			task.Container.Docker = nil
 		}
 		// Nothing to do if not running a container
 		// and no arguments are specified.
@@ -87,14 +105,18 @@ func main() {
 		// This is done to satisfy the presumptuous golang/glog package
 		// which assumes I am using flag and insists it be configured
 		// with such. Since glog is used in go-mesos it is easiest to use
-		// the same library for the moment. TODO
-		flag.CommandLine.Set("v", string(*verbose))
+		// the same library for the moment.
+		flag.CommandLine.Set("v", string(*level))
 		flag.CommandLine.Set("logtostderr", "1")
 		flag.CommandLine.Parse([]string{})
-		if err := RunTask(*master, task); err != nil {
-			fmt.Errorf("Error: ", err.Error())
-			os.Exit(1)
-		}
+		failOnErr(RunTask(*master, task))
 	}
 	app.Run(os.Args)
+}
+
+func failOnErr(err error) {
+	if err != nil {
+		fmt.Printf("Error: %s\n", err.Error())
+		cli.Exit(1)
+	}
 }
