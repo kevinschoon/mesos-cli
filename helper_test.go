@@ -48,10 +48,22 @@ func TestSetVolumes(t *testing.T) {
 		"/some/path:/path:ro",
 	}))
 	volumes := task.Container.Volumes
+	assert.Len(t, volumes, 2)
 	assert.Equal(t, *volumes[0].HostPath, "/var/run/docker.sock")
 	assert.Equal(t, *volumes[0].ContainerPath, "/var/run/docker.sock")
 	assert.Equal(t, volumes[0].Mode.Enum(), mesos.Volume_RW.Enum())
 	assert.Equal(t, *volumes[1].HostPath, "/some/path")
 	assert.Equal(t, *volumes[1].ContainerPath, "/path")
 	assert.Equal(t, volumes[1].Mode.Enum(), mesos.Volume_RO.Enum())
+}
+
+func TestSetEnvironment(t *testing.T) {
+	task := NewTask()
+	assert.NoError(t, setEnvironment(task, []string{
+		"SOME_VAR=SOME_VALUE",
+	}))
+	envs := task.Command.Environment.Variables
+	assert.Len(t, envs, 1)
+	assert.Equal(t, *envs[0].Name, "SOME_VAR")
+	assert.Equal(t, *envs[0].Value, "SOME_VALUE")
 }

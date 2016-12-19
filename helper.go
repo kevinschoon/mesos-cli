@@ -251,6 +251,24 @@ func setVolumes(task *mesos.TaskInfo, vols []string) error {
 	return nil
 }
 
+func setEnvironment(task *mesos.TaskInfo, envs []string) error {
+	variables := []*mesos.Environment_Variable{}
+	for _, env := range envs {
+		split := strings.Split(env, "=")
+		if len(split) != 2 {
+			return fmt.Errorf("Bad environment variable: %s", env)
+		}
+		variables = append(variables, &mesos.Environment_Variable{
+			Name:  proto.String(split[0]),
+			Value: proto.String(split[1]),
+		})
+	}
+	task.Command.Environment = &mesos.Environment{
+		Variables: variables,
+	}
+	return nil
+}
+
 // Convenience types for cli so we may
 // specify default values in one place
 // as pass them to the cli parser.

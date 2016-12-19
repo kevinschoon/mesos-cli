@@ -22,6 +22,7 @@ func main() {
 		level      = app.IntOpt("l level", 0, "Level of verbosity")
 		volumes    = app.StringsOpt("v volume", []string{}, "Volume mappings")
 		ports      = app.StringsOpt("p ports", []string{}, "Port mappings")
+		envs       = app.StringsOpt("e, env", []string{}, "Environment Variables")
 	)
 	task := NewTask()
 	app.VarOpt(
@@ -83,6 +84,7 @@ func main() {
 		failOnErr(setPorts(task, *ports))
 		failOnErr(setVolumes(task, *volumes))
 		failOnErr(setParameters(task, *parameters))
+		failOnErr(setEnvironment(task, *envs))
 		// Assuming that if image is specified the user wants
 		// to run with the Docker containerizer. This is
 		// not always the case as an image may be passed
