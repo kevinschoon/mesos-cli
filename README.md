@@ -25,6 +25,7 @@ nor language specific bindings to the Mesos C library.
       -l, --level=0                Level of verbosity
       -v, --volume=[]              Volume mappings
       -p, --ports=[]               Port mappings
+      -e, --env=[]                 Environment Variables
       -n, --name=mesos-exec        Task Name
       -s, --shell=false            Execute as shell command
       -u, --user=root              User to run as
