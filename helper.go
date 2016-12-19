@@ -151,6 +151,7 @@ Docker portmappings. Mappings can be accepted in several formats:
 8000:80/tcp
 */
 func setPorts(task *mesos.TaskInfo, ports []string) error {
+	mappings := []*mesos.ContainerInfo_DockerInfo_PortMapping{}
 	for _, port := range ports {
 		mapping := &mesos.ContainerInfo_DockerInfo_PortMapping{
 			// Assume tcp
@@ -196,7 +197,9 @@ func setPorts(task *mesos.TaskInfo, ports []string) error {
 			mapping.HostPort = proto.Uint32(uint32(host))
 			mapping.ContainerPort = proto.Uint32(uint32(host))
 		}
+		mappings = append(mappings, mapping)
 	}
+	task.Container.Docker.PortMappings = mappings
 	return nil
 }
 
