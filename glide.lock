@@ -1,5 +1,5 @@
 hash: f713ea9feb2c8a9c6199f6631c6700efb4679386e246b60aeda168ccf44fe97e
-updated: 2016-12-14T18:06:54.508228686-05:00
+updated: 2016-12-19T13:09:41.387765902-05:00
 imports:
 - name: github.com/gogo/protobuf
   version: 06ec6c31ff1bac6ed4e205a547a3d72934813ef3
@@ -34,11 +34,23 @@ imports:
   subpackages:
   - zk
 - name: github.com/tidwall/gjson
-  version: b0e589ad0b7ff467fad157cc07b1381ea0a9708e
+  version: e3f249f4fdf33c278edeb770426a6f83c954ae64
 - name: github.com/tidwall/match
   version: 173748da739a410c5b0b813b956f89ff94730b4c
 - name: golang.org/x/net
-  version: cfae461cedfdcab6e261a26eb77db53695623303
+  version: 45e771701b814666a7eb299e6c7a57d0b1799e91
   subpackages:
   - context
-testImports: []
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 346938d642f2ec3594ed81d874461961cd0faa76
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  subpackages:
+  - difflib
+- name: github.com/stretchr/testify
+  version: 2402e8e7a02fc811447d11f881aa9746cdc57983
+  subpackages:
+  - assert
