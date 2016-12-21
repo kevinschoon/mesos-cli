@@ -1,0 +1,13 @@
+{
+  "command": {
+    "shell": true,
+    "value": "while true; do echo $(date); sleep 1; done"
+  },
+  "container": {
+    "mesos": {
+      "docker": {
+      "image": "ubuntu:latest"
+      }
+    }
+  }
+}

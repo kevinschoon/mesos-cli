@@ -17,6 +17,7 @@ func main() {
 	var (
 		arguments  = app.StringsArg("ARG", nil, "Command Arguments")
 		master     = app.StringOpt("master", "127.0.0.1:5050", "Master address <host:port>")
+		taskPath   = app.StringOpt("task", "", "Path to a Mesos TaskInfo JSON file")
 		parameters = app.StringsOpt("param", []string{}, "Docker parameters")
 		image      = app.StringOpt("i image", "", "Docker image to run")
 		level      = app.IntOpt("l level", 0, "Level of verbosity")
@@ -81,6 +82,9 @@ func main() {
 		} else {
 			task.Command.Arguments = args
 		}
+		if *taskPath != "" {
+			failOnErr(TaskFromJSON(task, *taskPath))
+		}
 		failOnErr(setPorts(task, *ports))
 		failOnErr(setVolumes(task, *volumes))
 		failOnErr(setParameters(task, *parameters))
@@ -93,12 +97,10 @@ func main() {
 			task.Container.Mesos = nil
 			task.Container.Type = mesos.ContainerInfo_DOCKER.Enum()
 			task.Container.Docker.Image = image
-		} else {
-			task.Container.Docker = nil
 		}
 		// Nothing to do if not running a container
 		// and no arguments are specified.
-		if *image == "" && len(args) == 0 {
+		if *image == "" && *taskPath == "" && len(args) == 0 {
 			app.PrintHelp()
 			cli.Exit(1)
 		}

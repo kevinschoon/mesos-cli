@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gogo/protobuf/proto"
 	mesos "github.com/mesos/mesos-go/mesosproto"
@@ -141,6 +142,14 @@ func NewTask() *mesos.TaskInfo {
 		},
 	}
 	return task
+}
+
+func TaskFromJSON(task *mesos.TaskInfo, path string) error {
+	raw, err := ioutil.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(raw, task)
 }
 
 /* setPorts translates portMapping parameters into
