@@ -35,29 +35,31 @@ func (p *Pailer) url() *url.URL {
 	}
 }
 
-func (p *Pailer) Monitor(target io.Writer) error {
+func (p *Pailer) Monitor(target io.Writer) (err error) {
 	writer := bufio.NewWriter(target)
 	for {
 		resp, err := http.Get(p.url().String())
 		if err != nil {
-			return err
+			break
 		}
 		raw, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return err
+			break
 		}
 		resp.Body.Close()
 		data := gjson.GetBytes(raw, "data").Str
-		if _, err := writer.WriteString(data); err != nil {
-			return err
+		_, err = writer.WriteString(data)
+		if err != nil {
+			break
 		}
-		if err := writer.Flush(); err != nil {
-			return err
+		err = writer.Flush()
+		if err != nil {
+			break
 		}
 		p.offset += len(data)
 		time.Sleep(PollInterval)
 	}
-	return nil
+	return err
 }
 
 // LogTask monitors a task redirecting it's
