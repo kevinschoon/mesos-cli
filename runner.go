@@ -78,7 +78,7 @@ func NewDriver(master string, runner *Runner) (*sched.MesosSchedulerDriver, erro
 	return sched.NewMesosSchedulerDriver(config)
 }
 
-func RunTask(master string, task *mesos.TaskInfo) (err error) {
+func RunTask(profile *Profile, task *mesos.TaskInfo) (err error) {
 	status := make(chan *mesos.TaskStatus)
 	errors := make(chan error)
 	runner := &Runner{
@@ -86,7 +86,7 @@ func RunTask(master string, task *mesos.TaskInfo) (err error) {
 		status: status,
 		errors: errors,
 	}
-	driver, err := NewDriver(master, runner)
+	driver, err := NewDriver(profile.Master, runner)
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ loop:
 			switch *state {
 			case mesos.TaskState_TASK_RUNNING:
 				go func() {
-					fmt.Println(LogTask(master, s))
+					fmt.Println(LogTask(profile.Master, s))
 				}()
 			case mesos.TaskState_TASK_LOST:
 				driver.Stop(false)

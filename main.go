@@ -16,6 +16,7 @@ func main() {
 	app.Spec = "[OPTIONS] [ARG...]"
 	var (
 		arguments  = app.StringsArg("ARG", nil, "Command Arguments")
+		profile    = app.StringOpt("profile", "default", "Profile to load from ~/.mesos-exec.json")
 		master     = app.StringOpt("master", "127.0.0.1:5050", "Master address <host:port>")
 		taskPath   = app.StringOpt("task", "", "Path to a Mesos TaskInfo JSON file")
 		parameters = app.StringsOpt("param", []string{}, "Docker parameters")
@@ -113,7 +114,9 @@ func main() {
 		flag.CommandLine.Set("v", string(*level))
 		flag.CommandLine.Set("logtostderr", "1")
 		flag.CommandLine.Parse([]string{})
-		failOnErr(RunTask(*master, task))
+		config, err := LoadConfig(*profile, *master)
+		failOnErr(err)
+		failOnErr(RunTask(config.Profile(), task))
 	}
 	app.Run(os.Args)
 }
