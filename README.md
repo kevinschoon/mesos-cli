@@ -19,7 +19,9 @@ nor language specific bindings to the Mesos C library.
       ARG=[]       Command Arguments
 
     Options:
+      --profile="default"          Profile to load from ~/.mesos-exec.json
       --master="127.0.0.1:5050"    Master address <host:port>
+      --task=""                    Path to a Mesos TaskInfo JSON file
       --param=[]                   Docker parameters
       -i, --image=""               Docker image to run
       -l, --level=0                Level of verbosity
@@ -47,6 +49,26 @@ nor language specific bindings to the Mesos C library.
     ....
     # Or Docker
     $ mesos-exec --image ubuntu:latest --shell 'for i in $(seq 1 5); do echo $(date); sleep 1; done'
+    
+### Profiles
+You can configure "profiles" by creating a JSON file at `~/.mesos-exec.json`.
+
+    $ cat ~/.mesos-exec.json
+    {
+      "profiles": {
+        "default": {
+          "master": "localhost:5050"
+        },
+        "production": {
+          "master": "production-host:5050"
+        },
+        "development": {
+          "master": "development-host:5050"
+        }
+      }
+    }
+
+
 
 
 
@@ -61,5 +83,4 @@ nor language specific bindings to the Mesos C library.
 
   * Support full TaskInfo object
   * Support multiple TaskInfos array
-  * Support JSON config file with "profiles"
   * Improve logging output
