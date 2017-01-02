@@ -9,8 +9,6 @@ nor language specific bindings to the Mesos C library.
 
 ### Usage
 
-    $ mesos-exec --help
-
     Usage: mesos-exec [OPTIONS] [ARG...]
 
     Execute Commands on Apache Mesos
@@ -28,8 +26,8 @@ nor language specific bindings to the Mesos C library.
       -v, --volume=[]              Volume mappings
       -p, --ports=[]               Port mappings
       -e, --env=[]                 Environment Variables
+      -s, --shell=""               Shell command to execute
       -n, --name=mesos-exec        Task Name
-      -s, --shell=false            Execute as shell command
       -u, --user=root              User to run as
       -c, --cpus=0.1               CPU Resources to allocate
       -m, --mem=128.0              Memory Resources (mb) to allocate
@@ -38,8 +36,8 @@ nor language specific bindings to the Mesos C library.
       -f, --forcePullImage=false   Always pull the container image
 
 
-    # In native mesos executor
-    $ mesos-exec --shell 'for i in $(seq 1 5); do echo $(date); sleep 1; done'
+    # With Docker containerizer
+    $ mesos-exec --image alpine:latest --shell 'for i in $(seq 1 5); do echo $(date); sleep 1; done'
     ....
     Wed Dec 14 23:16:49 UTC 2016
     Wed Dec 14 23:16:50 UTC 2016
@@ -47,8 +45,10 @@ nor language specific bindings to the Mesos C library.
     Wed Dec 14 23:16:52 UTC 2016
     Wed Dec 14 23:16:53 UTC 2016
     ....
-    # Or Docker
-    $ mesos-exec --image ubuntu:latest --shell 'for i in $(seq 1 5); do echo $(date); sleep 1; done'
+    # Or with native Mesos containerizer
+    # Since native mesos containerizer doesn't redirect stdout/stderr by default you 
+    # need to literally write to a file called `stdout`/`stderr` in the sandbox directory.
+    $ mesos-exec --shell 'for i in $(seq 1 5); do echo $(date) >> stdout; sleep 1; done'
     
 ### Profiles
 You can configure "profiles" by creating a JSON file at `~/.mesos-exec.json`.
