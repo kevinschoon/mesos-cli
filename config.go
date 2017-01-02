@@ -45,7 +45,7 @@ func loadConfig(config *Config) error {
 }
 
 // LoadConfig loads a user configuration
-// from ~/.mesos-exec.json creating a
+// from ~/.mesos-cli.json creating a
 // JSON file with defaults if it does
 // not exist.
 func LoadConfig(profile, master string) (*Config, error) {
@@ -56,7 +56,7 @@ func LoadConfig(profile, master string) (*Config, error) {
 			"default": &Profile{
 				Master: master,
 				FrameworkInfo: &mesos.FrameworkInfo{
-					Name: proto.String("mesos-exec"),
+					Name: proto.String("mesos-cli"),
 				},
 			},
 		},
@@ -86,5 +86,5 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	ConfigPath = fmt.Sprintf("%s/.mesos-exec.json", u.HomeDir)
+	ConfigPath = fmt.Sprintf("%s/.mesos-cli.json", u.HomeDir)
 }

@@ -19,7 +19,7 @@ func main() {
 
 	var (
 		master  = app.StringOpt("master", "127.0.0.1:5050", "Master address <host:port>")
-		profile = app.StringOpt("profile", "default", "Profile to load from ~/.mesos-exec.json")
+		profile = app.StringOpt("profile", "default", "Profile to load from ~/.mesos-cli.json")
 		level   = app.IntOpt("level", 0, "Level of verbosity")
 		err     error
 	)

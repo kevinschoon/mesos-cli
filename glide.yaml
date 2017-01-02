@@ -1,4 +1,4 @@
-package: github.com/vektorlab/mesos-exec
+package: github.com/vektorlab/mesos-cli
 import:
 - package: github.com/gogo/protobuf
   subpackages:

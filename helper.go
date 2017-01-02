@@ -99,8 +99,8 @@ func Sufficent(task *mesos.TaskInfo, offer *mesos.Offer) bool {
 func NewTask() *mesos.TaskInfo {
 	task := &mesos.TaskInfo{
 		// TODO: Generate unique taskid
-		TaskId: &mesos.TaskID{Value: proto.String("mesos-exec")},
-		Name:   proto.String("mesos-exec"),
+		TaskId: &mesos.TaskID{Value: proto.String("mesos-cli")},
+		Name:   proto.String("mesos-cli"),
 		Command: &mesos.CommandInfo{
 			Shell: proto.Bool(false),
 			User:  proto.String("root"),

@@ -26,7 +26,7 @@ Binary packages are not yet available so you need to install from source.
 
     Options:
       --master="127.0.0.1:5050"   Master address <host:port>
-      --profile="default"         Profile to load from ~/.mesos-exec.json
+      --profile="default"         Profile to load from ~/.mesos-cli.json
       --level=0                   Level of verbosity
 
     Commands:
@@ -53,7 +53,7 @@ with some additional features.
       -p, --ports=[]               Port mappings
       -e, --env=[]                 Environment Variables
       -s, --shell=""               Shell command to execute
-      -n, --name=mesos-exec        Task Name
+      -n, --name=mesos-cli        Task Name
       -u, --user=root              User to run as
       -c, --cpus=0.1               CPU Resources to allocate
       -m, --mem=128.0              Memory Resources (mb) to allocate
