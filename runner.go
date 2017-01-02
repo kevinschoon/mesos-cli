@@ -66,27 +66,18 @@ func (r *Runner) Error(_ sched.SchedulerDriver, message string) {
 	r.errors <- fmt.Errorf(message)
 }
 
-func NewDriver(master string, runner *Runner) (*sched.MesosSchedulerDriver, error) {
-	config := sched.DriverConfig{
-		Scheduler: runner,
-		Framework: &mesos.FrameworkInfo{
-			User: proto.String(""),
-			Name: proto.String("mesos-exec"),
-		},
-		Master: master,
-	}
-	return sched.NewMesosSchedulerDriver(config)
-}
-
 func RunTask(profile *Profile, task *mesos.TaskInfo) (err error) {
 	status := make(chan *mesos.TaskStatus)
 	errors := make(chan error)
-	runner := &Runner{
-		task:   task,
-		status: status,
-		errors: errors,
-	}
-	driver, err := NewDriver(profile.Master, runner)
+	driver, err := sched.NewMesosSchedulerDriver(sched.DriverConfig{
+		Scheduler: &Runner{
+			task:   task,
+			status: status,
+			errors: errors,
+		},
+		Framework: profile.FrameworkInfo,
+		Master:    profile.Master,
+	})
 	if err != nil {
 		return err
 	}
