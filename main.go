@@ -25,17 +25,13 @@ func main() {
 		volumes    = app.StringsOpt("v volume", []string{}, "Volume mappings")
 		ports      = app.StringsOpt("p ports", []string{}, "Port mappings")
 		envs       = app.StringsOpt("e env", []string{}, "Environment Variables")
+		shell      = app.StringOpt("s shell", "", "Shell command to execute")
 	)
 	task := NewTask()
 	app.VarOpt(
 		"n name",
 		str{pt: task.Name},
 		"Task Name",
-	)
-	app.VarOpt(
-		"s shell",
-		bl{pt: task.Command.Shell},
-		"Execute as shell command",
 	)
 	app.VarOpt(
 		"u user",
@@ -68,20 +64,13 @@ func main() {
 		"Always pull the container image",
 	)
 	app.Before = func() {
-		args := *arguments
-		if *task.Command.Shell {
-			cmd := ""
-			if len(args) == 1 {
-				task.Command.Value = proto.String(args[0])
-			}
-			if len(args) > 1 {
-				for _, arg := range args {
-					cmd += fmt.Sprintf(" %s", arg)
-				}
-				task.Command.Value = proto.String(cmd)
-			}
+		if *shell != "" {
+			task.Command.Shell = proto.Bool(true)
+			task.Command.Value = shell
 		} else {
-			task.Command.Arguments = args
+			for _, arg := range *arguments {
+				*task.Command.Value += fmt.Sprintf(" %s", arg)
+			}
 		}
 		if *taskPath != "" {
 			failOnErr(TaskFromJSON(task, *taskPath))
@@ -98,10 +87,12 @@ func main() {
 			task.Container.Mesos = nil
 			task.Container.Type = mesos.ContainerInfo_DOCKER.Enum()
 			task.Container.Docker.Image = image
+		} else {
+			task.Container.Docker = nil
 		}
 		// Nothing to do if not running a container
 		// and no arguments are specified.
-		if *image == "" && *taskPath == "" && len(args) == 0 {
+		if *image == "" && *taskPath == "" && len(*arguments) == 0 && *shell == "" {
 			app.PrintHelp()
 			cli.Exit(1)
 		}
