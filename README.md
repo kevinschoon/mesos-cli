@@ -16,6 +16,24 @@ Binary packages are not yet available so you need to install from source.
  If you don't mind potentially overriding the default `mesos` command you may add an alias:
  
      echo "alias mesos=mesos-cli" >> $HOME/.bashrc
+     
+### Profiles
+You can configure "profiles" by creating a JSON file at `~/.mesos-cli.json`.
+
+    $ cat ~/.mesos-cli.json
+    {
+      "profiles": {
+        "default": {
+          "master": "localhost:5050"
+        },
+        "production": {
+          "master": "production-host:5050"
+        },
+        "development": {
+          "master": "development-host:5050"
+        }
+      }
+    }
     
 ### Usage
 
@@ -33,6 +51,7 @@ Binary packages are not yet available so you need to install from source.
       exec         Execute Arbitrary Commands Against a Cluster
 
     Run 'mesos-cli COMMAND --help' for more information on a command.
+    
     
 #### exec
 `mesos exec` implements the functionality of the [mesos-execute](https://github.com/apache/mesos/blob/master/src/cli/execute.cpp)
@@ -75,23 +94,22 @@ with some additional features.
     # need to literally write to a file called `stdout`/`stderr` in the sandbox directory.
     $ mesos exec --shell 'for i in $(seq 1 5); do echo $(date) >> stdout; sleep 1; done'
     
-### Profiles
-You can configure "profiles" by creating a JSON file at `~/.mesos-cli.json`.
+#### local
 
-    $ cat ~/.mesos-cli.json
-    {
-      "profiles": {
-        "default": {
-          "master": "localhost:5050"
-        },
-        "production": {
-          "master": "production-host:5050"
-        },
-        "development": {
-          "master": "development-host:5050"
-        }
-      }
-    }
+`mesos local` provides a wrapper for launching a local Mesos cluster for development and testing purposes. It requires that you have Docker installed locally uses the [vektorcloud/mesos]("https://github.com/vektorcloud/mesos") image.
+
+    Usage: mesos-cli local [OPTIONS] COMMAND [arg...]
+
+    Launch a local Mesos cluster (requires Docker)
+
+    Commands:
+      up           Start the local cluster
+      down         Stop the local cluster
+      status       Display the status of the local cluster
+      rm           Remove the local cluster
+
+    Run 'mesos-cli local COMMAND --help' for more information on a command.
+
 
 #### TODO
 
