@@ -32,7 +32,10 @@ type ProfileOption func(*Profile)
 
 func WithMaster(m string) ProfileOption {
 	return func(p *Profile) {
-		p.Master = m
+		// Checks to be sure we do not override with a default value from CLI
+		if m != DefaultProfile().Master {
+			p.Master = m
+		}
 	}
 }
 
