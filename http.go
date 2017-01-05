@@ -118,6 +118,26 @@ type Client struct {
 	handler Handler
 }
 
+func (c *Client) Agents() ([]*mesos.SlaveInfo, error) {
+	agents := []*mesos.SlaveInfo{}
+	agnts := struct {
+		Agents []struct {
+			ID       *string `json:"id"`
+			Hostname *string `json:"hostname"`
+		} `json:"slaves"`
+	}{}
+	if err := c.handler.Handle(&url.URL{Path: "/master/slaves"}, &agnts); err != nil {
+		return nil, err
+	}
+	for _, agent := range agnts.Agents {
+		agents = append(agents, &mesos.SlaveInfo{
+			Id:       &mesos.SlaveID{Value: agent.ID},
+			Hostname: agent.Hostname,
+		})
+	}
+	return agents, nil
+}
+
 func (c *Client) Paginate(pag Paginator) (err error) {
 	defer pag.Close()
 	for err == nil {

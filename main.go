@@ -16,7 +16,8 @@ func main() {
 	app := cli.App("mesos-cli", "Alternative Apache Mesos CLI")
 	app.Spec = "[OPTIONS]"
 	app.Command("ps", "List currently running tasks on a cluster", ps)
-	app.Command("exec", "Execute Arbitrary Commands Against a Cluster", exec)
+	app.Command("agents", "List registered agents on a cluster", agents)
+	app.Command("exec", "Execute arbitrary commands against a cluster", exec)
 	app.Command("local", "Launch a local Mesos cluster (requires Docker)", local)
 	var (
 		master  = app.StringOpt("master", "127.0.0.1:5050", "Master address <host:port>")
