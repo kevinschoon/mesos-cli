@@ -15,6 +15,7 @@ var config *Config
 func main() {
 	app := cli.App("mesos-cli", "Alternative Apache Mesos CLI")
 	app.Spec = "[OPTIONS]"
+	app.Command("ps", "List currently running tasks on a cluster", ps)
 	app.Command("exec", "Execute Arbitrary Commands Against a Cluster", exec)
 	app.Command("local", "Launch a local Mesos cluster (requires Docker)", local)
 	var (

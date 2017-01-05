@@ -16,6 +16,7 @@ import (
 
 const PollInterval = 100 * time.Millisecond
 
+// TODO: Move to HTTP paginator
 type Pailer struct {
 	Hostname string
 	Path     string
