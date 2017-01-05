@@ -37,7 +37,6 @@ You can configure "profiles" by creating a JSON file at `~/.mesos-cli.json`.
     
 ### Usage
 
-    mesos --help
     Usage: mesos-cli [OPTIONS] COMMAND [arg...]
 
     Alternative Apache Mesos CLI
@@ -48,10 +47,11 @@ You can configure "profiles" by creating a JSON file at `~/.mesos-cli.json`.
       --level=0                   Level of verbosity
 
     Commands:
+      ps           List currently running tasks on a cluster
       exec         Execute Arbitrary Commands Against a Cluster
+      local        Launch a local Mesos cluster (requires Docker)
 
     Run 'mesos-cli COMMAND --help' for more information on a command.
-    
     
 #### exec
 `mesos exec` implements the functionality of the [mesos-execute](https://github.com/apache/mesos/blob/master/src/cli/execute.cpp)
@@ -109,6 +109,20 @@ with some additional features.
       rm           Remove the local cluster
 
     Run 'mesos-cli local COMMAND --help' for more information on a command.
+    
+#### ps
+
+`mesos ps` lists currently running tasks in a cluster
+
+    Usage: mesos-cli ps [OPTIONS]
+
+    List currently running tasks on a cluster
+
+    Arguments:
+      limit=100      maximum number of tasks to return per request
+      max=250        maximum number of tasks to list
+      order="desc"   accending or decending sort order [asc|desc]
+
 
 
 #### TODO
@@ -116,7 +130,6 @@ with some additional features.
   * Support full TaskInfo object
   * Support multiple TaskInfos array
   * Improve logging output
-  * mesos ps
   * mesos cat
   * mesos top
   * mesos tail
