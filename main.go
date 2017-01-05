@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jawher/mow.cli"
 	"os"
+	"os/user"
 )
 
 const Version = "0.0.1"
@@ -20,10 +21,11 @@ func main() {
 	app.Command("exec", "Execute arbitrary commands against a cluster", exec)
 	app.Command("local", "Launch a local Mesos cluster (requires Docker)", local)
 	var (
-		master  = app.StringOpt("master", "127.0.0.1:5050", "Master address <host:port>")
-		profile = app.StringOpt("profile", "default", "Profile to load from ~/.mesos-cli.json")
-		level   = app.IntOpt("level", 0, "Level of verbosity")
-		err     error
+		profile    = app.StringOpt("profile", "default", "Profile to load")
+		configPath = app.StringOpt("config", fmt.Sprintf("%s/.mesos-cli.json", homeDir()),
+			"Path to load config from")
+		level = app.IntOpt("level", 0, "Level of verbosity")
+		err   error
 	)
 
 	// This is done to satisfy the presumptuous golang/glog package
@@ -34,9 +36,19 @@ func main() {
 	flag.CommandLine.Set("logtostderr", "1")
 	flag.CommandLine.Parse([]string{})
 
-	config, err = LoadConfig(*profile, *master)
-	failOnErr(err)
+	app.Before = func() {
+		config, err = LoadConfig(*configPath, *profile)
+		failOnErr(err)
+	}
 	app.Run(os.Args)
+}
+
+func homeDir() string {
+	u, err := user.Current()
+	if err != nil {
+		cli.Exit(1)
+	}
+	return u.HomeDir
 }
 
 func failOnErr(err error) {

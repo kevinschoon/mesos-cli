@@ -9,8 +9,9 @@ import (
 
 func exec(cmd *cli.Cmd) {
 	cmd.Spec = "[OPTIONS] [ARG...]"
-
+	defaults := DefaultProfile()
 	var (
+		master     = cmd.StringOpt("master", defaults.Master, "Mesos Master")
 		arguments  = cmd.StringsArg("ARG", nil, "Command Arguments")
 		taskPath   = cmd.StringOpt("task", "", "Path to a Mesos TaskInfo JSON file")
 		parameters = cmd.StringsOpt("param", []string{}, "Docker parameters")
@@ -20,7 +21,6 @@ func exec(cmd *cli.Cmd) {
 		envs       = cmd.StringsOpt("e env", []string{}, "Environment Variables")
 		shell      = cmd.StringOpt("s shell", "", "Shell command to execute")
 	)
-
 	task := NewTask()
 	cmd.VarOpt(
 		"n name",
@@ -92,5 +92,7 @@ func exec(cmd *cli.Cmd) {
 			cli.Exit(1)
 		}
 	}
-	cmd.Action = func() { failOnErr(RunTask(config.Profile(), task)) }
+	cmd.Action = func() {
+		failOnErr(RunTask(config.Profile(WithMaster(*master)), task))
+	}
 }
