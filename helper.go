@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gogo/protobuf/proto"
@@ -276,6 +277,14 @@ func setEnvironment(task *mesos.TaskInfo, envs []string) error {
 		Variables: variables,
 	}
 	return nil
+}
+
+func truncStr(s string, l int) string {
+	runes := bytes.Runes([]byte(s))
+	if len(runes) < l {
+		return s
+	}
+	return string(runes[:l])
 }
 
 // Convenience types for cli so we may
