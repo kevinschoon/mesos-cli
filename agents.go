@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/jawher/mow.cli"
+	"net/url"
 )
 
 func agents(cmd *cli.Cmd) {
@@ -11,15 +12,17 @@ func agents(cmd *cli.Cmd) {
 	var master = cmd.StringOpt("master", defaults.Master, "Mesos Master")
 	cmd.Action = func() {
 		client := &Client{
-			handler: DefaultHandler{
-				hostname: config.Profile(
-					WithMaster(*master),
-				).Master,
-			}}
-		agents, err := client.Agents()
-		failOnErr(err)
-		for _, agent := range agents {
-			fmt.Println(*agent.Id.Value, *agent.Hostname)
+			Hostname: config.Profile(WithMaster(*master)).Master,
+		}
+		agents := struct {
+			Agents []struct {
+				ID       *string `json:"id"`
+				Hostname *string `json:"hostname"`
+			} `json:"slaves"`
+		}{}
+		failOnErr(client.Get(&url.URL{Path: "/master/slaves"}, &agents))
+		for _, agent := range agents.Agents {
+			fmt.Println(*agent.ID, *agent.Hostname)
 		}
 	}
 }

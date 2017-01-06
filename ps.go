@@ -25,7 +25,7 @@ type TaskPaginator struct {
 
 func (t *TaskPaginator) Close() { close(t.tasks) }
 
-func (t *TaskPaginator) Next(h Handler, f ...Filter) error {
+func (t *TaskPaginator) Next(c *Client, f ...Filter) error {
 	u := &url.URL{
 		Path: "/master/tasks",
 		RawQuery: url.Values{
@@ -42,7 +42,7 @@ func (t *TaskPaginator) Next(h Handler, f ...Filter) error {
 			State       *mesos.TaskState `json:"state"`
 		} `json:"tasks"`
 	}{}
-	if err := h.Handle(u, &tasks); err != nil {
+	if err := c.Get(u, &tasks); err != nil {
 		return err
 	}
 loop:
@@ -106,7 +106,9 @@ func ps(cmd *cli.Cmd) {
 			})
 		}
 		tasks := make(chan *mesos.Task)
-		client := &Client{handler: DefaultHandler{hostname: config.Profile(WithMaster(*master)).Master}}
+		client := &Client{
+			Hostname: config.Profile(WithMaster(*master)).Master,
+		}
 		paginator := &TaskPaginator{
 			limit: *limit,
 			max:   *max,
@@ -114,7 +116,7 @@ func ps(cmd *cli.Cmd) {
 			tasks: tasks,
 		}
 		go func() {
-			failOnErr(client.Paginate(paginator, filters...))
+			failOnErr(Paginate(client, paginator, filters...))
 		}()
 		// TODO: make pretty
 		for task := range tasks {
