@@ -5,13 +5,123 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gogo/protobuf/proto"
+	"github.com/jawher/mow.cli"
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"os/user"
+	"regexp"
 	"strconv"
 	"strings"
 )
+
+// TaskPaginator paginates requests from /master/tasks
+type TaskPaginator struct {
+	tasks     chan *taskInfo
+	processed int    // Total number of tasks proessed
+	count     int    // Total number of matching tasks
+	limit     int    // Limit of tasks per request
+	max       int    // Maximum amount of matching tasks
+	order     string // Order of tasks
+}
+
+func (t *TaskPaginator) Close() { close(t.tasks) }
+
+func (t *TaskPaginator) Next(c *Client, f ...Filter) error {
+	u := &url.URL{
+		Path: "/master/tasks",
+		RawQuery: url.Values{
+			"offset": []string{fmt.Sprintf("%d", t.processed)},
+			"limit":  []string{fmt.Sprintf("%d", t.limit)},
+		}.Encode(),
+	}
+	tasks := struct {
+		Tasks []*taskInfo `json:"tasks"`
+	}{}
+	if err := c.Get(u, &tasks); err != nil {
+		return err
+	}
+loop:
+	for _, task := range tasks.Tasks {
+		t.processed++
+		for _, filter := range f {
+			// If any filter does not match discard the task
+			if !filter(task) {
+				continue loop
+			}
+		}
+		t.count++
+		// Check if we've exceeded the maximum tasks
+		// If the maximum tasks is less than zero
+		// continue forever.
+		if t.count >= t.max && t.max > 0 {
+			return ErrMaxExceeded
+		}
+		t.tasks <- task
+	}
+	// If the response is smaller than the limit
+	// we have finished this request
+	if len(tasks.Tasks) < t.limit {
+		return ErrEndPagination
+	}
+	return nil
+}
+
+// FindTask attempts to find a task
+// the taskId may match exactly
+// or be a fuzzy match
+func FindTask(taskID string, client *Client) (*taskInfo, error) {
+	var err error
+	results := []*taskInfo{}
+	tasks := make(chan *taskInfo)
+	paginator := &TaskPaginator{
+		limit: 100,
+		max:   -1,
+		order: "asc",
+		tasks: tasks,
+	}
+	expr, err := regexp.Compile(taskID)
+	if err != nil {
+		return nil, err
+	}
+	go func() {
+		err = Paginate(client, paginator, func(o interface{}) bool {
+			task := o.(*taskInfo)
+			return expr.MatchString(task.ID)
+		})
+	}()
+	for task := range tasks {
+		results = append(results, task)
+	}
+	if err != nil {
+		return nil, err
+	}
+	if len(results) > 1 {
+		return nil, fmt.Errorf("too many results")
+	}
+	if len(results) != 1 {
+		return nil, fmt.Errorf("task not found")
+	}
+	return results[0], nil
+}
+
+func FindAgent(agentID string, client *Client) (*agentInfo, error) {
+	agents := struct {
+		Agents []*agentInfo `json:"slaves"`
+	}{}
+	err := client.Get(&url.URL{Path: "/master/slaves"}, &agents)
+	if err != nil {
+		return nil, err
+	}
+	for _, agent := range agents.Agents {
+		if agent.ID == agentID {
+			return agent, nil
+		}
+	}
+	return nil, fmt.Errorf("agent not found")
+}
 
 // Agents returns a map of IDs to hostnames
 func Agents(master string) (map[string]string, error) {
@@ -43,12 +153,8 @@ func Agents(master string) (map[string]string, error) {
 
 // LogDir returns the directory path for following task output
 func LogDir(hostname, executorId string) (string, error) {
-	resp, err := http.Get(fmt.Sprintf("http://%s/slave(1)/state", hostname))
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	raw, err := ioutil.ReadAll(resp.Body)
+	client := &Client{Hostname: hostname}
+	raw, err := client.GetBytes(&url.URL{Path: "/slave(1)/state"})
 	if err != nil {
 		return "", err
 	}
@@ -285,6 +391,21 @@ func truncStr(s string, l int) string {
 		return s
 	}
 	return string(runes[:l])
+}
+
+func homeDir() string {
+	u, err := user.Current()
+	if err != nil {
+		cli.Exit(1)
+	}
+	return u.HomeDir
+}
+
+func failOnErr(err error) {
+	if err != nil {
+		fmt.Printf("Error: %s\n", err.Error())
+		cli.Exit(1)
+	}
 }
 
 // Convenience types for cli so we may

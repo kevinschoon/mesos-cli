@@ -29,7 +29,7 @@ type Client struct {
 	Hostname string
 }
 
-func (c Client) handle(u *url.URL, method string, o interface{}) error {
+func (c Client) handle(u *url.URL, method string) ([]byte, error) {
 	u.Scheme = "http"
 	u.Host = c.Hostname
 	resp, err := http.DefaultClient.Do(&http.Request{
@@ -43,20 +43,28 @@ func (c Client) handle(u *url.URL, method string, o interface{}) error {
 		URL:        u,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	raw, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err = resp.Body.Close(); err != nil {
-		return err
+		return nil, err
 	}
-	return json.Unmarshal(raw, o)
+	return raw, nil
+}
+
+func (c Client) GetBytes(u *url.URL) ([]byte, error) {
+	return c.handle(u, "GET")
 }
 
 func (c Client) Get(u *url.URL, o interface{}) error {
-	return c.handle(u, "GET", o)
+	raw, err := c.handle(u, "GET")
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(raw, o)
 }
 
 func Paginate(client *Client, pag Paginator, f ...Filter) (err error) {
