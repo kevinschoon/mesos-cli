@@ -89,9 +89,9 @@ loop:
 			state := s.State
 			switch *state {
 			case mesos.TaskState_TASK_RUNNING:
-				go func() {
-					fmt.Println(LogTask(profile.Master, s))
-				}()
+				//go func() {
+				//	fmt.Println(LogTask(profile.Master, s))
+				//}()
 			case mesos.TaskState_TASK_LOST:
 				driver.Stop(false)
 				err = fmt.Errorf(state.String())

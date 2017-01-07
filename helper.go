@@ -9,7 +9,6 @@ import (
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
-	"net/http"
 	"net/url"
 	"os/user"
 	"regexp"
@@ -107,7 +106,8 @@ func FindTask(taskID string, client *Client) (*taskInfo, error) {
 	return results[0], nil
 }
 
-func FindAgent(agentID string, client *Client) (*agentInfo, error) {
+// Agents will return an array of agentInfo as reported by the master
+func Agents(client *Client) ([]*agentInfo, error) {
 	agents := struct {
 		Agents []*agentInfo `json:"slaves"`
 	}{}
@@ -115,40 +115,38 @@ func FindAgent(agentID string, client *Client) (*agentInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, agent := range agents.Agents {
-		if agent.ID == agentID {
-			return agent, nil
-		}
-	}
-	return nil, fmt.Errorf("agent not found")
+	return agents.Agents, nil
 }
 
-// Agents returns a map of IDs to hostnames
-func Agents(master string) (map[string]string, error) {
-	resp, err := http.Get(fmt.Sprintf("http://%s/master/slaves", master))
+// Agent returns an agent with it's full state
+func Agent(client *Client, agentID string) (*agentInfo, error) {
+	agents, err := Agents(client)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	raw, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	agents := map[string]string{}
-	for _, agent := range gjson.GetBytes(raw, "slaves").Array() {
-		hostname := agent.Get("hostname").Str
-		// Detect port agent is listening on
-		split := strings.Split(agent.Get("pid").Str, ":")
-		if len(split) != 2 {
-			return nil, fmt.Errorf("Cannot detect port")
+	var agent *agentInfo
+	for _, a := range agents {
+		if a.ID == agentID {
+			agent = a
+			break
 		}
-		port, err := strconv.ParseInt(split[1], 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		agents[agent.Get("id").Str] = fmt.Sprintf("%s:%d", hostname, port)
 	}
-	return agents, nil
+	if agent == nil {
+		return nil, fmt.Errorf("agent not found")
+	}
+	err = Client{Hostname: agent.FQDN()}.Get(&url.URL{Path: "/slave(1)/state"}, agent)
+	return agent, err
+}
+
+func findExecutor(agent *agentInfo, id string) *executorInfo {
+	for _, framework := range agent.Frameworks {
+		for _, executor := range framework.Executors {
+			if executor.ID == id {
+				return executor
+			}
+		}
+	}
+	return nil
 }
 
 // LogDir returns the directory path for following task output

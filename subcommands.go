@@ -7,7 +7,6 @@ import (
 	"github.com/gosuri/uitable"
 	"github.com/jawher/mow.cli"
 	mesos "github.com/mesos/mesos-go/mesosproto"
-	"net/url"
 	"regexp"
 	"strings"
 )
@@ -86,11 +85,10 @@ func ps(cmd *cli.Cmd) {
 
 func ls(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
-	cmd.Spec = "[OPTIONS] TASKID"
+	cmd.Spec = "[OPTIONS] ID"
 	var (
-		master    = cmd.StringOpt("master", defaults.Master, "Mesos Master")
-		agentAddr = cmd.StringOpt("agent", "", "Mesos Agent")
-		taskID    = cmd.StringArg("TASKID", "", "TaskID to list")
+		master = cmd.StringOpt("master", defaults.Master, "Mesos Master")
+		taskID = cmd.StringArg("ID", "", "Task to list")
 	)
 	cmd.Action = func() {
 		client := &Client{
@@ -99,17 +97,15 @@ func ls(cmd *cli.Cmd) {
 		// First attempt to resolve the task by ID
 		task, err := FindTask(*taskID, client)
 		failOnErr(err)
-		// If no agent is specified we will
-		// attempt to resolve the hostname
-		// from the master
-		if *agentAddr == "" {
-			agent, err := FindAgent(task.AgentID, client)
-			failOnErr(err)
-			*agentAddr = agent.FQDN()
-		}
-		logDir, err := LogDir(*agentAddr, task.ID)
+		// Attempt to get the full agent state
+		agent, err := Agent(client, task.AgentID)
 		failOnErr(err)
-		fmt.Println(logDir)
+		// Lookup executor information in agent state
+		executor := findExecutor(agent, task.ID)
+		if executor == nil {
+			failOnErr(fmt.Errorf("could not resolve executor"))
+		}
+		fmt.Println(executor.Directory)
 	}
 }
 func agents(cmd *cli.Cmd) {
@@ -120,16 +116,14 @@ func agents(cmd *cli.Cmd) {
 		client := &Client{
 			Hostname: config.Profile(WithMaster(*master)).Master,
 		}
-		agents := struct {
-			Agents []*agentInfo `json:"slaves"`
-		}{}
-		failOnErr(client.Get(&url.URL{Path: "/master/slaves"}, &agents))
+		agents, err := Agents(client)
+		failOnErr(err)
 		table := uitable.New()
-		table.AddRow("ID", "HOSTNAME", "VERSION", "UPTIME", "CPUS", "MEM", "GPUS", "DISK")
-		for _, agent := range agents.Agents {
+		table.AddRow("ID", "FQDN", "VERSION", "UPTIME", "CPUS", "MEM", "GPUS", "DISK")
+		for _, agent := range agents {
 			table.AddRow(
 				agent.ID,
-				agent.Hostname,
+				agent.FQDN(),
 				agent.Version,
 				agent.Uptime().String(),
 				fmt.Sprintf("%.2f/%.2f", agent.UsedResources.CPU, agent.Resources.CPU),

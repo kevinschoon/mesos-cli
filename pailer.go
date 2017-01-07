@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"bufio"
 	"fmt"
@@ -93,3 +94,4 @@ func LogTask(master string, status *mesos.TaskStatus) error {
 	wg.Wait()
 	return err
 }
+*/
