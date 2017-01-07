@@ -7,7 +7,6 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/jawher/mow.cli"
 	mesos "github.com/mesos/mesos-go/mesosproto"
-	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"net/url"
 	"os/user"
@@ -138,6 +137,22 @@ func Agent(client *Client, agentID string) (*agentInfo, error) {
 	return agent, err
 }
 
+// Browse returns all of the files on an agent at the given path
+func Browse(agent *agentInfo, path string) ([]*fileInfo, error) {
+	client := &Client{Hostname: agent.FQDN()}
+	files := []*fileInfo{}
+	err := client.Get(&url.URL{
+		Path: "/files/browse",
+		RawQuery: url.Values{
+			"path": []string{path},
+		}.Encode(),
+	}, &files)
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
+}
+
 func findExecutor(agent *agentInfo, id string) *executorInfo {
 	for _, framework := range agent.Frameworks {
 		for _, executor := range framework.Executors {
@@ -147,23 +162,6 @@ func findExecutor(agent *agentInfo, id string) *executorInfo {
 		}
 	}
 	return nil
-}
-
-// LogDir returns the directory path for following task output
-func LogDir(hostname, executorId string) (string, error) {
-	client := &Client{Hostname: hostname}
-	raw, err := client.GetBytes(&url.URL{Path: "/slave(1)/state"})
-	if err != nil {
-		return "", err
-	}
-	for _, framework := range gjson.GetBytes(raw, "frameworks").Array() {
-		for _, executor := range framework.Get("executors").Array() {
-			if executor.Get("id").Str == executorId {
-				return executor.Get("directory").Str, nil
-			}
-		}
-	}
-	return "", fmt.Errorf("Unable to find log directory")
 }
 
 // Resource returns the value of a resource

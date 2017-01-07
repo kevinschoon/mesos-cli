@@ -87,8 +87,9 @@ func ls(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
 	cmd.Spec = "[OPTIONS] ID"
 	var (
-		master = cmd.StringOpt("master", defaults.Master, "Mesos Master")
-		taskID = cmd.StringArg("ID", "", "Task to list")
+		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
+		taskID   = cmd.StringArg("ID", "", "Task to list")
+		relative = cmd.BoolOpt("a", true, "List relative file paths")
 	)
 	cmd.Action = func() {
 		client := &Client{
@@ -105,9 +106,21 @@ func ls(cmd *cli.Cmd) {
 		if executor == nil {
 			failOnErr(fmt.Errorf("could not resolve executor"))
 		}
-		fmt.Println(executor.Directory)
+		files, err := Browse(agent, executor.Directory)
+		table := uitable.New()
+		table.AddRow("UID", "GID", "MODE", "MODIFIED", "SIZE", "PATH")
+		failOnErr(err)
+		for _, file := range files {
+			path := file.Path
+			if *relative {
+				path = file.Relative()
+			}
+			table.AddRow(file.UID, file.GID, file.Mode, file.Modified().String(), fmt.Sprintf("%d", file.Size), path)
+		}
+		fmt.Println(table)
 	}
 }
+
 func agents(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
 	cmd.Spec = "[OPTIONS]"

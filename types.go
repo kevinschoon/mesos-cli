@@ -89,3 +89,27 @@ type executorInfo struct {
 	Name      string `json:"name"`
 	Directory string `json:"directory"`
 }
+
+type fileInfo struct {
+	GID   string  `json:"gid"`
+	UID   string  `json:"uid"`
+	Path  string  `json:"path"`
+	Mode  string  `json:"mode"`
+	MTime float64 `json:"mtime"`
+	Nlink int64   `json:"nlink"`
+	Size  int64   `json:"size"`
+}
+
+func (f fileInfo) Modified() time.Time {
+	return time.Unix(int64(f.MTime), 0)
+}
+
+// Return relative file path
+func (f fileInfo) Relative() string {
+	path := f.Path
+	split := strings.Split(f.Path, "/")
+	if len(split) > 0 {
+		path = split[len(split)-1]
+	}
+	return path
+}
