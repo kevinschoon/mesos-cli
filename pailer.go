@@ -1,97 +1,142 @@
 package main
 
-/*
 import (
 	"bufio"
+	"bytes"
 	"fmt"
-	mesos "github.com/mesos/mesos-go/mesosproto"
-	"github.com/tidwall/gjson"
+	//mesos "github.com/mesos/mesos-go/mesosproto"
+	//"github.com/tidwall/gjson"
+	//"io/ioutil"
 	"io"
-	"io/ioutil"
-	"net/http"
+	//"net/http"
 	"net/url"
-	"os"
-	"sync"
+	//"os"
+	//"sync"
 	"time"
 )
 
 const PollInterval = 100 * time.Millisecond
 
-// TODO: Move to HTTP paginator
-type Pailer struct {
-	Hostname string
-	Path     string
-	offset   int
+/*
+FilePaginator paginates requests to a /file/read endpoint
+sending the response as fileData on the data channel.
+If max is a negative number paginate forever or until
+a message is received at f.cancel. Otherwise find the
+length of the file and paginate until we reach that position.
+*/
+type FilePaginator struct {
+	data   chan *fileData // Results
+	cancel chan bool      // Cancel the pagination
+	offset int            // Current offset
+	max    int            // Maximum offset
+	tail   bool           // Begin at the end
+	path   string         // Path to file
 }
 
-func (p *Pailer) url() *url.URL {
-	return &url.URL{
-		Scheme: "http",
-		Host:   p.Hostname,
-		Path:   "/files/read",
+func (f *FilePaginator) init(c *Client) error {
+	u := &url.URL{
+		Path: "/files/read",
 		RawQuery: url.Values{
-			"path":   []string{p.Path},
-			"length": []string{"50000"},
-			"offset": []string{fmt.Sprintf("%d", p.offset)},
+			"path": []string{f.path},
 		}.Encode(),
 	}
+	fd := &fileData{}
+	if err := c.Get(u, fd); err != nil {
+		return err
+	}
+	// If we are tailing output we start
+	// at the end of the file. Since it
+	// is impossible to tell how many
+	// of the previous bytes equate to
+	// a single line we just start at the
+	// end and wait for more data.
+	if f.tail {
+		f.offset = fd.Offset
+	} else {
+		// Signal the end of this file once
+		// we reach the total offset.
+		f.max = fd.Offset
+	}
+	return nil
 }
 
-func (p *Pailer) Monitor(target io.Writer) (err error) {
-	writer := bufio.NewWriter(target)
-	for {
-		resp, err := http.Get(p.url().String())
-		if err != nil {
-			break
+func (f *FilePaginator) Next(c *Client, _ ...Filter) error {
+	select {
+	case <-f.cancel:
+		return ErrEndPagination
+	default:
+	}
+	u := &url.URL{
+		Path: "/files/read",
+		RawQuery: url.Values{
+			"offset": []string{fmt.Sprintf("%d", f.offset)},
+			"path":   []string{f.path},
+		}.Encode(),
+	}
+	fd := &fileData{}
+	if err := c.Get(u, fd); err != nil {
+		return err
+	}
+	f.offset += fd.Length()
+	f.data <- fd
+	// If max == 0 this is a tail operation
+	if f.max > 0 {
+		if f.max == f.offset {
+			// We've reached the end of the file
+			return ErrMaxExceeded
 		}
-		raw, err := ioutil.ReadAll(resp.Body)
+	}
+	time.Sleep(PollInterval)
+	return nil
+}
+
+func (f *FilePaginator) Close() { close(f.data) }
+
+// Pailer reads until n lines
+// TODO: Add support for binary data
+// TODO: Learn the origin of the word "pailer"
+// the term is used in the Mesos codebase but has
+// no indication of what the word actually means.
+func Pailer(data <-chan *fileData, cancel chan bool, n int, w io.Writer) error {
+	writer := bufio.NewWriter(w)
+	var (
+		buf   bytes.Buffer
+		err   error
+		lines int
+	)
+loop:
+	for fd := range data {
+		_, err = buf.WriteString(fd.Data)
 		if err != nil {
-			break
+			break loop
 		}
-		resp.Body.Close()
-		data := gjson.GetBytes(raw, "data").Str
-		_, err = writer.WriteString(data)
-		if err != nil {
-			break
+		for {
+			line, err := buf.ReadBytes('\n')
+			if err != nil {
+				if err == io.EOF {
+					buf.Write(line)
+					break
+				} else {
+					break loop
+				}
+			}
+			_, err = writer.Write(line)
+			if err != nil {
+				break loop
+			}
+			writer.Flush()
+			lines++
+			if n > 0 {
+				if lines >= n {
+					cancel <- true
+					break loop
+				}
+			}
 		}
-		err = writer.Flush()
-		if err != nil {
-			break
+		if buf.Len() > 0 {
+			writer.Write(buf.Bytes())
+			writer.Flush()
 		}
-		p.offset += len(data)
-		time.Sleep(PollInterval)
 	}
 	return err
 }
-
-// LogTask monitors a task redirecting it's
-// stdout and stderr log files to the operator
-func LogTask(master string, status *mesos.TaskStatus) error {
-	agents, err := Agents(master)
-	if err != nil {
-		return err
-	}
-	hostname, ok := agents[*status.SlaveId.Value]
-	if !ok {
-		return fmt.Errorf("Cannot find agent host")
-	}
-	logDir, err := LogDir(hostname, *status.ExecutorId.Value)
-	if err != nil {
-		return err
-	}
-	stdout := &Pailer{
-		Hostname: hostname,
-		Path:     fmt.Sprintf("%s/stdout", logDir),
-	}
-	stderr := &Pailer{
-		Hostname: hostname,
-		Path:     fmt.Sprintf("%s/stderr", logDir),
-	}
-	wg := sync.WaitGroup{}
-	wg.Add(2)
-	go func() { defer wg.Done(); err = stdout.Monitor(os.Stdout) }()
-	go func() { defer wg.Done(); err = stderr.Monitor(os.Stderr) }()
-	wg.Wait()
-	return err
-}
-*/

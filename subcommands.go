@@ -7,8 +7,10 @@ import (
 	"github.com/gosuri/uitable"
 	"github.com/jawher/mow.cli"
 	mesos "github.com/mesos/mesos-go/mesosproto"
+	"os"
 	"regexp"
 	"strings"
+	"sync"
 )
 
 func ps(cmd *cli.Cmd) {
@@ -83,13 +85,69 @@ func ps(cmd *cli.Cmd) {
 	}
 }
 
+func cat(cmd *cli.Cmd) {
+	defaults := DefaultProfile()
+	cmd.Spec = "[OPTIONS] ID FILE"
+	var (
+		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
+		lines    = cmd.IntOpt("n lines", 0, "Output the last N lines")
+		tail     = cmd.BoolOpt("t tail", false, "Tail output")
+		taskID   = cmd.StringArg("ID", "", "TaskID")
+		filename = cmd.StringArg("FILE", "", "Filename to retrieve")
+	)
+	cmd.Action = func() {
+		client := &Client{
+			Hostname: config.Profile(WithMaster(*master)).Master,
+		}
+		// First attempt to resolve the task by ID
+		task, err := FindTask(*taskID, client)
+		failOnErr(err)
+		// Attempt to get the full agent state
+		agent, err := Agent(client, task.AgentID)
+		failOnErr(err)
+		// Lookup executor information in agent state
+		executor := findExecutor(agent, task.ID)
+		if executor == nil {
+			failOnErr(fmt.Errorf("could not resolve executor"))
+		}
+		var target *fileInfo
+		files, err := Browse(agent, executor.Directory)
+		for _, file := range files {
+			if file.Relative() == *filename {
+				target = file
+			}
+		}
+		if target == nil {
+			failOnErr(fmt.Errorf("cannot find file %s", *filename))
+		}
+		var wg sync.WaitGroup
+		wg.Add(2)
+		fp := &FilePaginator{
+			data:   make(chan *fileData),
+			cancel: make(chan bool),
+			path:   target.Path,
+			tail:   *tail,
+		}
+		failOnErr(fp.init(client))
+		go func() {
+			defer wg.Done()
+			failOnErr(Paginate(client, fp))
+		}()
+		go func() {
+			defer wg.Done()
+			failOnErr(Pailer(fp.data, fp.cancel, *lines, os.Stdout))
+		}()
+		wg.Wait()
+	}
+}
+
 func ls(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
 	cmd.Spec = "[OPTIONS] ID"
 	var (
 		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
 		taskID   = cmd.StringArg("ID", "", "Task to list")
-		relative = cmd.BoolOpt("a", true, "List relative file paths")
+		absolute = cmd.BoolOpt("a absolute", false, "Show absolute file paths")
 	)
 	cmd.Action = func() {
 		client := &Client{
@@ -111,9 +169,9 @@ func ls(cmd *cli.Cmd) {
 		table.AddRow("UID", "GID", "MODE", "MODIFIED", "SIZE", "PATH")
 		failOnErr(err)
 		for _, file := range files {
-			path := file.Path
-			if *relative {
-				path = file.Relative()
+			path := file.Relative()
+			if *absolute {
+				path = file.Path
 			}
 			table.AddRow(file.UID, file.GID, file.Mode, file.Modified().String(), fmt.Sprintf("%d", file.Size), path)
 		}
@@ -121,6 +179,7 @@ func ls(cmd *cli.Cmd) {
 	}
 }
 
+/*
 func agents(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
 	cmd.Spec = "[OPTIONS]"
@@ -148,8 +207,9 @@ func agents(cmd *cli.Cmd) {
 		fmt.Println(table)
 	}
 }
+*/
 
-func exec(cmd *cli.Cmd) {
+func run(cmd *cli.Cmd) {
 	cmd.Spec = "[OPTIONS] [ARG...]"
 	defaults := DefaultProfile()
 	var (

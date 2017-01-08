@@ -1,6 +1,7 @@
 package main
 
 import (
+	//"bytes"
 	"fmt"
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	"strconv"
@@ -112,4 +113,13 @@ func (f fileInfo) Relative() string {
 		path = split[len(split)-1]
 	}
 	return path
+}
+
+type fileData struct {
+	Data   string `json:"data"`
+	Offset int    `json:"offset"`
+}
+
+func (f fileData) Length() int {
+	return len([]byte(f.Data))
 }
