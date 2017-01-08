@@ -5,6 +5,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	sched "github.com/mesos/mesos-go/scheduler"
+	"os"
 )
 
 /*
@@ -66,9 +67,10 @@ func (r *Runner) Error(_ sched.SchedulerDriver, message string) {
 	r.errors <- fmt.Errorf(message)
 }
 
-func RunTask(profile *Profile, task *mesos.TaskInfo) (err error) {
+func RunTask(profile *Profile, task *mesos.TaskInfo, tail bool) (err error) {
 	status := make(chan *mesos.TaskStatus)
 	errors := make(chan error)
+	client := &Client{Hostname: profile.Master}
 	driver, err := sched.NewMesosSchedulerDriver(sched.DriverConfig{
 		Scheduler: &Runner{
 			task:   task,
@@ -89,9 +91,30 @@ loop:
 			state := s.State
 			switch *state {
 			case mesos.TaskState_TASK_RUNNING:
-				//go func() {
-				//	fmt.Println(LogTask(profile.Master, s))
-				//}()
+				agent, err := Agent(client, *s.SlaveId.Value)
+				if err != nil {
+					break loop
+				}
+				executor := findExecutor(agent, *s.TaskId.Value)
+				if executor == nil {
+					err = fmt.Errorf("Cannot find executor")
+					break loop
+				}
+				go func() {
+					err = monitorFiles(
+						&Client{Hostname: agent.FQDN()},
+						os.Stdout,
+						&fileInfo{
+							Path: fmt.Sprintf("%s/stdout", executor.Directory),
+						},
+						&fileInfo{
+							Path: fmt.Sprintf("%s/stderr", executor.Directory),
+						},
+					)
+					if err != nil {
+						errors <- err
+					}
+				}()
 			case mesos.TaskState_TASK_LOST:
 				driver.Stop(false)
 				err = fmt.Errorf(state.String())

@@ -7,12 +7,14 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/jawher/mow.cli"
 	mesos "github.com/mesos/mesos-go/mesosproto"
+	"io"
 	"io/ioutil"
 	"net/url"
 	"os/user"
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 // TaskPaginator paginates requests from /master/tasks
@@ -151,6 +153,38 @@ func Browse(agent *agentInfo, path string) ([]*fileInfo, error) {
 		return nil, err
 	}
 	return files, nil
+}
+
+// Attempt to monitor one or more files
+func monitorFiles(client *Client, w io.Writer, targets ...*fileInfo) error {
+	var (
+		wg  sync.WaitGroup
+		err error
+	)
+	for _, target := range targets {
+		wg.Add(2)
+		fp := &FilePaginator{
+			data:   make(chan *fileData),
+			cancel: make(chan bool),
+			path:   target.Path,
+			tail:   true,
+		}
+		err := fp.init(client)
+		if err != nil {
+			return err
+		}
+		// TODO: Need to bubble these errors back properly
+		go func() {
+			defer wg.Done()
+			err = Paginate(client, fp)
+		}()
+		go func() {
+			defer wg.Done()
+			err = Pailer(fp.data, fp.cancel, 0, w)
+		}()
+	}
+	wg.Wait()
+	return err
 }
 
 func findExecutor(agent *agentInfo, id string) *executorInfo {

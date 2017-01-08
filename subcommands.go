@@ -222,6 +222,7 @@ func run(cmd *cli.Cmd) {
 		ports      = cmd.StringsOpt("p ports", []string{}, "Port mappings")
 		envs       = cmd.StringsOpt("e env", []string{}, "Environment Variables")
 		shell      = cmd.StringOpt("s shell", "", "Shell command to execute")
+		tail       = cmd.BoolOpt("t tail", false, "Tail command output")
 	)
 	task := NewTask()
 	cmd.VarOpt(
@@ -295,7 +296,7 @@ func run(cmd *cli.Cmd) {
 		}
 	}
 	cmd.Action = func() {
-		failOnErr(RunTask(config.Profile(WithMaster(*master)), task))
+		failOnErr(RunTask(config.Profile(WithMaster(*master)), task, *tail))
 	}
 }
 
