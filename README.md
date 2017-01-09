@@ -45,7 +45,8 @@ You can configure "profiles" by creating a JSON file at `~/.mesos-cli.json`:
 
 ## run
 `mesos run` implements the functionality of the [mesos-execute](https://github.com/apache/mesos/blob/master/src/cli/execute.cpp)
-with some additional features.
+with some additional features. You can also specify a file containing a JSON encoded Mesos 
+[TaskInfo](https://github.com/mesos/mesos-go/blob/master/mesosproto/mesos.proto#L1038-L1072) object with the `--task` flag.
 
 ```
 mesos-cli run [OPTIONS] [ARG...]
@@ -63,7 +64,7 @@ Wed Dec 14 23:16:50 UTC 2016
 
 Or with native Mesos containerizer:
 ```bash
-mesos exec --shell 'echo $(date) >> stdout'
+mesos run --shell 'echo $(date) >> stdout'
 ```
 *note:* Since native mesos containerizer doesn't redirect stdout/stderr by default you need to literally write to a file called `stdout`/`stderr` in the sandbox directory.
 

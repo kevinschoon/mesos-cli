@@ -4,14 +4,8 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	//mesos "github.com/mesos/mesos-go/mesosproto"
-	//"github.com/tidwall/gjson"
-	//"io/ioutil"
 	"io"
-	//"net/http"
 	"net/url"
-	//"os"
-	//"sync"
 	"time"
 )
 
@@ -94,9 +88,6 @@ func (f *FilePaginator) Close() { close(f.data) }
 
 // Pailer reads until n lines
 // TODO: Add support for binary data
-// TODO: Learn the origin of the word "pailer"
-// the term is used in the Mesos codebase but has
-// no indication of what the word actually means.
 func Pailer(data <-chan *fileData, cancel chan bool, n int, w io.Writer) error {
 	writer := bufio.NewWriter(w)
 	var (

@@ -59,4 +59,7 @@ func TestPailerHuge(t *testing.T) {
 	assert.NoError(t, err)
 	lines := strings.Split(string(raw), "\n")
 	assert.Equal(t, 120001, len(lines))
+	assert.Equal(t, "AAAAAAAAAAAAAAAAAAAAAAAA", lines[119991])
+	assert.Equal(t, "BBBBBBBBBBBBBBBBBBBBBBBB", lines[119995])
+	assert.Equal(t, "CCCCCCCCCCCCCCCCCCCCCCCC", lines[119999])
 }
