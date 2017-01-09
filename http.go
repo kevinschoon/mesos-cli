@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	log "github.com/golang/glog"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -42,6 +43,7 @@ func (c Client) handle(u *url.URL, method string) ([]byte, error) {
 		Host:       c.Hostname,
 		URL:        u,
 	})
+	log.V(1).Infof("%s[%d] %s", method, resp.StatusCode, u.String())
 	if err != nil {
 		return nil, err
 	}

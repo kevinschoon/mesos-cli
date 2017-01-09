@@ -25,21 +25,19 @@ func main() {
 		profile    = app.StringOpt("profile", "default", "Profile to load")
 		configPath = app.StringOpt("config", fmt.Sprintf("%s/.mesos-cli.json", homeDir()),
 			"Path to load config from")
-		level = app.IntOpt("level", 0, "Level of verbosity")
+		level = app.IntOpt("level", 0, "Logging level (higher is more verbose)")
 		err   error
 	)
 
 	app.Version("version", Version)
 
-	// This is done to satisfy the presumptuous golang/glog package
-	// which assumes I am using flag and insists it be configured
-	// with such. Since glog is used in go-mesos it is easiest to use
-	// the same library for the moment.
-	flag.CommandLine.Set("v", string(*level))
-	flag.CommandLine.Set("logtostderr", "1")
-	flag.CommandLine.Parse([]string{})
-
 	app.Before = func() {
+		// This is done to satisfy the presumptuous golang/glog package
+		// which assumes I am using flag and insists it be configured
+		// with such. Since glog is used in go-mesos it is easiest to use
+		// the same library for the moment.
+		flag.CommandLine.Parse([]string{fmt.Sprintf("-v=%d", *level), "-logtostderr=true"})
+
 		config, err = LoadConfig(*configPath, *profile)
 		failOnErr(err)
 	}
