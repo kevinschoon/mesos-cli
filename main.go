@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const Version = "0.0.1"
+const Version = "undefined"
 
 // Singleton config object
 var config *Config
@@ -28,6 +28,8 @@ func main() {
 		level = app.IntOpt("level", 0, "Level of verbosity")
 		err   error
 	)
+
+	app.Version("version", Version)
 
 	// This is done to satisfy the presumptuous golang/glog package
 	// which assumes I am using flag and insists it be configured
