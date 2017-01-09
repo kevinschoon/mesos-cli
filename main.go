@@ -7,7 +7,10 @@ import (
 	"os"
 )
 
-const Version = "undefined"
+var (
+	Version = "undefined"
+	GitSHA  = "undefied"
+)
 
 // Singleton config object
 var config *Config
@@ -29,7 +32,7 @@ func main() {
 		err   error
 	)
 
-	app.Version("version", Version)
+	app.Version("version", fmt.Sprintf("%s (%s)", Version, GitSHA))
 
 	app.Before = func() {
 		// This is done to satisfy the presumptuous golang/glog package
