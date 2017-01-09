@@ -1,9 +1,12 @@
 # mesos-cli
 
-Alternative command line interface for using an [Apache Mesos]("http://mesos.apache.com") cluster.
+Standalone commandline tool for interacting with an [Apache Mesos]("http://mesos.apache.com") cluster.
 
-The existing CLI tools [bundled]("https://github.com/apache/mesos/tree/master/src/cli") with Mesos are a combintation
-of C++ and Python scripts. The previously developed [mesos-cli]("https://github.com/mesosphere/mesos-cli") by Mesosphere has been integrated into their DC/OS platform. Both of those tools depend on the cubmersome libmesos packages which are difficult to install. `mesos-cli` is written in pure Go and communicates with Mesos via HTTP with the excellent [mesos-go]("https://github.com/mesos/mesos-go") library. `mesos-cli` additionally aims to add more convenient features than the original toolset.
+## Why?
+
+Existing CLI tools for Mesos are tightly integrated into their parent projects(e.g. [[0]](https://github.com/apache/mesos/tree/master/src/cli), [[1]](https://github.com/mesosphere/mesos-cli)) and dependent on cumbersome libmesos packages.
+
+`mesos-cli` is a lightweight alternative to these tools, leveraging the excellent [mesos-go]("https://github.com/mesos/mesos-go") library to communicate with Mesos via HTTP. `mesos-cli` additionally aims to add more convenient features than the original toolset.
 
 `mesos-cli` is under development and not ready for use in a production environment.
 
