@@ -128,6 +128,7 @@ func cat(cmd *cli.Cmd) {
 			path:   target.Path,
 			tail:   *tail,
 		}
+		client = &Client{Hostname: agent.FQDN()}
 		failOnErr(fp.init(client))
 		go func() {
 			defer wg.Done()
