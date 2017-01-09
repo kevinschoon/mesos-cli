@@ -70,7 +70,9 @@ mesos exec --shell 'for i in $(seq 1 5); do echo $(date) >> stdout; sleep 1; don
 ```
 
 #### Options
+
 Option | Description
+--- | ---
 --master="127.0.0.1:5050" | Mesos Master
 --task="" | Path to a Mesos TaskInfo JSON file
 --param=[] | Docker parameters
@@ -97,7 +99,9 @@ mesos-cli ps [OPTIONS]
 ```
 
 #### Options
+
 Option | Description
+--- | ---
 --master="127.0.0.1:5050" | Mesos Master
 --limit=100 | maximum number of tasks to return per request
 --max=250 | maximum number of tasks to list
@@ -128,7 +132,9 @@ Usage: mesos-cli ls [OPTIONS] TASKID
 ```
 
 #### Options
+
 Option | Description
+--- | ---
 --master="127.0.0.1:5050" | Mesos Master
 -a, --absolute=false | Show absolute file paths
 
@@ -152,7 +158,9 @@ mesos-cli cat [OPTIONS] TASKID FILE
 ```
 
 #### Options
+
 Option | Description
+--- | ---
 --master="127.0.0.1:5050" | Mesos Master
 -n, --lines=0 | Output the last N lines
 -t, --tail=false | Tail output
@@ -178,6 +186,7 @@ mesos-cli local [OPTIONS] COMMAND [arg...]
 
 #### Commands
 Command | Description
+--- | ---
 up | Start the local cluster
 down | Stop the local cluster
 status | Display the status of the local cluster
@@ -186,6 +195,7 @@ rm | Remove the local cluster
 ### Global Options
 
 Option | Description
+--- | ---
 --profile | Profile to load
 --config | Path to load config from
 --level | Level of verbosity
