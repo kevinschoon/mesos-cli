@@ -2,7 +2,7 @@
 
 Standalone commandline tool for interacting with an [Apache Mesos]("http://mesos.apache.com") cluster.
 
-## Why?
+# Why?
 
 Existing CLI tools for Mesos are tightly integrated into their parent projects(e.g. [[0]](https://github.com/apache/mesos/tree/master/src/cli), [[1]](https://github.com/mesosphere/mesos-cli)) and dependent on cumbersome libmesos packages.
 
@@ -10,7 +10,7 @@ Existing CLI tools for Mesos are tightly integrated into their parent projects(e
 
 `mesos-cli` is under development and not ready for use in a production environment.
 
-## Installation
+# Installation
 
 Binary packages are not yet available so you need to install from source.
 
@@ -20,7 +20,7 @@ Binary packages are not yet available so you need to install from source.
 
      echo "alias mesos=mesos-cli" >> $HOME/.bashrc
 
-## Profiles
+# Profiles
 You can configure "profiles" by creating a JSON file at `~/.mesos-cli.json`:
 
 ```json
@@ -39,11 +39,11 @@ You can configure "profiles" by creating a JSON file at `~/.mesos-cli.json`:
 }
 ```
 
-## Usage
+# Usage
 
 `mesos-cli` currently supports the following subcommands:
 
-### run
+## run
 `mesos run` implements the functionality of the [mesos-execute](https://github.com/apache/mesos/blob/master/src/cli/execute.cpp)
 with some additional features.
 
@@ -51,7 +51,7 @@ with some additional features.
 mesos-cli run [OPTIONS] [ARG...]
 ```
 
-#### Example
+### Example
 With Docker containerizer:
 
 ```bash
@@ -69,7 +69,7 @@ Or with native Mesos containerizer:
 mesos exec --shell 'for i in $(seq 1 5); do echo $(date) >> stdout; sleep 1; done'
 ```
 
-#### Options
+### Options
 
 Option | Description
 --- | ---
@@ -90,7 +90,7 @@ Option | Description
 --privileged=false | Give extended privileges to this container
 -f, --forcePullImage=false | Always pull the container image
 
-### ps
+## ps
 
 List currently running tasks on a cluster
 
@@ -98,7 +98,7 @@ List currently running tasks on a cluster
 mesos-cli ps [OPTIONS]
 ```
 
-#### Options
+### Options
 
 Option | Description
 --- | ---
@@ -112,7 +112,7 @@ Option | Description
 -k, --killed=false | show killed tasks
 -f, --finished=false | show finished tasks
 
-#### Example
+### Example
 
 ```bash
 mesos ps
@@ -123,7 +123,7 @@ mesos ps
     nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0	c654f3d1 	TASK_RUNNING	0.1 	64 	0   	0
 ```
 
-### ls
+## ls
 
 List the sandbox directory of a task
 
@@ -131,14 +131,14 @@ List the sandbox directory of a task
 Usage: mesos-cli ls [OPTIONS] TASKID
 ```
 
-#### Options
+### Options
 
 Option | Description
 --- | ---
 --master="127.0.0.1:5050" | Mesos Master
 -a, --absolute=false | Show absolute file paths
 
-#### Example
+### Example
 ```bash
 mesos ls nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0
 ```
@@ -149,7 +149,7 @@ root	root	-rw-r--r--	2017-01-07 22:35:46 -0500 EST	1527  	stderr
 root	root	-rw-r--r--	2017-01-08 17:39:03 -0500 EST	642717	stdout
 ```
 
-### cat
+## cat
 
 Output the contents of a file
 
@@ -157,7 +157,7 @@ Output the contents of a file
 mesos-cli cat [OPTIONS] TASKID FILE
 ```
 
-#### Options
+### Options
 
 Option | Description
 --- | ---
@@ -165,7 +165,7 @@ Option | Description
 -n, --lines=0 | Output the last N lines
 -t, --tail=false | Tail output
 
-#### Example
+### Example
 ```bash
 mesos cat nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0 stdout
 ```
@@ -175,7 +175,7 @@ mesos cat nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0 stdout
 ...
 ```
 
-### local
+## local
 
 `mesos local` provides a wrapper for launching a local Mesos cluster for development and testing purposes.
 It requires that you have Docker installed locally, and uses the [vektorcloud/mesos]("https://github.com/vektorcloud/mesos") image.
@@ -184,7 +184,7 @@ It requires that you have Docker installed locally, and uses the [vektorcloud/me
 mesos-cli local [OPTIONS] COMMAND [arg...]
 ```
 
-#### Commands
+### Commands
 Command | Description
 --- | ---
 up | Start the local cluster
@@ -192,7 +192,7 @@ down | Stop the local cluster
 status | Display the status of the local cluster
 rm | Remove the local cluster
 
-### Global Options
+## Global Options
 
 Option | Description
 --- | ---
