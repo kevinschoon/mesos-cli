@@ -77,7 +77,7 @@ func FindTask(taskID string, client *Client) (*taskInfo, error) {
 	results := []*taskInfo{}
 	tasks := make(chan *taskInfo)
 	paginator := &TaskPaginator{
-		limit: 100,
+		limit: 2000,
 		max:   -1,
 		order: "asc",
 		tasks: tasks,
