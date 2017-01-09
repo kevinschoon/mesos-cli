@@ -18,7 +18,7 @@ func ps(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
 	var (
 		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
-		limit    = cmd.IntOpt("limit", 100, "maximum number of tasks to return per request")
+		limit    = cmd.IntOpt("limit", 2000, "maximum number of tasks to return per request")
 		max      = cmd.IntOpt("max", 250, "maximum number of tasks to list")
 		order    = cmd.StringArg("order", "desc", "accending or decending sort order [asc|desc]")
 		name     = cmd.StringOpt("name", "", "regular expression to match the TaskId")
