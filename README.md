@@ -55,19 +55,17 @@ mesos-cli run [OPTIONS] [ARG...]
 With Docker containerizer:
 
 ```bash
-mesos run --tail --image alpine:latest --shell 'for i in $(seq 1 5); do echo $(date); sleep 1; done'
+mesos run --tail --image alpine:latest --shell 'date'
 ....
-Wed Dec 14 23:16:49 UTC 2016
 Wed Dec 14 23:16:50 UTC 2016
-Wed Dec 14 23:16:51 UTC 2016
 ....
 ```
 
 Or with native Mesos containerizer:
-*note:* Since native mesos containerizer doesn't redirect stdout/stderr by default you need to literally write to a file called `stdout`/`stderr` in the sandbox directory.
 ```bash
-mesos exec --shell 'for i in $(seq 1 5); do echo $(date) >> stdout; sleep 1; done'
+mesos exec --shell 'echo $(date) >> stdout'
 ```
+*note:* Since native mesos containerizer doesn't redirect stdout/stderr by default you need to literally write to a file called `stdout`/`stderr` in the sandbox directory.
 
 ### Options
 
