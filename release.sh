@@ -13,5 +13,5 @@ echo $LDFLAGS
 
 go test -v -race .
 
-GOARCH=amd64 go build -ldflags "$LDFLAGS" -o ./release/mesos-cli-v0.0.1-linux-amd64
-GOOS=darwin GOARCH=amd64 go build -ldflags "$LDFLAGS" -o ./release/mesos-cli-v0.0.1-darwin-amd64
+GOARCH=amd64 go build -ldflags "$LDFLAGS" -o "./release/mesos-cli-$VERSION-linux-amd64"
+GOOS=darwin GOARCH=amd64 go build -ldflags "$LDFLAGS" -o "./release/mesos-cli-$VERSION-darwin-amd64"
