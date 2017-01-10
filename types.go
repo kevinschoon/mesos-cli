@@ -28,15 +28,16 @@ type taskInfo struct {
 }
 
 type agentInfo struct {
-	ID               string            `json:"id"`
-	Pid              string            `json:"pid"`
-	Hostname         string            `json:"hostname"`
-	RegisteredTime   float64           `json:"registered_time"`
-	ReRegisteredTime float64           `json:"reregistered_time"`
-	Version          string            `json:"version"`
-	Flags            map[string]string `json:"flags"`
-	Frameworks       []*frameworkInfo  `json:"frameworks"`
-	Resources        struct {
+	ID                  string            `json:"id"`
+	Pid                 string            `json:"pid"`
+	Hostname            string            `json:"hostname"`
+	RegisteredTime      float64           `json:"registered_time"`
+	ReRegisteredTime    float64           `json:"reregistered_time"`
+	Version             string            `json:"version"`
+	Flags               map[string]string `json:"flags"`
+	Frameworks          []*frameworkInfo  `json:"frameworks"`
+	CompletedFrameworks []*frameworkInfo  `json:"completed_frameworks"`
+	Resources           struct {
 		CPU  float64 `json:"cpus"`
 		Mem  float64 `json:"mem"`
 		Disk float64 `json:"disk"`
@@ -80,9 +81,10 @@ func (a *agentInfo) FQDN() string {
 }
 
 type frameworkInfo struct {
-	ID        string          `json:"id"`
-	Name      string          `json:"name"`
-	Executors []*executorInfo `json:"executors"`
+	ID                 string          `json:"id"`
+	Name               string          `json:"name"`
+	Executors          []*executorInfo `json:"executors"`
+	CompletedExecutors []*executorInfo `json:"completed_executors"`
 }
 
 type executorInfo struct {

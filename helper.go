@@ -188,14 +188,26 @@ func monitorFiles(client *Client, w io.Writer, targets ...*fileInfo) error {
 }
 
 func findExecutor(agent *agentInfo, id string) *executorInfo {
-	for _, framework := range agent.Frameworks {
-		for _, executor := range framework.Executors {
-			if executor.ID == id {
-				return executor
+	var executor *executorInfo
+	filter := func(frameworks []*frameworkInfo) {
+		for _, framework := range frameworks {
+			for _, e := range framework.Executors {
+				if e.ID == id {
+					executor = e
+					return
+				}
+			}
+			for _, e := range framework.CompletedExecutors {
+				if e.ID == id {
+					executor = e
+					return
+				}
 			}
 		}
 	}
-	return nil
+	filter(agent.Frameworks)
+	filter(agent.CompletedFrameworks)
+	return executor
 }
 
 // Resource returns the value of a resource
