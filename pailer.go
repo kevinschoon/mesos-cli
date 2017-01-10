@@ -80,6 +80,11 @@ func (f *FilePaginator) Next(c *Client, _ ...Filter) error {
 			return ErrMaxExceeded
 		}
 	}
+	// If this is not a tail operation and no
+	// data was returned break pagination.
+	if !f.tail && fd.Length() == 0 {
+		return ErrEndPagination
+	}
 	time.Sleep(PollInterval)
 	return nil
 }
