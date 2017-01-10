@@ -15,7 +15,7 @@ Existing CLI tools for Mesos are tightly integrated into their parent projects(e
 You can download binary packages for your platform (linux/darwin) from the [releases](https://github.com/vektorlab/mesos-cli/releases) section. 
 
     PLATFORM=linux
-    wget https://github.com/vektorlab/mesos-cli/releases/download/v0.0.1/mesos-cli-v0.0.1-$PLATFORM-amd64 -o /usr/local/bin/mesos-cli
+    wget https://github.com/vektorlab/mesos-cli/releases/download/v0.0.1/mesos-cli-v0.0.2-$PLATFORM-amd64 -o /usr/local/bin/mesos-cli
 
  If you don't mind potentially overriding the default `mesos` command you may add an alias:
 
