@@ -102,25 +102,28 @@ mesos-cli ps [OPTIONS]
 
 Option | Description
 --- | ---
---master="127.0.0.1:5050" | Mesos Master
---limit=100 | maximum number of tasks to return per request
---max=250 | maximum number of tasks to list
---name="" | regular expression to match the TaskId
--a, --all=false | show all tasks
--r, --running=true | show running tasks
---fa, --failed=false | show failed tasks
--k, --killed=false | show killed tasks
--f, --finished=false | show finished tasks
+--master="127.0.0.1:5050" |  Mesos Master
+--limit=2000              |  maximum number of tasks to return per request
+--max=250                 |  maximum number of tasks to list
+--truncate=true           |  truncate some values
+--all=false               |  Show all tasks
+--framework=""            |  Filter FrameworkID
+--fuzzy=true              |  Fuzzy match Task name or Task ID prefix
+--name=""                 |  Filter Task name
+--id=""                   |  Filter Task ID
+--state=["TASK_RUNNING"]  |  Filter based on Task state
+
 
 ### Example
 
 ```bash
-mesos ps
+mesos ps --state "TASK_FINISHED" --max=2
 ```
 
 ```
-    ID                                        	FRAMEWORK	STATE       	CPUS	MEM	GPUS	DISK
-    nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0	c654f3d1 	TASK_RUNNING	0.1 	64 	0   	0
+    ID        FRAMEWORK STATE         CPU MEM GPU DISK
+    mesos-cli b620d6e2  TASK_FINISHED 0.1 128 0   32  
+    mesos-cli b620d6e2  TASK_FINISHED 0.1 128 0   32  
 ```
 
 ## ls
@@ -135,12 +138,19 @@ Usage: mesos-cli ls [OPTIONS] TASKID
 
 Option | Description
 --- | ---
---master="127.0.0.1:5050" | Mesos Master
--a, --absolute=false | Show absolute file paths
+--master="127.0.0.1:5050"   | Mesos Master
+-a, --absolute=false        | Show absolute file paths
+--all=false                 | Show all tasks
+--framework=""              | Filter FrameworkID
+--fuzzy=true                | Fuzzy match Task name or Task ID prefix
+--name=""                   | Filter Task name
+--id=""                     | Filter Task ID
+--state=[]                  | Filter based on Task state
+
 
 ### Example
 ```bash
-mesos ls nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0
+mesos ls --id nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0
 ```
 
 ```
@@ -161,13 +171,21 @@ mesos-cli cat [OPTIONS] TASKID FILE
 
 Option | Description
 --- | ---
---master="127.0.0.1:5050" | Mesos Master
--n, --lines=0 | Output the last N lines
--t, --tail=false | Tail output
+Options:
+--master="127.0.0.1:5050"  | Mesos Master
+-n, --lines=0              | Output the last N lines
+-t, --tail=false           | Tail output
+--all=false                | Show all tasks
+--framework=""             | Filter FrameworkID
+--fuzzy=true               | Fuzzy match Task name or Task ID prefix
+--name=""                  | Filter Task name
+--id=""                    | Filter Task ID
+--state=[]                 | Filter based on Task state
+
 
 ### Example
 ```bash
-mesos cat nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0 stdout
+mesos cat --id=nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0 stdout
 ```
 
 ```
