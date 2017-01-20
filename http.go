@@ -49,6 +49,7 @@ loop:
 		// If the maximum tasks is less than zero
 		// continue forever.
 		if t.count >= t.max && t.max > 0 {
+			t.tasks <- task // Send the last task
 			return ErrMaxExceeded
 		}
 		t.tasks <- task
