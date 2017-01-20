@@ -19,7 +19,7 @@ func ps(cmd *cli.Cmd) {
 		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
 		limit    = cmd.IntOpt("limit", 2000, "maximum number of tasks to return per request")
 		max      = cmd.IntOpt("max", 250, "maximum number of tasks to list")
-		order    = cmd.StringArg("order", "desc", "accending or decending sort order [asc|desc]")
+		order    = cmd.StringOpt("order", "desc", "accending or decending sort order [asc|desc]")
 		truncate = cmd.BoolOpt("truncate", true, "truncate some values")
 
 		all         = cmd.BoolOpt("all", false, "Show all tasks")
