@@ -54,7 +54,7 @@ func (f *FilePaginator) init(c *Client) error {
 	return nil
 }
 
-func (f *FilePaginator) Next(c *Client, _ ...Filter) error {
+func (f *FilePaginator) Next(c *Client) error {
 	select {
 	case <-f.cancel:
 		return ErrEndPagination

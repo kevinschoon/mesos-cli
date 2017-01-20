@@ -1,13 +1,33 @@
 package main
 
 import (
-	//"bytes"
+	"errors"
 	"fmt"
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	"strconv"
 	"strings"
 	"time"
 )
+
+var (
+	ErrMaxExceeded   = errors.New("max exceeded")
+	ErrEndPagination = errors.New("no more items to paginate")
+)
+
+// Filter filters the results of a
+// paginator based on some criteria.
+//type Filter func(interface{}) bool
+/*
+type Filter interface {
+	Filter(interface{}) bool
+}
+
+// Paginator handles some stateful request
+type Paginator interface {
+	Next(*Client, ...Filter) error // Make the next HTTP request
+	Close()                        // Close any open channels
+}
+*/
 
 // TODO: It appears that we should be able to
 // unmarshal responses from the non-scheduler API
@@ -28,27 +48,11 @@ type taskInfo struct {
 }
 
 type agentInfo struct {
-	ID                  string            `json:"id"`
-	Pid                 string            `json:"pid"`
-	Hostname            string            `json:"hostname"`
-	RegisteredTime      float64           `json:"registered_time"`
-	ReRegisteredTime    float64           `json:"reregistered_time"`
-	Version             string            `json:"version"`
-	Flags               map[string]string `json:"flags"`
-	Frameworks          []*frameworkInfo  `json:"frameworks"`
-	CompletedFrameworks []*frameworkInfo  `json:"completed_frameworks"`
-	Resources           struct {
-		CPU  float64 `json:"cpus"`
-		Mem  float64 `json:"mem"`
-		Disk float64 `json:"disk"`
-		GPUs float64 `json:"gpus"`
-	} `json:"resources"`
-	UsedResources struct {
-		CPU  float64 `json:"cpus"`
-		Mem  float64 `json:"mem"`
-		Disk float64 `json:"disk"`
-		GPUs float64 `json:"gpus"`
-	} `json:"used_resources"`
+	ID               string  `json:"id"`
+	Pid              string  `json:"pid"`
+	Hostname         string  `json:"hostname"`
+	RegisteredTime   float64 `json:"registered_time"`
+	ReRegisteredTime float64 `json:"reregistered_time"`
 }
 
 func (a *agentInfo) Registered() time.Time {
@@ -78,6 +82,26 @@ func (a *agentInfo) Port() int64 {
 
 func (a *agentInfo) FQDN() string {
 	return fmt.Sprintf("%s:%d", a.Hostname, a.Port())
+}
+
+type agentState struct {
+	agentInfo
+	Version             string            `json:"version"`
+	Flags               map[string]string `json:"flags"`
+	Frameworks          []*frameworkInfo  `json:"frameworks"`
+	CompletedFrameworks []*frameworkInfo  `json:"completed_frameworks"`
+	Resources           struct {
+		CPU  float64 `json:"cpus"`
+		Mem  float64 `json:"mem"`
+		Disk float64 `json:"disk"`
+		GPUs float64 `json:"gpus"`
+	} `json:"resources"`
+	UsedResources struct {
+		CPU  float64 `json:"cpus"`
+		Mem  float64 `json:"mem"`
+		Disk float64 `json:"disk"`
+		GPUs float64 `json:"gpus"`
+	} `json:"used_resources"`
 }
 
 type frameworkInfo struct {

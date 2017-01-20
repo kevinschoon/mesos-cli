@@ -91,7 +91,7 @@ loop:
 			state := s.State
 			switch *state {
 			case mesos.TaskState_TASK_RUNNING:
-				agent, err := Agent(client, *s.SlaveId.Value)
+				agent, err := client.Agent(*s.SlaveId.Value)
 				if err != nil {
 					break loop
 				}
@@ -100,17 +100,16 @@ loop:
 					err = fmt.Errorf("Cannot find executor")
 					break loop
 				}
+				client := &Client{Hostname: agent.FQDN()}
 				go func() {
-					err = monitorFiles(
-						&Client{Hostname: agent.FQDN()},
+					err = client.ReadFiles(
 						os.Stdout,
 						&fileInfo{
 							Path: fmt.Sprintf("%s/stdout", executor.Directory),
 						},
 						&fileInfo{
 							Path: fmt.Sprintf("%s/stderr", executor.Directory),
-						},
-					)
+						})
 					if err != nil {
 						errors <- err
 					}

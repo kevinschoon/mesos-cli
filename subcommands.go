@@ -8,7 +8,7 @@ import (
 	"github.com/jawher/mow.cli"
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	"os"
-	"regexp"
+	//"regexp"
 	"strings"
 	"sync"
 )
@@ -22,46 +22,38 @@ func ps(cmd *cli.Cmd) {
 		max      = cmd.IntOpt("max", 250, "maximum number of tasks to list")
 		order    = cmd.StringArg("order", "desc", "accending or decending sort order [asc|desc]")
 		name     = cmd.StringOpt("name", "", "regular expression to match the TaskId")
-		all      = cmd.BoolOpt("a all", false, "show all tasks")
-		running  = cmd.BoolOpt("r running", true, "show running tasks")
-		failed   = cmd.BoolOpt("fa failed", false, "show failed tasks")
-		killed   = cmd.BoolOpt("k killed", false, "show killed tasks")
-		finished = cmd.BoolOpt("f finished", false, "show finished tasks")
+		all      = cmd.BoolOpt("all", false, "show all tasks")
+		running  = cmd.BoolOpt("running", true, "show running tasks")
+		failed   = cmd.BoolOpt("failed", false, "show failed tasks")
+		killed   = cmd.BoolOpt("killed", false, "show killed tasks")
+		finished = cmd.BoolOpt("finished", false, "show finished tasks")
 	)
-	stateFilter := func(name string) Filter {
-		return func(t interface{}) bool {
-			task := t.(*taskInfo)
-			return task.State.String() == name
-		}
-	}
-	Filters := func() []Filter {
-		filters := []Filter{}
+
+	Filters := func() []TaskFilter {
+		filters := []TaskFilter{}
 		if *name != "" {
-			exp, err := regexp.Compile(*name)
+			f, err := MatchTaskIDFuzzy(*name)
 			failOnErr(err)
-			filters = append(filters, func(t interface{}) bool {
-				task := t.(*taskInfo)
-				return exp.MatchString(task.Name)
-			})
+			filters = append(filters, f)
 		}
 		if *all {
-			filters = append(filters, func(t interface{}) bool { return true })
-			return filters
+			filters = append(filters, MatchTaskAll)
 		}
 		if *running {
-			filters = append(filters, stateFilter("TASK_RUNNING"))
+			filters = append(filters, MatchTaskState(mesos.TaskState_TASK_RUNNING))
 		}
 		if *failed {
-			filters = append(filters, stateFilter("TASK_FAILED"))
+			filters = append(filters, MatchTaskState(mesos.TaskState_TASK_FAILED))
 		}
 		if *killed {
-			filters = append(filters, stateFilter("TASK_KILLED"))
+			filters = append(filters, MatchTaskState(mesos.TaskState_TASK_KILLED))
 		}
 		if *finished {
-			filters = append(filters, stateFilter("TASK_FINISHED"))
+			filters = append(filters, MatchTaskState(mesos.TaskState_TASK_FINISHED))
 		}
 		return filters
 	}
+
 	cmd.Action = func() {
 		tasks := make(chan *taskInfo)
 		client := &Client{
@@ -74,7 +66,7 @@ func ps(cmd *cli.Cmd) {
 			tasks: tasks,
 		}
 		go func() {
-			failOnErr(Paginate(client, paginator, Filters()...))
+			failOnErr(client.PaginateTasks(paginator, Filters()...))
 		}()
 		table := uitable.New()
 		table.AddRow("ID", "FRAMEWORK", "STATE", "CPUS", "MEM", "GPUS", "DISK")
@@ -100,18 +92,19 @@ func cat(cmd *cli.Cmd) {
 			Hostname: config.Profile(WithMaster(*master)).Master,
 		}
 		// First attempt to resolve the task by ID
-		task, err := FindTask(*taskID, client)
+		task, err := client.FindTask(MatchTaskID(*taskID))
 		failOnErr(err)
 		// Attempt to get the full agent state
-		agent, err := Agent(client, task.AgentID)
+		agent, err := client.Agent(task.AgentID)
 		failOnErr(err)
 		// Lookup executor information in agent state
 		executor := findExecutor(agent, task.ID)
 		if executor == nil {
 			failOnErr(fmt.Errorf("could not resolve executor"))
 		}
+		client = &Client{Hostname: agent.FQDN()}
 		var target *fileInfo
-		files, err := Browse(agent, executor.Directory)
+		files, err := client.Browse(executor.Directory)
 		for _, file := range files {
 			if file.Relative() == *filename {
 				target = file
@@ -128,11 +121,10 @@ func cat(cmd *cli.Cmd) {
 			path:   target.Path,
 			tail:   *tail,
 		}
-		client = &Client{Hostname: agent.FQDN()}
 		failOnErr(fp.init(client))
 		go func() {
 			defer wg.Done()
-			failOnErr(Paginate(client, fp))
+			failOnErr(client.PaginateFile(fp))
 		}()
 		go func() {
 			defer wg.Done()
@@ -155,20 +147,21 @@ func ls(cmd *cli.Cmd) {
 			Hostname: config.Profile(WithMaster(*master)).Master,
 		}
 		// First attempt to resolve the task by ID
-		task, err := FindTask(*taskID, client)
+		task, err := client.FindTask(MatchTaskID(*taskID))
 		failOnErr(err)
 		// Attempt to get the full agent state
-		agent, err := Agent(client, task.AgentID)
+		agent, err := client.Agent(task.AgentID)
 		failOnErr(err)
 		// Lookup executor information in agent state
 		executor := findExecutor(agent, task.ID)
 		if executor == nil {
 			failOnErr(fmt.Errorf("could not resolve executor"))
 		}
-		files, err := Browse(agent, executor.Directory)
+		client = &Client{Hostname: agent.FQDN()}
+		files, err := client.Browse(executor.Directory)
+		failOnErr(err)
 		table := uitable.New()
 		table.AddRow("UID", "GID", "MODE", "MODIFIED", "SIZE", "PATH")
-		failOnErr(err)
 		for _, file := range files {
 			path := file.Relative()
 			if *absolute {
