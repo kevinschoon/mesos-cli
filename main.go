@@ -23,6 +23,7 @@ func main() {
 	app.Command("ls", "List the sandbox directory of a task", ls)
 	app.Command("ps", "List currently running tasks on a cluster", ps)
 	app.Command("run", "Run arbitrary commands against a cluster", run)
+	app.Command("top", "Display a Mesos top dialog", topCmd)
 
 	var (
 		profile    = app.StringOpt("profile", "default", "Profile to load")

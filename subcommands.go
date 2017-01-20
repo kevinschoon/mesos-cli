@@ -58,7 +58,7 @@ func ps(cmd *cli.Cmd) {
 			failOnErr(client.PaginateTasks(paginator, filters...))
 		}()
 		table := uitable.New()
-		table.AddRow("ID", "FRAMEWORK", "STATE", "CPUS", "MEM", "GPUS", "DISK")
+		table.AddRow("ID", "FRAMEWORK", "STATE", "CPU", "MEM", "GPU", "DISK")
 		for task := range tasks {
 			frameworkID := task.FrameworkID
 			if *truncate {
@@ -202,6 +202,18 @@ func ls(cmd *cli.Cmd) {
 			table.AddRow(file.UID, file.GID, file.Mode, file.Modified().String(), fmt.Sprintf("%d", file.Size), path)
 		}
 		fmt.Println(table)
+	}
+}
+
+func topCmd(cmd *cli.Cmd) {
+	defaults := DefaultProfile()
+	cmd.Spec = "[OPTIONS]"
+	var master = cmd.StringOpt("master", defaults.Master, "Mesos Master")
+	cmd.Action = func() {
+		client := &Client{
+			Hostname: config.Profile(WithMaster(*master)).Master,
+		}
+		failOnErr(RunTop(client))
 	}
 }
 
