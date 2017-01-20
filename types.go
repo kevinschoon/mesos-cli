@@ -14,21 +14,6 @@ var (
 	ErrEndPagination = errors.New("no more items to paginate")
 )
 
-// Filter filters the results of a
-// paginator based on some criteria.
-//type Filter func(interface{}) bool
-/*
-type Filter interface {
-	Filter(interface{}) bool
-}
-
-// Paginator handles some stateful request
-type Paginator interface {
-	Next(*Client, ...Filter) error // Make the next HTTP request
-	Close()                        // Close any open channels
-}
-*/
-
 // TODO: It appears that we should be able to
 // unmarshal responses from the non-scheduler API
 // with protobuf code generated from /include/mesos/master/master.proto
