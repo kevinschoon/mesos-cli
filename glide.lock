@@ -1,12 +1,12 @@
 hash: bfd83c7158866fbe4291a8980e966b0a116a1ce83b3647badc70700449764f1b
-updated: 2017-01-09T11:14:38.283479933-05:00
+updated: 2017-01-20T13:41:15.871775787-05:00
 imports:
 - name: github.com/Azure/go-ansiterm
   version: fa152c58bc15761d0200cb75fe958b89a9d4888e
   subpackages:
   - winterm
 - name: github.com/docker/docker
-  version: 1dded0dee432a3cc9573727748129e3601d8d9c2
+  version: 49bf474f9ed7ce7143a59d1964ff7b7fd9b52178
   subpackages:
   - api/types
   - api/types/blkiodev
@@ -40,9 +40,11 @@ imports:
 - name: github.com/docker/go-units
   version: e30f1e79f3cd72542f2026ceec18d3bd67ab859c
 - name: github.com/fsouza/go-dockerclient
-  version: fbeb72ccd29aa2596f364a5a85af622c651c3e16
+  version: 53f04ab33b89eef256c320c36435a10b672d473d
+- name: github.com/gizak/termui
+  version: 991cd3d3809135dc24daf6188dc6edcaf3d7d2d9
 - name: github.com/gogo/protobuf
-  version: f9114dace7bd920b32f943b3c73fafbcbab2bf31
+  version: 265e960d45b331a5055057ef0f29088cf1eb91ce
   subpackages:
   - proto
 - name: github.com/golang/glog
@@ -56,6 +58,10 @@ imports:
   version: ad28ea4487f05916463e2423a55166280e8254b5
 - name: github.com/jawher/mow.cli
   version: 0de3d3b4ed00f261460d12ecde4efa90fbfcd8ed
+- name: github.com/maruel/panicparse
+  version: ad661195ed0e88491e0f14be6613304e3b1141d6
+  subpackages:
+  - stack
 - name: github.com/mattn/go-runewidth
   version: 737072b4e32b7a5018b4a7125da8d12de90e8045
 - name: github.com/mesos/mesos-go
@@ -77,22 +83,28 @@ imports:
   - scheduler
   - upid
 - name: github.com/Microsoft/go-winio
-  version: 24a3e3d3fc7451805e09d11e11e95d9a0a4f205e
+  version: 307e919c663683a9000576fdc855acaf9534c165
+- name: github.com/mitchellh/go-wordwrap
+  version: ad45545899c7b13c020ea92b2072220eefad42b8
+- name: github.com/nsf/termbox-go
+  version: abe82ce5fb7a42fbd6784a5ceb71aff977e09ed8
 - name: github.com/opencontainers/runc
-  version: 1a9dd2678d2d6ad574f05cb7b9ae46ce65586725
+  version: 0fefa36f3ac057f579adca3016cc260a0f805d3e
   subpackages:
   - libcontainer/system
   - libcontainer/user
 - name: github.com/pborman/uuid
-  version: 5007efa264d92316c43112bc573e754bc889b7b1
+  version: 1b00554d822231195d1babd97ff4a781231955c9
 - name: github.com/samuel/go-zookeeper
   version: 1d7be4effb13d2d908342d349d71a284a7542693
   subpackages:
   - zk
 - name: github.com/Sirupsen/logrus
-  version: 9b48ece7fc373043054858f8c0d362665e866004
+  version: 61e43dc76f7ee59a82bdf3d71033dc12bea4c77d
+- name: github.com/vektorlab/toplib
+  version: f63225bce986ada002c2d39bcb72529d966d526b
 - name: golang.org/x/net
-  version: da2b4fa28524a3baf148c1b94df4440267063c88
+  version: f2499483f923065a842d38eb4c7f1927e6fc6e6d
   subpackages:
   - context
   - context/ctxhttp
