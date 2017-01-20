@@ -171,7 +171,6 @@ mesos-cli cat [OPTIONS] TASKID FILE
 
 Option | Description
 --- | ---
-Options:
 --master="127.0.0.1:5050"  | Mesos Master
 -n, --lines=0              | Output the last N lines
 -t, --tail=false           | Tail output
@@ -191,6 +190,18 @@ mesos cat --id=nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0 stdout
 ```
 172.17.0.1 - - [08/Jan/2017:03:35:46 +0000] "GET / HTTP/1.1" 200 612 "http://localhost:8080/ui/" "Mozilla/5.0 (X11;...
 ...
+```
+
+## top
+`mesos top` provides a top-like overview of tasks, agent, and cluster status (work in progress)
+
+```
+mesos-cli top [OPTIONS] COMMAND [arg...]
+```
+
+### Example
+```bash
+mesos top
 ```
 
 ## local
