@@ -8,7 +8,6 @@ import (
 	"github.com/jawher/mow.cli"
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	"os"
-	//"regexp"
 	"strings"
 	"sync"
 )
@@ -21,37 +20,18 @@ func ps(cmd *cli.Cmd) {
 		limit    = cmd.IntOpt("limit", 2000, "maximum number of tasks to return per request")
 		max      = cmd.IntOpt("max", 250, "maximum number of tasks to list")
 		order    = cmd.StringArg("order", "desc", "accending or decending sort order [asc|desc]")
-		name     = cmd.StringOpt("name", "", "regular expression to match the TaskId")
-		all      = cmd.BoolOpt("all", false, "show all tasks")
-		running  = cmd.BoolOpt("running", true, "show running tasks")
-		failed   = cmd.BoolOpt("failed", false, "show failed tasks")
-		killed   = cmd.BoolOpt("killed", false, "show killed tasks")
-		finished = cmd.BoolOpt("finished", false, "show finished tasks")
+		truncate = cmd.BoolOpt("truncate", true, "truncate some values")
+
+		all         = cmd.BoolOpt("all", false, "Show all tasks")
+		frameworkID = cmd.StringOpt("framework", "", "Filter FrameworkID")
+		fuzzy       = cmd.BoolOpt("fuzzy", true, "Fuzzy match Task name or Task ID prefix")
+		name        = cmd.StringOpt("name", "", "Filter Task name")
+		id          = cmd.StringOpt("id", "", "Filter Task ID")
+		state       = cmd.StringsOpt("state", []string{"TASK_RUNNING"}, "Filter based on Task state")
 	)
 
-	Filters := func() []TaskFilter {
-		filters := []TaskFilter{}
-		if *name != "" {
-			f, err := MatchTaskIDFuzzy(*name)
-			failOnErr(err)
-			filters = append(filters, f)
-		}
-		if *all {
-			filters = append(filters, MatchTaskAll)
-		}
-		if *running {
-			filters = append(filters, MatchTaskState(mesos.TaskState_TASK_RUNNING))
-		}
-		if *failed {
-			filters = append(filters, MatchTaskState(mesos.TaskState_TASK_FAILED))
-		}
-		if *killed {
-			filters = append(filters, MatchTaskState(mesos.TaskState_TASK_KILLED))
-		}
-		if *finished {
-			filters = append(filters, MatchTaskState(mesos.TaskState_TASK_FINISHED))
-		}
-		return filters
+	cmd.Before = func() {
+		*state = trimFlaged(*state, "--state")
 	}
 
 	cmd.Action = func() {
@@ -59,6 +39,15 @@ func ps(cmd *cli.Cmd) {
 		client := &Client{
 			Hostname: config.Profile(WithMaster(*master)).Master,
 		}
+		filters, err := NewTaskFilters(&TaskFilterOptions{
+			All:         *all,
+			FrameworkID: *frameworkID,
+			Fuzzy:       *fuzzy,
+			ID:          *id,
+			Name:        *name,
+			States:      *state,
+		})
+		failOnErr(err)
 		paginator := &TaskPaginator{
 			limit: *limit,
 			max:   *max,
@@ -66,12 +55,16 @@ func ps(cmd *cli.Cmd) {
 			tasks: tasks,
 		}
 		go func() {
-			failOnErr(client.PaginateTasks(paginator, Filters()...))
+			failOnErr(client.PaginateTasks(paginator, filters...))
 		}()
 		table := uitable.New()
 		table.AddRow("ID", "FRAMEWORK", "STATE", "CPUS", "MEM", "GPUS", "DISK")
 		for task := range tasks {
-			table.AddRow(task.ID, truncStr(task.FrameworkID, 8), task.State.String(), task.Resources.CPU, task.Resources.Mem, task.Resources.GPUs, task.Resources.Disk)
+			frameworkID := task.FrameworkID
+			if *truncate {
+				frameworkID = truncStr(task.FrameworkID, 8)
+			}
+			table.AddRow(task.ID, frameworkID, task.State.String(), task.Resources.CPU, task.Resources.Mem, task.Resources.GPUs, task.Resources.Disk)
 		}
 		fmt.Println(table)
 	}
@@ -84,15 +77,34 @@ func cat(cmd *cli.Cmd) {
 		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
 		lines    = cmd.IntOpt("n lines", 0, "Output the last N lines")
 		tail     = cmd.BoolOpt("t tail", false, "Tail output")
-		taskID   = cmd.StringArg("ID", "", "TaskID")
 		filename = cmd.StringArg("FILE", "", "Filename to retrieve")
+
+		all         = cmd.BoolOpt("all", false, "Show all tasks")
+		frameworkID = cmd.StringOpt("framework", "", "Filter FrameworkID")
+		fuzzy       = cmd.BoolOpt("fuzzy", true, "Fuzzy match Task name or Task ID prefix")
+		name        = cmd.StringOpt("name", "", "Filter Task name")
+		id          = cmd.StringOpt("id", "", "Filter Task ID")
+		state       = cmd.StringsOpt("state", []string{}, "Filter based on Task state")
 	)
+
+	cmd.Before = func() {
+		*state = trimFlaged(*state, "--state")
+	}
+
 	cmd.Action = func() {
 		client := &Client{
 			Hostname: config.Profile(WithMaster(*master)).Master,
 		}
-		// First attempt to resolve the task by ID
-		task, err := client.FindTask(MatchTaskID(*taskID))
+		filters, err := NewTaskFilters(&TaskFilterOptions{
+			All:         *all,
+			FrameworkID: *frameworkID,
+			Fuzzy:       *fuzzy,
+			ID:          *id,
+			Name:        *name,
+			States:      *state,
+		})
+		failOnErr(err)
+		task, err := client.FindTask(filters...)
 		failOnErr(err)
 		// Attempt to get the full agent state
 		agent, err := client.Agent(task.AgentID)
@@ -136,18 +148,38 @@ func cat(cmd *cli.Cmd) {
 
 func ls(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
-	cmd.Spec = "[OPTIONS] ID"
+	cmd.Spec = "[OPTIONS]"
 	var (
 		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
-		taskID   = cmd.StringArg("ID", "", "Task to list")
 		absolute = cmd.BoolOpt("a absolute", false, "Show absolute file paths")
+
+		all         = cmd.BoolOpt("all", false, "Show all tasks")
+		frameworkID = cmd.StringOpt("framework", "", "Filter FrameworkID")
+		fuzzy       = cmd.BoolOpt("fuzzy", true, "Fuzzy match Task name or Task ID prefix")
+		name        = cmd.StringOpt("name", "", "Filter Task name")
+		id          = cmd.StringOpt("id", "", "Filter Task ID")
+		state       = cmd.StringsOpt("state", []string{}, "Filter based on Task state")
 	)
+
+	cmd.Before = func() {
+		*state = trimFlaged(*state, "--state")
+	}
+
 	cmd.Action = func() {
 		client := &Client{
 			Hostname: config.Profile(WithMaster(*master)).Master,
 		}
+		filters, err := NewTaskFilters(&TaskFilterOptions{
+			All:         *all,
+			FrameworkID: *frameworkID,
+			Fuzzy:       *fuzzy,
+			ID:          *id,
+			Name:        *name,
+			States:      *state,
+		})
+		failOnErr(err)
 		// First attempt to resolve the task by ID
-		task, err := client.FindTask(MatchTaskID(*taskID))
+		task, err := client.FindTask(filters...)
 		failOnErr(err)
 		// Attempt to get the full agent state
 		agent, err := client.Agent(task.AgentID)

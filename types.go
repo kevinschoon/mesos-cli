@@ -34,11 +34,11 @@ type Paginator interface {
 // with protobuf code generated from /include/mesos/master/master.proto
 // however I was unsuccesful after several attempts.
 type taskInfo struct {
-	ID          string           `json:"id"`
-	Name        string           `json:"name"`
-	FrameworkID string           `json:"framework_id"`
-	AgentID     string           `json:"slave_id"`
-	State       *mesos.TaskState `json:"state"`
+	ID          string          `json:"id"`
+	Name        string          `json:"name"`
+	FrameworkID string          `json:"framework_id"`
+	AgentID     string          `json:"slave_id"`
+	State       mesos.TaskState `json:"state"`
 	Resources   struct {
 		CPU  float64 `json:"cpus"`
 		Mem  float64 `json:"mem"`

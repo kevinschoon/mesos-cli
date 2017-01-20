@@ -8,6 +8,7 @@ import (
 	"github.com/jawher/mow.cli"
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	"io/ioutil"
+	"os"
 	"os/user"
 	"strconv"
 	"strings"
@@ -267,6 +268,15 @@ func homeDir() string {
 		cli.Exit(1)
 	}
 	return u.HomeDir
+}
+
+func trimFlaged(flags []string, prefix string) []string {
+	for _, arg := range os.Args {
+		if strings.HasPrefix(arg, prefix) {
+			return flags[1:]
+		}
+	}
+	return flags
 }
 
 func failOnErr(err error) {

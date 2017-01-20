@@ -19,6 +19,7 @@ type TaskPaginator struct {
 	limit     int    // Limit of tasks per request
 	max       int    // Maximum amount of matching tasks
 	order     string // Order of tasks
+	Any       bool   // Any match
 }
 
 func (t *TaskPaginator) Close() { close(t.tasks) }
@@ -40,11 +41,8 @@ func (t *TaskPaginator) Next(c *Client, f ...TaskFilter) error {
 loop:
 	for _, task := range tasks.Tasks {
 		t.processed++
-		for _, filter := range f {
-			// If any filter does not match discard the task
-			if !filter(task) {
-				continue loop
-			}
+		if !FilterTask(task, f, t.Any) {
+			continue loop
 		}
 		t.count++
 		// Check if we've exceeded the maximum tasks
@@ -185,7 +183,7 @@ func (c *Client) PaginateTasks(pag *TaskPaginator, f ...TaskFilter) (err error) 
 }
 
 // FindTask attempts to find a single task
-func (c *Client) FindTask(filter TaskFilter) (*taskInfo, error) {
+func (c *Client) FindTask(f ...TaskFilter) (*taskInfo, error) {
 	var err error
 	results := []*taskInfo{}
 	tasks := make(chan *taskInfo)
@@ -196,10 +194,9 @@ func (c *Client) FindTask(filter TaskFilter) (*taskInfo, error) {
 		tasks: tasks,
 	}
 	go func() {
-		err = c.PaginateTasks(paginator, filter)
+		err = c.PaginateTasks(paginator, f...)
 	}()
 	for task := range tasks {
-		fmt.Println(task)
 		results = append(results, task)
 	}
 	if err != nil {
