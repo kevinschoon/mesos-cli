@@ -72,7 +72,7 @@ func ps(cmd *cli.Cmd) {
 
 func cat(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
-	cmd.Spec = "[OPTIONS] ID FILE"
+	cmd.Spec = "[OPTIONS] FILE"
 	var (
 		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
 		lines    = cmd.IntOpt("n lines", 0, "Output the last N lines")
