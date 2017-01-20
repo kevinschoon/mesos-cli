@@ -4,11 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	log "github.com/golang/glog"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"sync"
 )
 
 // TaskPaginator paginates requests from /master/tasks
@@ -134,38 +132,6 @@ func (c *Client) PaginateFile(pag *FilePaginator) (err error) {
 	case ErrEndPagination:
 		return nil
 	}
-	return err
-}
-
-// Attempt to monitor one or more files
-func (c *Client) ReadFiles(w io.Writer, targets ...*fileInfo) error {
-	var (
-		wg  sync.WaitGroup
-		err error
-	)
-	for _, target := range targets {
-		wg.Add(2)
-		fp := &FilePaginator{
-			data:   make(chan *fileData),
-			cancel: make(chan bool),
-			path:   target.Path,
-			tail:   true,
-		}
-		err := fp.init(c)
-		if err != nil {
-			return err
-		}
-		// TODO: Need to bubble these errors back properly
-		go func() {
-			defer wg.Done()
-			err = c.PaginateFile(fp)
-		}()
-		go func() {
-			defer wg.Done()
-			err = Pailer(fp.data, fp.cancel, 0, w)
-		}()
-	}
-	wg.Wait()
 	return err
 }
 

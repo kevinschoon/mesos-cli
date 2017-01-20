@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"sync"
 	"time"
 )
 
@@ -134,5 +135,20 @@ loop:
 			writer.Flush()
 		}
 	}
+	return err
+}
+
+func Monitor(c *Client, w io.Writer, lines int, pag *FilePaginator) (err error) {
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		err = c.PaginateFile(pag)
+	}()
+	go func() {
+		defer wg.Done()
+		err = Pailer(pag.data, pag.cancel, lines, w)
+	}()
+	wg.Wait()
 	return err
 }

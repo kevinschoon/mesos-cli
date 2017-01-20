@@ -102,13 +102,30 @@ loop:
 				}
 				client := &Client{Hostname: agent.FQDN()}
 				go func() {
-					err = client.ReadFiles(
+					err = Monitor(
+						client,
 						os.Stdout,
-						&fileInfo{
-							Path: fmt.Sprintf("%s/stdout", executor.Directory),
-						},
-						&fileInfo{
-							Path: fmt.Sprintf("%s/stderr", executor.Directory),
+						0,
+						&FilePaginator{
+							data:   make(chan *fileData),
+							cancel: make(chan bool),
+							path:   fmt.Sprintf("%s/stdout", executor.Directory),
+							tail:   true,
+						})
+					if err != nil {
+						errors <- err
+					}
+				}()
+				go func() {
+					err = Monitor(
+						client,
+						os.Stdout,
+						0,
+						&FilePaginator{
+							data:   make(chan *fileData),
+							cancel: make(chan bool),
+							path:   fmt.Sprintf("%s/stderr", executor.Directory),
+							tail:   true,
 						})
 					if err != nil {
 						errors <- err

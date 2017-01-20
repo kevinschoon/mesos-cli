@@ -9,7 +9,6 @@ import (
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	"os"
 	"strings"
-	"sync"
 )
 
 func ps(cmd *cli.Cmd) {
@@ -125,24 +124,13 @@ func cat(cmd *cli.Cmd) {
 		if target == nil {
 			failOnErr(fmt.Errorf("cannot find file %s", *filename))
 		}
-		var wg sync.WaitGroup
-		wg.Add(2)
 		fp := &FilePaginator{
 			data:   make(chan *fileData),
 			cancel: make(chan bool),
 			path:   target.Path,
 			tail:   *tail,
 		}
-		failOnErr(fp.init(client))
-		go func() {
-			defer wg.Done()
-			failOnErr(client.PaginateFile(fp))
-		}()
-		go func() {
-			defer wg.Done()
-			failOnErr(Pailer(fp.data, fp.cancel, *lines, os.Stdout))
-		}()
-		wg.Wait()
+		failOnErr(Monitor(client, os.Stdout, *lines, fp))
 	}
 }
 
