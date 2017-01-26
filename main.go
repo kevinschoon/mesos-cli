@@ -18,6 +18,7 @@ var config *Config
 func main() {
 	app := cli.App("mesos-cli", "Alternative Apache Mesos CLI")
 	app.Spec = "[OPTIONS]"
+	app.Command("agents", "List Mesos agents", agents)
 	app.Command("cat", "Output the contents of a file", cat)
 	app.Command("local", "Launch a local Mesos cluster (requires Docker)", local)
 	app.Command("ls", "List the sandbox directory of a task", ls)

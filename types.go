@@ -38,6 +38,19 @@ type agentInfo struct {
 	Hostname         string  `json:"hostname"`
 	RegisteredTime   float64 `json:"registered_time"`
 	ReRegisteredTime float64 `json:"reregistered_time"`
+	Version          string  `json:"version"`
+	Resources        struct {
+		CPU  float64 `json:"cpus"`
+		Mem  float64 `json:"mem"`
+		Disk float64 `json:"disk"`
+		GPUs float64 `json:"gpus"`
+	} `json:"resources"`
+	UsedResources struct {
+		CPU  float64 `json:"cpus"`
+		Mem  float64 `json:"mem"`
+		Disk float64 `json:"disk"`
+		GPUs float64 `json:"gpus"`
+	} `json:"used_resources"`
 }
 
 func (a *agentInfo) Registered() time.Time {
@@ -71,22 +84,9 @@ func (a *agentInfo) FQDN() string {
 
 type agentState struct {
 	agentInfo
-	Version             string            `json:"version"`
 	Flags               map[string]string `json:"flags"`
 	Frameworks          []*frameworkInfo  `json:"frameworks"`
 	CompletedFrameworks []*frameworkInfo  `json:"completed_frameworks"`
-	Resources           struct {
-		CPU  float64 `json:"cpus"`
-		Mem  float64 `json:"mem"`
-		Disk float64 `json:"disk"`
-		GPUs float64 `json:"gpus"`
-	} `json:"resources"`
-	UsedResources struct {
-		CPU  float64 `json:"cpus"`
-		Mem  float64 `json:"mem"`
-		Disk float64 `json:"disk"`
-		GPUs float64 `json:"gpus"`
-	} `json:"used_resources"`
 }
 
 type frameworkInfo struct {

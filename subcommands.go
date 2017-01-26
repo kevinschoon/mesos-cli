@@ -205,7 +205,6 @@ func topCmd(cmd *cli.Cmd) {
 	}
 }
 
-/*
 func agents(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
 	cmd.Spec = "[OPTIONS]"
@@ -214,14 +213,14 @@ func agents(cmd *cli.Cmd) {
 		client := &Client{
 			Hostname: config.Profile(WithMaster(*master)).Master,
 		}
-		agents, err := Agents(client)
+		agents, err := client.Agents()
 		failOnErr(err)
 		table := uitable.New()
-		table.AddRow("ID", "FQDN", "VERSION", "UPTIME", "CPUS", "MEM", "GPUS", "DISK")
+		table.AddRow("ID", "HOSTNAME", "VERSION", "UPTIME", "CPUS", "MEM", "GPUS", "DISK")
 		for _, agent := range agents {
 			table.AddRow(
 				agent.ID,
-				agent.FQDN(),
+				agent.Hostname,
 				agent.Version,
 				agent.Uptime().String(),
 				fmt.Sprintf("%.2f/%.2f", agent.UsedResources.CPU, agent.Resources.CPU),
@@ -233,7 +232,6 @@ func agents(cmd *cli.Cmd) {
 		fmt.Println(table)
 	}
 }
-*/
 
 func run(cmd *cli.Cmd) {
 	cmd.Spec = "[OPTIONS] [ARG...]"
