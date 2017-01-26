@@ -192,6 +192,18 @@ mesos cat --id=nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0 stdout
 ...
 ```
 
+## agents
+`mesos agents` lists all the agents running in the cluster
+
+```bash
+mesos agents
+```
+
+```
+ID                                     	HOSTNAME             	VERSION	UPTIME                 	CPUS     	MEM         	GPUS     	DISK        
+23d60c9d-dab0-4af9-8336-a7cb501ea2c1-S0	localhost.localdomain	1.1.0  	412626h27m31.603293767s	0.00/4.00	0.00/6867.00	0.00/0.00	0.00/5114.00
+```
+
 ## top
 `mesos top` provides a top-like overview of tasks, agent, and cluster status (work in progress)
 
