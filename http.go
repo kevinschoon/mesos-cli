@@ -79,10 +79,10 @@ func (c Client) handle(u *url.URL, method string) ([]byte, error) {
 		Host:       c.Hostname,
 		URL:        u,
 	})
-	log.V(1).Infof("%s[%d] %s", method, resp.StatusCode, u.String())
 	if err != nil {
 		return nil, err
 	}
+	log.V(1).Infof("%s[%d] %s", method, resp.StatusCode, u.String())
 	raw, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
