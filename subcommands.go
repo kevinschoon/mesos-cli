@@ -3,11 +3,8 @@ package main
 import (
 	"fmt"
 	docker "github.com/fsouza/go-dockerclient"
-	"github.com/gogo/protobuf/proto"
 	"github.com/gosuri/uitable"
 	"github.com/jawher/mow.cli"
-	mesos "github.com/mesos/mesos-go/mesosproto"
-	"os"
 	"strings"
 )
 
@@ -15,10 +12,10 @@ func ps(cmd *cli.Cmd) {
 	cmd.Spec = "[OPTIONS]"
 	defaults := DefaultProfile()
 	var (
-		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
-		limit    = cmd.IntOpt("limit", 2000, "maximum number of tasks to return per request")
-		max      = cmd.IntOpt("max", 250, "maximum number of tasks to list")
-		order    = cmd.StringOpt("order", "desc", "accending or decending sort order [asc|desc]")
+		master = cmd.StringOpt("master", defaults.Master, "Mesos Master")
+		//limit    = cmd.IntOpt("limit", 2000, "maximum number of tasks to return per request")
+		//max      = cmd.IntOpt("max", 250, "maximum number of tasks to list")
+		//order    = cmd.StringOpt("order", "desc", "accending or decending sort order [asc|desc]")
 		truncate = cmd.BoolOpt("truncate", true, "truncate some values")
 
 		all         = cmd.BoolOpt("all", false, "Show all tasks")
@@ -34,7 +31,6 @@ func ps(cmd *cli.Cmd) {
 	}
 
 	cmd.Action = func() {
-		tasks := make(chan *taskInfo)
 		client := &Client{
 			Hostname: config.Profile(WithMaster(*master)).Master,
 		}
@@ -47,23 +43,24 @@ func ps(cmd *cli.Cmd) {
 			States:      *state,
 		})
 		failOnErr(err)
-		paginator := &TaskPaginator{
-			limit: *limit,
-			max:   *max,
-			order: *order,
-			tasks: tasks,
-		}
-		go func() {
-			failOnErr(client.PaginateTasks(paginator, filters...))
-		}()
+		tasks, err := client.Tasks(filters...)
+		failOnErr(err)
 		table := uitable.New()
 		table.AddRow("ID", "FRAMEWORK", "STATE", "CPU", "MEM", "GPU", "DISK")
-		for task := range tasks {
-			frameworkID := task.FrameworkID
+		for _, task := range tasks {
+			frameworkID := task.GetFrameworkId().GetValue()
 			if *truncate {
-				frameworkID = truncStr(task.FrameworkID, 8)
+				frameworkID = truncStr(frameworkID, 8)
 			}
-			table.AddRow(task.ID, frameworkID, task.State.String(), task.Resources.CPU, task.Resources.Mem, task.Resources.GPUs, task.Resources.Disk)
+			table.AddRow(
+				task.GetTaskId().GetValue(),
+				frameworkID,
+				task.GetState().String(),
+				FilterScalar(task.GetResources(), "cpus"),
+				FilterScalar(task.GetResources(), "mem"),
+				FilterScalar(task.GetResources(), "gpu"),
+				FilterScalar(task.GetResources(), "disk"),
+			)
 		}
 		fmt.Println(table)
 	}
@@ -73,10 +70,10 @@ func cat(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
 	cmd.Spec = "[OPTIONS] FILE"
 	var (
-		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
-		lines    = cmd.IntOpt("n lines", 0, "Output the last N lines")
-		tail     = cmd.BoolOpt("t tail", false, "Tail output")
-		filename = cmd.StringArg("FILE", "", "Filename to retrieve")
+		master = cmd.StringOpt("master", defaults.Master, "Mesos Master")
+		//lines    = cmd.IntOpt("n lines", 0, "Output the last N lines")
+		//tail     = cmd.BoolOpt("t tail", false, "Tail output")
+		//filename = cmd.StringArg("FILE", "", "Filename to retrieve")
 
 		all         = cmd.BoolOpt("all", false, "Show all tasks")
 		frameworkID = cmd.StringOpt("framework", "", "Filter FrameworkID")
@@ -103,34 +100,33 @@ func cat(cmd *cli.Cmd) {
 			States:      *state,
 		})
 		failOnErr(err)
-		task, err := client.FindTask(filters...)
+		task, err := client.Task(filters...)
 		failOnErr(err)
-		// Attempt to get the full agent state
-		agent, err := client.Agent(task.AgentID)
+		agent, err := client.Agent(AgentFilterId(task.GetTaskId().GetValue()))
 		failOnErr(err)
 		// Lookup executor information in agent state
-		executor := findExecutor(agent, task.ID)
-		if executor == nil {
-			failOnErr(fmt.Errorf("could not resolve executor"))
-		}
-		client = &Client{Hostname: agent.FQDN()}
-		var target *fileInfo
-		files, err := client.Browse(executor.Directory)
-		for _, file := range files {
-			if file.Relative() == *filename {
-				target = file
+		client = &Client{Hostname: FQDN(agent)}
+		executor, err := client.Executor(ExecutorFilterId(task.GetExecutorId().GetValue()))
+		failOnErr(err)
+		fmt.Println(executor)
+		/*
+			files, err := client.Browse(executor.Directory)
+			for _, file := range files {
+				if file.Relative() == *filename {
+					target = file
+				}
 			}
-		}
-		if target == nil {
-			failOnErr(fmt.Errorf("cannot find file %s", *filename))
-		}
-		fp := &FilePaginator{
-			data:   make(chan *fileData),
-			cancel: make(chan bool),
-			path:   target.Path,
-			tail:   *tail,
-		}
-		failOnErr(Monitor(client, os.Stdout, *lines, fp))
+			if target == nil {
+				failOnErr(fmt.Errorf("cannot find file %s", *filename))
+			}
+			fp := &FilePaginator{
+				data:   make(chan *fileData),
+				cancel: make(chan bool),
+				path:   target.Path,
+				tail:   *tail,
+			}
+			failOnErr(Monitor(client, os.Stdout, *lines, fp))
+		*/
 	}
 }
 
@@ -138,8 +134,8 @@ func ls(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
 	cmd.Spec = "[OPTIONS]"
 	var (
-		master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
-		absolute = cmd.BoolOpt("a absolute", false, "Show absolute file paths")
+		master = cmd.StringOpt("master", defaults.Master, "Mesos Master")
+		//absolute = cmd.BoolOpt("a absolute", false, "Show absolute file paths")
 
 		all         = cmd.BoolOpt("all", false, "Show all tasks")
 		frameworkID = cmd.StringOpt("framework", "", "Filter FrameworkID")
@@ -167,29 +163,30 @@ func ls(cmd *cli.Cmd) {
 		})
 		failOnErr(err)
 		// First attempt to resolve the task by ID
-		task, err := client.FindTask(filters...)
+		task, err := client.Task(filters...)
 		failOnErr(err)
 		// Attempt to get the full agent state
-		agent, err := client.Agent(task.AgentID)
+		agent, err := client.Agent(AgentFilterId(task.GetAgentId().GetValue()))
 		failOnErr(err)
 		// Lookup executor information in agent state
-		executor := findExecutor(agent, task.ID)
-		if executor == nil {
-			failOnErr(fmt.Errorf("could not resolve executor"))
-		}
-		client = &Client{Hostname: agent.FQDN()}
-		files, err := client.Browse(executor.Directory)
+		client = &Client{Hostname: FQDN(agent)}
+		executor, err := client.Executor(ExecutorFilterId(task.GetExecutorId().GetValue()))
 		failOnErr(err)
-		table := uitable.New()
-		table.AddRow("UID", "GID", "MODE", "MODIFIED", "SIZE", "PATH")
-		for _, file := range files {
-			path := file.Relative()
-			if *absolute {
-				path = file.Path
+		fmt.Println(executor)
+		/*
+			files, err := client.Files()
+			failOnErr(err)
+			table := uitable.New()
+			table.AddRow("UID", "GID", "MODE", "MODIFIED", "SIZE", "PATH")
+			for _, file := range files {
+				path := file.Relative()
+				if *absolute {
+					path = file.Path
+				}
+				table.AddRow(file.UID, file.GID, file.Mode, file.Modified().String(), fmt.Sprintf("%d", file.Size), path)
 			}
-			table.AddRow(file.UID, file.GID, file.Mode, file.Modified().String(), fmt.Sprintf("%d", file.Size), path)
-		}
-		fmt.Println(table)
+			fmt.Println(table)
+		*/
 	}
 }
 
@@ -213,26 +210,25 @@ func agents(cmd *cli.Cmd) {
 		client := &Client{
 			Hostname: config.Profile(WithMaster(*master)).Master,
 		}
-		agents, err := client.Agents()
+		agents, err := client.Agents(AgentFilterAll)
 		failOnErr(err)
 		table := uitable.New()
-		table.AddRow("ID", "HOSTNAME", "VERSION", "UPTIME", "CPUS", "MEM", "GPUS", "DISK")
+		table.AddRow("ID", "HOSTNAME", "CPUS")
 		for _, agent := range agents {
 			table.AddRow(
-				agent.ID,
-				agent.Hostname,
-				agent.Version,
-				agent.Uptime().String(),
-				fmt.Sprintf("%.2f/%.2f", agent.UsedResources.CPU, agent.Resources.CPU),
-				fmt.Sprintf("%.2f/%.2f", agent.UsedResources.Mem, agent.Resources.Mem),
-				fmt.Sprintf("%.2f/%.2f", agent.UsedResources.GPUs, agent.Resources.GPUs),
-				fmt.Sprintf("%.2f/%.2f", agent.UsedResources.Disk, agent.Resources.Disk),
+				agent.GetId().GetValue(),
+				agent.GetHostname(),
+				fmt.Sprintf("%.2f", FilterScalar(agent.GetResources(), "cpus")),
+				//fmt.Sprintf("%.2f/%.2f", FilterScalar(used, "mem"), FilterScalar(total, "mem")),
+				//fmt.Sprintf("%.2f/%.2f", FilterScalar(used, "gpus"), FilterScalar(total, "gpus")),
+				//fmt.Sprintf("%.2f/%.2f", FilterScalar(used, "disk"), FilterScalar(total, "disk")),
 			)
 		}
 		fmt.Println(table)
 	}
 }
 
+/*
 func run(cmd *cli.Cmd) {
 	cmd.Spec = "[OPTIONS] [ARG...]"
 	defaults := DefaultProfile()
@@ -323,6 +319,7 @@ func run(cmd *cli.Cmd) {
 		failOnErr(RunTask(config.Profile(WithMaster(*master)), task, *tail))
 	}
 }
+*/
 
 const (
 	repository    string = "quay.io/vektorcloud/mesos:latest"

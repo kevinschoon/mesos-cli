@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/gogo/protobuf/proto"
 	"github.com/jawher/mow.cli"
-	mesos "github.com/mesos/mesos-go/mesosproto"
+	mesos "github.com/vektorlab/mesos/v1"
 	"io/ioutil"
 	"os"
 	"os/user"
@@ -14,27 +14,32 @@ import (
 	"strings"
 )
 
-func findExecutor(agent *agentState, id string) *executorInfo {
-	var executor *executorInfo
-	filter := func(frameworks []*frameworkInfo) {
-		for _, framework := range frameworks {
-			for _, e := range framework.Executors {
-				if e.ID == id {
-					executor = e
-					return
-				}
-			}
-			for _, e := range framework.CompletedExecutors {
-				if e.ID == id {
-					executor = e
-					return
-				}
+func FilterScalar(resources []*mesos.Resource, name string) float64 {
+	var value float64
+	for _, resource := range resources {
+		if resource.GetName() == name {
+			scalar := resource.GetScalar()
+			if scalar != nil {
+				value = scalar.GetValue()
+				break
 			}
 		}
 	}
-	filter(agent.Frameworks)
-	filter(agent.CompletedFrameworks)
-	return executor
+	return value
+}
+
+func FQDN(agent *mesos.AgentInfo) string {
+	return fmt.Sprintf("%s:%d", agent.GetHostname(), agent.GetPort())
+}
+
+// Return relative file path
+func Relative(f *mesos.FileInfo) string {
+	path := f.GetPath()
+	split := strings.Split(f.GetPath(), "/")
+	if len(split) > 0 {
+		path = split[len(split)-1]
+	}
+	return path
 }
 
 // Resource returns the value of a resource

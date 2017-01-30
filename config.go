@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gogo/protobuf/proto"
-	mesos "github.com/mesos/mesos-go/mesosproto"
+	mesos "github.com/vektorlab/mesos/v1"
 	"io/ioutil"
 	"os"
 )

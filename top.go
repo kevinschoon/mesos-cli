@@ -84,28 +84,21 @@ func initTop() *toplib.Top {
 // TODO: Update toplib so samples can be sent individually
 func collect(client *Client) ([]*toplib.Sample, error) {
 	samples := []*toplib.Sample{}
-	var err error
-	tasks := make(chan *taskInfo)
-	filters, _ := NewTaskFilters(&TaskFilterOptions{All: true})
-	go func() {
-		err = client.PaginateTasks(&TaskPaginator{
-			limit: 2000,
-			max:   250,
-			order: "desc",
-			tasks: tasks,
-		}, filters...)
-	}()
-	for task := range tasks {
-		sample := toplib.NewSample(task.ID)
-		sample.SetString("FRAMEWORK", task.FrameworkID)
-		sample.SetString("STATE", task.State.String())
-		sample.SetFloat64("CPU", task.Resources.CPU)
-		sample.SetFloat64("MEM", task.Resources.Mem)
-		sample.SetFloat64("GPU", task.Resources.GPUs)
-		sample.SetFloat64("DISK", task.Resources.Disk)
+	tasks, err := client.Tasks(TaskFilterAll)
+	if err != nil {
+		return nil, err
+	}
+	for _, task := range tasks {
+		sample := toplib.NewSample(task.GetTaskId().GetValue())
+		sample.SetString("FRAMEWORK", task.GetFrameworkId().GetValue())
+		sample.SetString("STATE", task.GetState().String())
+		sample.SetFloat64("CPU", FilterScalar(task.GetResources(), "cpus"))
+		sample.SetFloat64("MEM", FilterScalar(task.GetResources(), "mem"))
+		sample.SetFloat64("GPU", FilterScalar(task.GetResources(), "gpu"))
+		sample.SetFloat64("DISK", FilterScalar(task.GetResources(), "disk"))
 		samples = append(samples, sample)
 	}
-	return samples, err
+	return samples, nil
 }
 
 func RunTop(client *Client) (err error) {

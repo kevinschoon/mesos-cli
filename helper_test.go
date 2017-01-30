@@ -1,8 +1,8 @@
 package main
 
 import (
-	mesos "github.com/mesos/mesos-go/mesosproto"
 	"github.com/stretchr/testify/assert"
+	mesos "github.com/vektorlab/mesos/v1"
 	"testing"
 )
 

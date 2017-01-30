@@ -1,32 +1,37 @@
 package main
 
 import (
-	mesos "github.com/mesos/mesos-go/mesosproto"
+	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/assert"
+	mesos "github.com/vektorlab/mesos/v1"
 	"testing"
 )
 
 func TestTaskFilter(t *testing.T) {
-	tasks := []*taskInfo{
-		&taskInfo{
-			ID:    "T1",
-			Name:  "T1 Task",
-			State: mesos.TaskState_TASK_FAILED,
+	state := func(i mesos.TaskState) *mesos.TaskState {
+		s := mesos.TaskState(i)
+		return &s
+	}
+	tasks := []*mesos.Task{
+		&mesos.Task{
+			TaskId: &mesos.TaskID{Value: proto.String("T1")},
+			Name:   proto.String("T1 Task"),
+			State:  state(mesos.TaskState_TASK_FAILED),
 		},
-		&taskInfo{
-			ID:    "T2",
-			Name:  "T2 Task",
-			State: mesos.TaskState_TASK_RUNNING,
+		&mesos.Task{
+			TaskId: &mesos.TaskID{Value: proto.String("T2")},
+			Name:   proto.String("T2 Task"),
+			State:  state(mesos.TaskState_TASK_RUNNING),
 		},
-		&taskInfo{
-			ID:    "T3",
-			Name:  "T3 Task",
-			State: mesos.TaskState_TASK_RUNNING,
+		&mesos.Task{
+			TaskId: &mesos.TaskID{Value: proto.String("T3")},
+			Name:   proto.String("T3 Task"),
+			State:  state(mesos.TaskState_TASK_RUNNING),
 		},
-		&taskInfo{
-			ID:    "T3-1",
-			Name:  "T3 Task (1)",
-			State: mesos.TaskState_TASK_RUNNING,
+		&mesos.Task{
+			TaskId: &mesos.TaskID{Value: proto.String("T3-1")},
+			Name:   proto.String("T3 Task (1)"),
+			State:  state(mesos.TaskState_TASK_FAILED),
 		},
 	}
 	filters, err := NewTaskFilters(&TaskFilterOptions{

@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"fmt"
 	"github.com/gogo/protobuf/proto"
@@ -8,9 +9,7 @@ import (
 	"os"
 )
 
-/*
 Runner is a task runner which implements the mesos.Scheduler interface.
-*/
 type Runner struct {
 	task     *mesos.TaskInfo
 	status   chan *mesos.TaskStatus
@@ -157,3 +156,4 @@ loop:
 	}
 	return err
 }
+*/
