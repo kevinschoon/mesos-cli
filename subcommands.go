@@ -13,8 +13,7 @@ func ps(cmd *cli.Cmd) {
 	defaults := DefaultProfile()
 	var (
 		master = cmd.StringOpt("master", defaults.Master, "Mesos Master")
-		//limit    = cmd.IntOpt("limit", 2000, "maximum number of tasks to return per request")
-		//max      = cmd.IntOpt("max", 250, "maximum number of tasks to list")
+		//max    = cmd.IntOpt("max", 250, "maximum number of tasks to list")
 		//order    = cmd.StringOpt("order", "desc", "accending or decending sort order [asc|desc]")
 		truncate = cmd.BoolOpt("truncate", true, "truncate some values")
 
@@ -73,19 +72,21 @@ func cat(cmd *cli.Cmd) {
 		master = cmd.StringOpt("master", defaults.Master, "Mesos Master")
 		//lines    = cmd.IntOpt("n lines", 0, "Output the last N lines")
 		//tail     = cmd.BoolOpt("t tail", false, "Tail output")
-		//filename = cmd.StringArg("FILE", "", "Filename to retrieve")
+		filename = cmd.StringArg("FILE", "", "Filename to retrieve")
 
 		all         = cmd.BoolOpt("all", false, "Show all tasks")
 		frameworkID = cmd.StringOpt("framework", "", "Filter FrameworkID")
 		fuzzy       = cmd.BoolOpt("fuzzy", true, "Fuzzy match Task name or Task ID prefix")
 		name        = cmd.StringOpt("name", "", "Filter Task name")
 		id          = cmd.StringOpt("id", "", "Filter Task ID")
-		state       = cmd.StringsOpt("state", []string{}, "Filter based on Task state")
+		state       = cmd.StringsOpt("state", []string{"TASK_FINISHED"}, "Filter based on Task state")
 	)
 
 	cmd.Before = func() {
 		*state = trimFlaged(*state, "--state")
 	}
+
+	fmt.Println(*state)
 
 	cmd.Action = func() {
 		client := &Client{
@@ -108,7 +109,7 @@ func cat(cmd *cli.Cmd) {
 		client = &Client{Hostname: FQDN(agent)}
 		executor, err := client.Executor(ExecutorFilterId(task.GetExecutorId().GetValue()))
 		failOnErr(err)
-		fmt.Println(executor)
+		fmt.Println(executor, filename)
 		/*
 			files, err := client.Browse(executor.Directory)
 			for _, file := range files {
@@ -213,15 +214,15 @@ func agents(cmd *cli.Cmd) {
 		agents, err := client.Agents(AgentFilterAll)
 		failOnErr(err)
 		table := uitable.New()
-		table.AddRow("ID", "HOSTNAME", "CPUS")
+		table.AddRow("ID", "HOSTNAME", "CPUS", "MEM", "GPUS", "DISK")
 		for _, agent := range agents {
 			table.AddRow(
 				agent.GetId().GetValue(),
 				agent.GetHostname(),
 				fmt.Sprintf("%.2f", FilterScalar(agent.GetResources(), "cpus")),
-				//fmt.Sprintf("%.2f/%.2f", FilterScalar(used, "mem"), FilterScalar(total, "mem")),
-				//fmt.Sprintf("%.2f/%.2f", FilterScalar(used, "gpus"), FilterScalar(total, "gpus")),
-				//fmt.Sprintf("%.2f/%.2f", FilterScalar(used, "disk"), FilterScalar(total, "disk")),
+				fmt.Sprintf("%.2f", FilterScalar(agent.GetResources(), "mem")),
+				fmt.Sprintf("%.2f", FilterScalar(agent.GetResources(), "gpus")),
+				fmt.Sprintf("%.2f", FilterScalar(agent.GetResources(), "disk")),
 			)
 		}
 		fmt.Println(table)
