@@ -1,30 +1,40 @@
-package main
+package config
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gogo/protobuf/proto"
-	mesos "github.com/vektorlab/mesos/v1"
 	"io/ioutil"
+	"net/url"
 	"os"
+	"os/user"
+)
+
+const (
+	OperatorAPIPath  = "/api/v1"
+	SchedulerAPIPath = "/api/v1/scheduler"
 )
 
 var ErrNoConfig = errors.New("No Config File Present")
 
 func DefaultProfile() *Profile {
 	return &Profile{
-		Master: "127.0.0.1:5050",
-		FrameworkInfo: &mesos.FrameworkInfo{
-			Name: proto.String("mesos-cli"),
-		},
+		Master: "localhost:5050",
+		Scheme: "http",
 	}
 }
 
 // Profile contains environment specific options
 type Profile struct {
-	Master        string               `json:"master"`
-	FrameworkInfo *mesos.FrameworkInfo `json:"framework_info"`
+	Master string `json:"master"`
+	Scheme string `json:"scheme"`
+}
+
+func (p Profile) Endpoint() url.URL {
+	return url.URL{
+		Scheme: p.Scheme,
+		Host:   p.Master,
+	}
 }
 
 // ProfileOptions are functional profile options
@@ -39,15 +49,31 @@ func WithMaster(m string) ProfileOption {
 	}
 }
 
+func WithSchema(m string) ProfileOption {
+	return func(p *Profile) {
+		if m != DefaultProfile().Scheme {
+			p.Scheme = m
+		}
+	}
+}
+
 // Merge the options from another profile
 func (p *Profile) Merge(other *Profile) {
 	if other.Master != "" {
 		p.Master = other.Master
 	}
-	if other.FrameworkInfo != nil {
-		p.FrameworkInfo = other.FrameworkInfo
+	if other.Scheme != "" {
+		p.Scheme = other.Scheme
 	}
 }
+
+func (p *Profile) With(opts ...ProfileOption) {
+	for _, opt := range opts {
+		opt(p)
+	}
+}
+
+type CfgFn func() *Config
 
 // Config is a global configuration file usually stored
 // in the user's home (~/.mesos-cli.json).
@@ -117,4 +143,12 @@ func SaveConfig(path string, config *Config) error {
 		return err
 	}
 	return ioutil.WriteFile(path, raw, os.FileMode(0755))
+}
+
+func HomeDir() string {
+	u, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+	return u.HomeDir
 }

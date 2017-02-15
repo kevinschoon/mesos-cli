@@ -1,9 +1,10 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"github.com/jawher/mow.cli"
+	"github.com/vektorlab/mesos-cli/commands"
+	"github.com/vektorlab/mesos-cli/config"
 	"os"
 )
 
@@ -12,39 +13,44 @@ var (
 	GitSHA  = "undefied"
 )
 
-// Singleton config object
-var config *Config
-
 func main() {
 	app := cli.App("mesos-cli", "Alternative Apache Mesos CLI")
 	app.Spec = "[OPTIONS]"
-	app.Command("agents", "List Mesos agents", agents)
-	app.Command("cat", "Output the contents of a file", cat)
-	app.Command("local", "Launch a local Mesos cluster (requires Docker)", local)
-	app.Command("ls", "List the sandbox directory of a task", ls)
-	app.Command("ps", "List currently running tasks on a cluster", ps)
-	//app.Command("run", "Run arbitrary commands against a cluster", run)
-	app.Command("top", "Display a Mesos top dialog", topCmd)
-
+	/*
+		app.Command("agents", "List Mesos agents", agents)
+		app.Command("cat", "Output the contents of a file", cat)
+		app.Command("local", "Launch a local Mesos cluster (requires Docker)", local)
+		app.Command("ls", "List the sandbox directory of a task", ls)
+		app.Command("tasks", "List currently running tasks on a cluster", tasks)
+		app.Command("run", "Run arbitrary commands against a cluster", run)
+		app.Command("top", "Display a Mesos top dialog", topCmd)
+	*/
 	var (
-		profile    = app.StringOpt("profile", "default", "Profile to load")
-		configPath = app.StringOpt("config", fmt.Sprintf("%s/.mesos-cli.json", homeDir()),
+		cfg         *config.Config
+		profileName = app.StringOpt("profile", "default", "Profile to load")
+		configPath  = app.StringOpt("config", fmt.Sprintf("%s/.mesos-cli.json", config.HomeDir()),
 			"Path to load config from")
-		level = app.IntOpt("level", 0, "Logging level (higher is more verbose)")
-		err   error
+		err error
 	)
 
 	app.Version("version", fmt.Sprintf("%s (%s)", Version, GitSHA))
 
 	app.Before = func() {
-		// This is done to satisfy the presumptuous golang/glog package
-		// which assumes I am using flag and insists it be configured
-		// with such. Since glog is used in go-mesos it is easiest to use
-		// the same library for the moment.
-		flag.CommandLine.Parse([]string{fmt.Sprintf("-v=%d", *level), "-logtostderr=true"})
-
-		config, err = LoadConfig(*configPath, *profile)
+		cfg, err = config.LoadConfig(*configPath, *profileName)
 		failOnErr(err)
+		fmt.Println("Profile: ", cfg.Profile())
 	}
+	cfgFn := func() *config.Config { return cfg }
+	for _, cmd := range commands.Commands {
+		app.Command(cmd.Name(), cmd.Desc(), cmd.Init(cfgFn))
+	}
+
 	app.Run(os.Args)
+}
+
+func failOnErr(err error) {
+	if err != nil {
+		fmt.Printf("Encountered Error: %v", err)
+		os.Exit(2)
+	}
 }

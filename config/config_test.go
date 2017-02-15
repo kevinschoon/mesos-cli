@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -29,7 +29,7 @@ func TestLoadConfig(t *testing.T) {
 
 	config, _ := LoadConfig("/tmp/mesos-cli_test_config.json", "default")
 	assert.Equal(t, config.profile, "default")
-	assert.Equal(t, "127.0.0.1:5050", config.Profile().Master)
+	assert.Equal(t, "localhost:5050", config.Profile().Master)
 	assert.Equal(t, "override:5050", config.Profile(WithMaster("override:5050")).Master)
 
 	config, _ = LoadConfig("/tmp/mesos-cli_test_config.json", "my_profile")

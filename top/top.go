@@ -1,9 +1,9 @@
-package main
+package top
 
 import (
 	ui "github.com/gizak/termui"
 	"github.com/vektorlab/toplib"
-	"time"
+	//"time"
 )
 
 func initTop() *toplib.Top {
@@ -82,6 +82,7 @@ func initTop() *toplib.Top {
 }
 
 // TODO: Update toplib so samples can be sent individually
+/*
 func collect(client *Client) ([]*toplib.Sample, error) {
 	samples := []*toplib.Sample{}
 	tasks, err := client.Tasks(TaskFilterAll)
@@ -123,3 +124,4 @@ func RunTop(client *Client) (err error) {
 	}()
 	return toplib.Run(top)
 }
+*/
