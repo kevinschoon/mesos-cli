@@ -3,7 +3,6 @@ package commands
 import (
 	"github.com/jawher/mow.cli"
 	//"github.com/vektorlab/mesos-cli/client"
-	"github.com/vektorlab/mesos-cli/config"
 )
 
 // TODO
@@ -13,11 +12,14 @@ type Read struct {
 
 func NewRead() Command {
 	return Read{
-		&command{"read", "Read the contents of a file"},
+		command: &command{
+			name: "read",
+			desc: "Read the contents of a file",
+		},
 	}
 }
 
-func (read Read) Init(cfg config.CfgFn) func(*cli.Cmd) {
+func (read Read) Init() func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		/*
 				defaults := DefaultProfile()

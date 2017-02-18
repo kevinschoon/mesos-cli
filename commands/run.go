@@ -18,11 +18,14 @@ type Run struct {
 
 func NewRun() Command {
 	return Run{
-		&command{"run", "Run Tasks on Mesos"},
+		command: &command{
+			name: "run",
+			desc: "Run Tasks on Mesos",
+		},
 	}
 }
 
-func (r Run) Init(cfg config.CfgFn) func(*cli.Cmd) {
+func (r Run) Init() func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS] [CMD]"
 		var (
@@ -70,7 +73,7 @@ func (r Run) Init(cfg config.CfgFn) func(*cli.Cmd) {
 			}
 			failOnErr(
 				runner.New(
-					cfg().Profile(
+					r.configFn().Profile(
 						config.WithMaster(*master),
 					),
 				).Run(info))

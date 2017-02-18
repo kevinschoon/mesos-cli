@@ -73,7 +73,7 @@ func (p *Profile) With(opts ...ProfileOption) {
 	}
 }
 
-type CfgFn func() *Config
+type ConfigFn func() *Config
 
 // Config is a global configuration file usually stored
 // in the user's home (~/.mesos-cli.json).

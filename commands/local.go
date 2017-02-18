@@ -4,7 +4,6 @@ import (
 	"fmt"
 	docker "github.com/fsouza/go-dockerclient"
 	"github.com/jawher/mow.cli"
-	"github.com/vektorlab/mesos-cli/config"
 	"strings"
 )
 
@@ -19,11 +18,14 @@ type Local struct {
 
 func NewLocal() Command {
 	return Local{
-		&command{"local", "Run a local Mesos cluster"},
+		command: &command{
+			name: "local",
+			desc: "Run a local Mesos cluster",
+		},
 	}
 }
 
-func (local Local) Init(cfg config.CfgFn) func(*cli.Cmd) {
+func (local Local) Init() func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		var (
 			container *docker.APIContainers

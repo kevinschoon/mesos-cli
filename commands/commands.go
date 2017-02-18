@@ -18,13 +18,24 @@ var Commands = []Command{
 type Command interface {
 	Name() string
 	Desc() string
-	Init(config.CfgFn) func(*cli.Cmd)
+	SetConfig(config.ConfigFn)
+	Init() func(*cli.Cmd)
 }
 
 type command struct {
-	name string
-	desc string
+	name     string
+	desc     string
+	configFn config.ConfigFn
 }
 
-func (c command) Name() string { return c.name }
-func (c command) Desc() string { return c.desc }
+func (c command) Name() string                  { return c.name }
+func (c command) Desc() string                  { return c.desc }
+func (c *command) SetConfig(fn config.ConfigFn) { c.configFn = fn }
+
+func strPtr(s string) *string {
+	return &s
+}
+
+func boolPtr(b bool) *bool {
+	return &b
+}

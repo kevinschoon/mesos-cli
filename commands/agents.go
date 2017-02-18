@@ -4,48 +4,48 @@ import (
 	"fmt"
 	"github.com/gosuri/uitable"
 	"github.com/jawher/mow.cli"
-	"github.com/vektorlab/mesos-cli/client"
+	master "github.com/mesos/mesos-go/master/calls"
 	"github.com/vektorlab/mesos-cli/config"
+	"github.com/vektorlab/mesos-cli/state"
 )
 
 type Agents struct {
 	*command
+	Hostname *string
 }
 
 func NewAgents() Command {
-	return Agents{
-		&command{"agents", "List Mesos Agents"},
+	return &Agents{
+		command: &command{
+			name: "agents",
+			desc: "List Mesos Agents",
+		},
 	}
 }
 
-func (_ Agents) Init(cfg config.CfgFn) func(*cli.Cmd) {
+func (a Agents) Action() {
+	resp, err := NewCaller(a.configFn().Profile()).CallMaster(master.GetState())
+	failOnErr(err)
+	table := uitable.New()
+	table.AddRow("ID", "HOSTNAME", "CPUS", "MEM", "GPUS", "DISK")
+
+	for _, agent := range state.AsAgents(state.StateFromMaster(resp.GetState).FindMany()) {
+		table.AddRow(
+			agent.GetID().GetValue(),
+			agent.GetHostname(),
+			fmt.Sprintf("%.2f", Scalar("cpus", agent.Resources)),
+			fmt.Sprintf("%.2f", Scalar("mem", agent.Resources)),
+			fmt.Sprintf("%.2f", Scalar("gpus", agent.Resources)),
+			fmt.Sprintf("%.2f", Scalar("disk", agent.Resources)),
+		)
+	}
+	fmt.Println(table)
+}
+
+func (a *Agents) Init() func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS]"
-		var (
-			defaults = config.DefaultProfile()
-			hostname = cmd.StringOpt("hostname", defaults.Master, "Mesos Master")
-		)
-		cmd.Action = func() {
-			client := client.New(
-				cfg().Profile(
-					config.WithMaster(*hostname),
-				),
-			)
-			agents, err := client.Agents()
-			failOnErr(err)
-			table := uitable.New()
-			table.AddRow("ID", "HOSTNAME", "CPUS", "MEM", "GPUS", "DISK")
-			for _, agent := range agents {
-				table.AddRow(
-					agent.GetID().GetValue(),
-					agent.GetHostname(),
-					fmt.Sprintf("%.2f", Scalar("cpus", agent.Resources)),
-					fmt.Sprintf("%.2f", Scalar("mem", agent.Resources)),
-					fmt.Sprintf("%.2f", Scalar("gpus", agent.Resources)),
-					fmt.Sprintf("%.2f", Scalar("disk", agent.Resources)),
-				)
-			}
-			fmt.Println(table)
-		}
+		a.Hostname = cmd.StringOpt("hostname", config.DefaultProfile().Master, "Mesos Master")
+		cmd.Action = a.Action
 	}
 }
