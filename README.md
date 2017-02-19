@@ -2,13 +2,31 @@
 
 Standalone commandline tool for interacting with an [Apache Mesos]("http://mesos.apache.com") cluster.
 
-# Why?
-
 Existing CLI tools for Mesos are tightly integrated into their parent projects(e.g. [[0]](https://github.com/apache/mesos/tree/master/src/cli), [[1]](https://github.com/mesosphere/mesos-cli)) and dependent on cumbersome libmesos packages.
 
 `mesos-cli` is a lightweight alternative to these tools, leveraging the excellent [mesos-go]("https://github.com/mesos/mesos-go") library to communicate with Mesos via HTTP. `mesos-cli` additionally aims to add more convenient features than the original toolset.
 
 `mesos-cli` is under development and not ready for use in a production environment.
+
+# Distinctive Features
+
+
+| Feature                                                                             |implemented|
+|-------------------------------------------------------------------------------------|-----------|
+| Built ontop of the new Mesos HTTP V1 API                                            |✓          |
+| Simple installation without platform specific libmesos drivers                      |✓          |
+| Full support for latest Mesos features, e.g health checks, etc                      |✓          |
+| Streamimg sandbox file content content to console (including task stdout and stderr)|✓          |
+| Support for running Mesos TaskGroups                                                |           |
+| Ability to search and filter across most Mesos types                                |~          |
+| Pure integration with Apache Mesos outside of the DC/OS ecosystem                   |✓          |
+| Top-like interface for monitoring a cluster                                         |~          |
+| Subscribe to and monitor master event stream                                        |~          |
+| Single command to launch a local cluster with low resource usage                    |✓          |
+| Easily test running a container on Mesos                                            |✓          |
+| Support for running batch jobs as a DAG                                             |           |
+| Export to task to Kubernetes or Marathon                                            |✓          |
+| Simple interface for lauguage agnostic executors                                    |           |
 
 # Installation
 
