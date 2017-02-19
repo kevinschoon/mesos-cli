@@ -6,7 +6,7 @@ import (
 	"github.com/jawher/mow.cli"
 	master "github.com/mesos/mesos-go/master/calls"
 	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/state"
+	"github.com/vektorlab/mesos-cli/filter"
 )
 
 type Agents struct {
@@ -24,12 +24,12 @@ func NewAgents() Command {
 }
 
 func (a Agents) Action() {
-	resp, err := NewCaller(a.configFn().Profile()).CallMaster(master.GetState())
+	resp, err := NewCaller(a.config().Profile()).CallMaster(master.GetAgents())
 	failOnErr(err)
 	table := uitable.New()
 	table.AddRow("ID", "HOSTNAME", "CPUS", "MEM", "GPUS", "DISK")
 
-	for _, agent := range state.AsAgents(state.StateFromMaster(resp.GetState).FindMany()) {
+	for _, agent := range filter.AsAgents(filter.FromMaster(resp).FindMany()) {
 		table.AddRow(
 			agent.GetID().GetValue(),
 			agent.GetHostname(),

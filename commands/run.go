@@ -73,7 +73,7 @@ func (r Run) Init() func(*cli.Cmd) {
 			}
 			failOnErr(
 				runner.New(
-					r.configFn().Profile(
+					r.config().Profile(
 						config.WithMaster(*master),
 					),
 				).Run(info))

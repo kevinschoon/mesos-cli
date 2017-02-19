@@ -23,14 +23,14 @@ type Command interface {
 }
 
 type command struct {
-	name     string
-	desc     string
-	configFn config.ConfigFn
+	name   string
+	desc   string
+	config config.ConfigFn
 }
 
 func (c command) Name() string                  { return c.name }
 func (c command) Desc() string                  { return c.desc }
-func (c *command) SetConfig(fn config.ConfigFn) { c.configFn = fn }
+func (c *command) SetConfig(fn config.ConfigFn) { c.config = fn }
 
 func strPtr(s string) *string {
 	return &s

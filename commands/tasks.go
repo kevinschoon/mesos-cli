@@ -6,8 +6,8 @@ import (
 	"github.com/jawher/mow.cli"
 	master "github.com/mesos/mesos-go/master/calls"
 	"github.com/vektorlab/mesos-cli/config"
+	"github.com/vektorlab/mesos-cli/filter"
 	"github.com/vektorlab/mesos-cli/options"
-	"github.com/vektorlab/mesos-cli/state"
 )
 
 type Tasks struct {
@@ -29,24 +29,24 @@ func NewTasks() Command {
 	}
 }
 
-func (t *Tasks) filters() []state.Filter {
-	filters := []state.Filter{
-		state.TaskStateFilter(t.States),
+func (t *Tasks) filters() []filter.Filter {
+	filters := []filter.Filter{
+		filter.TaskStateFilter(t.States),
 	}
 	if *t.TaskID != "" {
-		filters = append(filters, state.TaskIDFilter(*t.TaskID, *t.Fuzzy))
+		filters = append(filters, filter.TaskIDFilter(*t.TaskID, *t.Fuzzy))
 	}
 	return filters
 }
 
 func (t *Tasks) Action() {
-	resp, err := NewCaller(t.configFn().Profile()).CallMaster(master.GetState())
+	resp, err := NewCaller(t.config().Profile()).CallMaster(master.GetTasks())
 	failOnErr(err)
 
 	table := uitable.New()
 	table.AddRow("ID", "FRAMEWORK", "STATE", "CPU", "MEM", "GPU", "DISK")
 
-	for _, task := range state.AsTasks(state.StateFromMaster(resp.GetState).FindMany(t.filters()...)) {
+	for _, task := range filter.AsTasks(filter.FromMaster(resp).FindMany(t.filters()...)) {
 		frameworkID := task.FrameworkID.Value
 		if *t.Truncate {
 			frameworkID = truncStr(frameworkID, 8)

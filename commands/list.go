@@ -1,17 +1,22 @@
 package commands
 
 import (
-	//"fmt"
+	"fmt"
+	"github.com/gosuri/uitable"
 	"github.com/jawher/mow.cli"
-	//"github.com/vektorlab/mesos-cli/filters"
+	agent "github.com/mesos/mesos-go/agent/calls"
+	"strings"
 )
 
 type List struct {
 	*command
+	Path     *string
+	AgentID  *string
+	Relative *bool
 }
 
 func NewList() Command {
-	return List{
+	return &List{
 		command: &command{
 			name: "list",
 			desc: "List files in a Mesos sandbox",
@@ -19,78 +24,35 @@ func NewList() Command {
 	}
 }
 
-func (_ List) Init() func(*cli.Cmd) {
+// TODO: The HTTP operator API does not provide a way to pull down the sandbox
+// paths of tasks that are not currently running. Once I work around this I will implement
+// a way to search across all agents from a root path like /<agentid>/<framework>/<executor>/<containerid>/...
+func (l *List) Action() {
+	caller, err := NewAgentCaller(l.config().Profile(), *l.AgentID)
+	failOnErr(err)
+	resp, err := caller.CallAgent(agent.ListFiles(*l.Path))
+	failOnErr(err)
+	table := uitable.New()
+	table.AddRow("UID", "GID", "MODE", "MODIFIED", "SIZE", "PATH")
+	for _, info := range resp.ListFiles.FileInfos {
+		path := info.Path
+		if *l.Relative {
+			split := strings.Split(path, "/")
+			if len(split) > 0 {
+				path = split[len(split)-1]
+			}
+		}
+		table.AddRow(*info.UID, *info.GID, *info.Mode, "TODO", fmt.Sprintf("%d", info.Size()), path)
+	}
+	fmt.Println(table)
+}
+
+func (l *List) Init() func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
-		/*
-			cmd.Spec = "[OPTIONS] [ID] [PATH]"
-			var (
-				defaults = config.DefaultProfile()
-				hostname = cmd.StringOpt("hostname", defaults.Master, "Mesos Master")
-				agentID  = cmd.StringArg("ID", "", "AgentID")
-				path     = cmd.StringArg("PATH", "", "Directory Path")
-				// TODO: Reduce duplicated code
-				fuzzy  = cmd.BoolOpt("fuzzy", true, "fuzzy match")
-				name   = cmd.StringOpt("name", "", "filter by task name")
-				states = options.NewStates()
-			)
-			cmd.VarOpt("state", &states, "Filter by task state")
-			cmd.Action = func() {
-				client := client.New(
-					cfg().Profile(
-						config.WithMaster(*hostname),
-					),
-				)
-				_, err := client.State()
-				failOnErr(err)
-		*/
-		/*
-			if *agentID == "" {
-				result, err := client.SearchByTask(
-					&filters.TaskFilter{
-						Name:   *name,
-						Fuzzy:  *fuzzy,
-						States: states,
-					},
-				)
-				failOnErr(err)
-				// TODO
-				fmt.Println("Result: ", result)
-				fmt.Println(path)
-			}
-		*/
-		/*
-			filters, err := NewTaskFilters(&TaskFilterOptions{
-				All:         *all,
-				FrameworkID: *frameworkID,
-				Fuzzy:       *fuzzy,
-				ID:          *id,
-				Name:        *name,
-				States:      *state,
-			})
-			failOnErr(err)
-			// First attempt to resolve the task by ID
-			task, err := client.Task(filters...)
-			failOnErr(err)
-			// Attempt to get the full agent state
-			agent, err := client.Agent(AgentFilterId(task.GetAgentId().GetValue()))
-			failOnErr(err)
-			// Lookup executor information in agent state
-			client = &Client{Hostname: FQDN(agent)}
-			executor, err := client.Executor(ExecutorFilterId(task.GetExecutorId().GetValue()))
-			failOnErr(err)
-			fmt.Println(executor)
-			files, err := client.Files()
-			failOnErr(err)
-			table := uitable.New()
-			table.AddRow("UID", "GID", "MODE", "MODIFIED", "SIZE", "PATH")
-			for _, file := range files {
-				path := file.Relative()
-				if *absolute {
-					path = file.Path
-				}
-				table.AddRow(file.UID, file.GID, file.Mode, file.Modified().String(), fmt.Sprintf("%d", file.Size), path)
-			}
-			fmt.Println(table)
-		*/
+		cmd.Spec = "[OPTIONS] ID PATH"
+		cmd.Action = l.Action
+		l.AgentID = cmd.StringArg("ID", "", "AgentID")
+		l.Path = cmd.StringArg("PATH", "", "path to list")
+		l.Relative = cmd.BoolOpt("relative", true, "Display the relative sandbox path")
 	}
 }
