@@ -17,15 +17,6 @@ type Filter func(proto.Message) bool
 // Messages is a filterable array of protobuf.Message.
 type Messages []proto.Message
 
-/*
-type State struct {
-	messages []proto.Message
-}
-
-// StateFromAgent loads a State with proto.messages
-// from a GET_STATE call.
-// TODO: Consider using reflect to reduce typing.
-*/
 // FindAny will return the first message
 // where all filters return true. If no
 // messages match we will return ErrNotFound.
