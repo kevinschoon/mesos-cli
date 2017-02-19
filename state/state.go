@@ -97,6 +97,10 @@ func StateFromMaster(resp *master.Response_GetState) *State {
 	return state
 }
 
+func (s *State) Add(msg proto.Message) {
+	s.messages = append(s.messages, msg)
+}
+
 // FindAny will return the first message
 // where all filters return true. If no
 // messages match we will return ErrNotFound.
