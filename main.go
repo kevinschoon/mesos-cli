@@ -5,6 +5,7 @@ import (
 	"github.com/jawher/mow.cli"
 	"github.com/vektorlab/mesos-cli/commands"
 	"github.com/vektorlab/mesos-cli/config"
+
 	"os"
 )
 
@@ -17,24 +18,22 @@ func main() {
 	app := cli.App("mesos-cli", "Alternative Apache Mesos CLI")
 	app.Spec = "[OPTIONS]"
 	var (
-		cfg         *config.Config
-		profileName = app.StringOpt("profile", "default", "Profile to load")
-		configPath  = app.StringOpt("config", fmt.Sprintf("%s/.mesos-cli.json", config.HomeDir()),
+		name = app.StringOpt("profile", "default", "Profile to load")
+		path = app.StringOpt("config", fmt.Sprintf("%s/.mesos-cli.json", config.HomeDir()),
 			"Path to load config from")
-		err error
+		profile *config.Profile
 	)
-
 	app.Version("version", fmt.Sprintf("%s (%s)", Version, GitSHA))
-
 	app.Before = func() {
-		cfg, err = config.LoadConfig(*configPath, *profileName)
+		p, err := config.LoadProfile(*path, *name)
 		if err != nil {
-			fmt.Println("Unable to load configuration: %v", err)
+			fmt.Printf("Could not load configuration profile %s: %s\n", *name, err)
 			os.Exit(2)
 		}
+		profile = p
 	}
 	for _, cmd := range commands.Commands {
-		cmd.SetConfig(func() *config.Config { return cfg })
+		cmd.SetProfile(func() *config.Profile { return profile })
 		app.Command(cmd.Name(), cmd.Desc(), cmd.Init())
 	}
 

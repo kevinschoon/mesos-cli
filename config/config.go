@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/url"
@@ -15,12 +14,9 @@ const (
 	SchedulerAPIPath = "/api/v1/scheduler"
 )
 
-var ErrNoConfig = errors.New("No Config File Present")
-
-func DefaultProfile() *Profile {
+func defaults() *Profile {
 	return &Profile{
-		Master: "localhost:5050",
-		Scheme: "http",
+		Master: "http://localhost:5050",
 	}
 }
 
@@ -30,119 +26,57 @@ type Profile struct {
 	Scheme string `json:"scheme"`
 }
 
-func (p Profile) Endpoint() url.URL {
-	return url.URL{
-		Scheme: p.Scheme,
-		Host:   p.Master,
-	}
-}
+// Options are functional profile options
+type Option func(*Profile)
 
-// ProfileOptions are functional profile options
-type ProfileOption func(*Profile)
-
-func WithMaster(m string) ProfileOption {
+func Master(m string) Option {
 	return func(p *Profile) {
-		// Checks to be sure we do not override with a default value from CLI
-		if m != DefaultProfile().Master {
-			p.Master = m
-		}
+		p.Master = m
 	}
 }
 
-func WithSchema(m string) ProfileOption {
-	return func(p *Profile) {
-		if m != DefaultProfile().Scheme {
-			p.Scheme = m
-		}
-	}
-}
-
-// Merge the options from another profile
-func (p *Profile) Merge(other *Profile) {
-	if other.Master != "" {
-		p.Master = other.Master
-	}
-	if other.Scheme != "" {
-		p.Scheme = other.Scheme
-	}
-}
-
-func (p *Profile) With(opts ...ProfileOption) {
+func (p *Profile) With(opts ...Option) *Profile {
 	for _, opt := range opts {
 		opt(p)
 	}
+	return p
 }
 
-type ConfigFn func() *Config
+func (p Profile) Endpoint() *url.URL {
+	u, _ := url.Parse(p.Master)
+	u.Path = OperatorAPIPath
+	return u
+}
 
-// Config is a global configuration file usually stored
-// in the user's home (~/.mesos-cli.json).
 type Config struct {
-	profile  string
-	Profiles map[string]*Profile `json:"profiles"`
+	Profiles map[string]*Profile `json:profiles`
 }
 
-// Profile returns a profile loaded from disks with optional
-// commandline overrides.
-func (c Config) Profile(opts ...ProfileOption) *Profile {
-	// Start with all default options
-	profile := DefaultProfile()
-	if other, ok := c.Profiles[c.profile]; ok {
-		// Merge (override) any options included
-		// in the user profile
-		profile.Merge(other)
-	} else {
-		panic(fmt.Sprintf("unknown profile %s", c.profile))
-	}
-	// Finally any command line flags
-	// take precedence
-	for _, opt := range opts {
-		opt(profile)
-	}
-	return profile
-}
-
-func loadConfig(path string, config *Config) error {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return ErrNoConfig
-	}
-	raw, err := ioutil.ReadFile(path)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(raw, config)
-}
-
-// LoadConfig loads a user configuration
+// LoadProfile loads a user configuration
 // from ~/.mesos-cli.json creating a
 // JSON file with defaults if it does
 // not exist.
-func LoadConfig(path, profile string) (*Config, error) {
-	// Default config
-	config := &Config{
-		profile: profile,
-		Profiles: map[string]*Profile{
-			"default": DefaultProfile(),
-		},
+func LoadProfile(path, name string) (*Profile, error) {
+	config := &Config{Profiles: map[string]*Profile{}}
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		config.Profiles["default"] = defaults()
+		raw, err := json.MarshalIndent(config, "", "  ")
+		if err != nil {
+			return nil, err
+		}
+		return config.Profiles["default"], ioutil.WriteFile(path, raw, os.FileMode(0755))
 	}
-	err := loadConfig(path, config)
-	if err != nil && err != ErrNoConfig {
+	raw, err := ioutil.ReadFile(path)
+	if err != nil {
 		return nil, err
 	}
-	// If there is no configuration file
-	// save the default one above.
-	if err == ErrNoConfig {
-		return config, SaveConfig(path, config)
+	if err = json.Unmarshal(raw, &config); err != nil {
+		return nil, err
 	}
-	return config, nil
-}
-
-func SaveConfig(path string, config *Config) error {
-	raw, err := json.MarshalIndent(config, "", "  ")
-	if err != nil {
-		return err
+	if _, ok := config.Profiles[name]; !ok {
+		return nil, fmt.Errorf("Cannot load profile: %s", name)
 	}
-	return ioutil.WriteFile(path, raw, os.FileMode(0755))
+	return config.Profiles[name], nil
 }
 
 func HomeDir() string {

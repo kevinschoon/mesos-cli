@@ -13,19 +13,25 @@ import (
 )
 
 type Run struct {
-	*command
+	Hostname *string
+	profile  Profile
 }
 
-func NewRun() Command {
-	return Run{
-		command: &command{
-			name: "run",
-			desc: "Run Tasks on Mesos",
-		},
+func (_ Run) Name() string { return "run" }
+func (_ Run) Desc() string { return "Run tasks on Mesos" }
+func (r *Run) SetProfile(p Profile) {
+	r.profile = func() *config.Profile {
+		profile := p()
+		if *r.Hostname != "" {
+			profile = profile.With(
+				config.Master(*r.Hostname),
+			)
+		}
+		return profile
 	}
 }
 
-func (r Run) Init() func(*cli.Cmd) {
+func (r *Run) Init() func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS] [CMD]"
 		var (
@@ -37,22 +43,19 @@ func (r Run) Init() func(*cli.Cmd) {
 					Scalar: &mesos.Value_Scalar{Value: 0.1},
 				},
 			}
-			defaults = config.DefaultProfile()
-			master   = cmd.StringOpt("master", defaults.Master, "Mesos Master")
-			command  = cmd.StringArg("CMD", "", "Command to run")
-			name     = cmd.StringOpt("name", "mesos-cli", "Task Name")
-			user     = cmd.StringOpt("user", "root", "User to run as")
-			shell    = cmd.BoolOpt("shell", true, "Run as a shell command")
-			toJson   = cmd.BoolOpt("json", false, "Write task to JSON instead of running")
-			taskID   = options.NewTaskID()
+			command = cmd.StringArg("CMD", "", "Command to run")
+			name    = cmd.StringOpt("name", "mesos-cli", "Task Name")
+			user    = cmd.StringOpt("user", "root", "User to run as")
+			shell   = cmd.BoolOpt("shell", true, "Run as a shell command")
+			toJson  = cmd.BoolOpt("json", false, "Write task to JSON instead of running")
+			taskID  = options.NewTaskID()
 		)
 
+		r.Hostname = cmd.StringOpt("master", "", "Mesos Master")
 		cmd.VarOpt("TaskID", taskID, "Mesos TaskID")
 		cmd.VarOpt("cpus", options.NewScalarResources("cpus", resources), "CPU Resources")
 		cmd.VarOpt("memory", options.NewScalarResources("memory", resources), "Memory Resources")
 		cmd.VarOpt("disk", options.NewScalarResources("disk", resources), "Disk Resources")
-
-		cmd.Before = func() {}
 
 		cmd.Action = func() {
 			info := &mesos.TaskInfo{
@@ -71,12 +74,7 @@ func (r Run) Init() func(*cli.Cmd) {
 				fmt.Println(string(raw))
 				os.Exit(0)
 			}
-			failOnErr(
-				runner.New(
-					r.config().Profile(
-						config.WithMaster(*master),
-					),
-				).Run(info))
+			failOnErr(runner.New(r.profile()).Run(info))
 		}
 	}
 }

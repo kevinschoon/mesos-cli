@@ -12,18 +12,11 @@ const (
 	containerName string = "mesos_cli"
 )
 
-type Local struct {
-	*command
-}
+type Local struct{}
 
-func NewLocal() Command {
-	return Local{
-		command: &command{
-			name: "local",
-			desc: "Run a local Mesos cluster",
-		},
-	}
-}
+func (_ Local) Name() string       { return "local" }
+func (_ Local) Desc() string       { return "Run a local Mesos cluster" }
+func (_ Local) SetProfile(Profile) {}
 
 func (local Local) Init() func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {

@@ -11,21 +11,25 @@ import (
 )
 
 type Tasks struct {
-	command
 	Hostname *string
 	TaskID   *string
 	Truncate *bool
 	Fuzzy    *bool
 	States   options.States
+	profile  Profile
 }
 
-func NewTasks() Command {
-	return &Tasks{
-		command: command{
-			name: "tasks",
-			desc: "List Mesos Tasks",
-		},
-		States: options.NewStates(),
+func (_ Tasks) Name() string { return "tasks" }
+func (_ Tasks) Desc() string { return "List Mesos tasks" }
+func (t *Tasks) SetProfile(p Profile) {
+	t.profile = func() *config.Profile {
+		profile := p()
+		if *t.Hostname != "" {
+			profile = profile.With(
+				config.Master(*t.Hostname),
+			)
+		}
+		return profile
 	}
 }
 
@@ -40,7 +44,7 @@ func (t *Tasks) filters() []filter.Filter {
 }
 
 func (t *Tasks) Action() {
-	resp, err := NewCaller(t.config().Profile()).CallMaster(master.GetTasks())
+	resp, err := NewCaller(t.profile()).CallMaster(master.GetTasks())
 	failOnErr(err)
 
 	table := uitable.New()
@@ -69,7 +73,7 @@ func (t *Tasks) Action() {
 func (t *Tasks) Init() func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS]"
-		t.Hostname = cmd.StringOpt("master", config.DefaultProfile().Master, "Mesos Master")
+		t.Hostname = cmd.StringOpt("master", "", "Mesos Master")
 		t.Truncate = cmd.BoolOpt("truncate", true, "truncate long values")
 		t.TaskID = cmd.StringOpt("task", "", "filter by task id")
 		t.Fuzzy = cmd.BoolOpt("fuzzy", true, "fuzzy matching on string values")

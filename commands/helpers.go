@@ -15,7 +15,7 @@ import (
 	"os"
 )
 
-func newCaller(endpoint url.URL) operator.Caller {
+func newCaller(endpoint *url.URL) operator.Caller {
 	return operator.NewCaller(
 		httpcli.New(
 			httpcli.Endpoint(endpoint.String()),
@@ -30,11 +30,7 @@ func newCaller(endpoint url.URL) operator.Caller {
 }
 
 func NewCaller(profile *config.Profile) operator.Caller {
-	return newCaller(url.URL{
-		Scheme: profile.Scheme,
-		Host:   profile.Master,
-		Path:   config.OperatorAPIPath,
-	})
+	return newCaller(profile.Endpoint())
 }
 
 func NewAgentCaller(profile *config.Profile, id string) (operator.Caller, error) {
@@ -46,11 +42,11 @@ func NewAgentCaller(profile *config.Profile, id string) (operator.Caller, error)
 	if err != nil {
 		return nil, err
 	}
-	return newCaller(url.URL{
-		Scheme: profile.Scheme,
-		Host:   fmt.Sprintf("%s:%d", agent.Hostname, agent.GetPort()),
-		Path:   fmt.Sprintf("slave(1)/%s", config.OperatorAPIPath),
-	}), nil
+	endpoint := profile.Endpoint()
+	endpoint.Host = fmt.Sprintf("%s:%d", agent.Hostname, agent.GetPort())
+	endpoint.Path = fmt.Sprintf("slave(1)/%s", config.OperatorAPIPath)
+	fmt.Println(endpoint)
+	return newCaller(endpoint), nil
 }
 
 func Scalar(name string, resources mesos.Resources) (v float64) {
