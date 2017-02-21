@@ -20,7 +20,7 @@ func (a *Agents) Init(profile Profile) func(*cli.Cmd) {
 		hostname := cmd.StringOpt("master", "", "Mesos Master")
 		cmd.Action = func() {
 			resp, err := NewCaller(profile().With(
-				config.Master(hostname),
+				config.Master(*hostname),
 			)).CallMaster(master.GetAgents())
 			failOnErr(err)
 			table := uitable.New()

@@ -29,7 +29,7 @@ func (t *Tasks) Init(profile Profile) func(*cli.Cmd) {
 		cmd.Action = func() {
 
 			resp, err := NewCaller(
-				profile().With(config.Master(hostname)),
+				profile().With(config.Master(*hostname)),
 			).CallMaster(master.GetTasks())
 			failOnErr(err)
 

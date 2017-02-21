@@ -29,7 +29,7 @@ func (l *List) Init(profile Profile) func(*cli.Cmd) {
 			hostname = cmd.StringOpt("master", "", "Mesos master")
 		)
 		cmd.Action = func() {
-			caller, err := NewAgentCaller(profile().With(config.Master(hostname)), *agentID)
+			caller, err := NewAgentCaller(profile().With(config.Master(*hostname)), *agentID)
 			failOnErr(err)
 			resp, err := caller.CallAgent(agent.ListFiles(*path))
 			failOnErr(err)
