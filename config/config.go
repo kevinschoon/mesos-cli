@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"os/user"
+	"strings"
 )
 
 const (
@@ -30,6 +31,7 @@ func defaults() *Profile {
 				},
 			},
 			Container: &mesos.ContainerInfo{
+				Type:    mesos.ContainerInfo_MESOS.Enum(),
 				Volumes: []mesos.Volume{},
 			},
 			Resources: []mesos.Resource{
@@ -54,46 +56,81 @@ type Profile struct {
 // Options are functional profile options
 type Option func(*Profile)
 
-func Master(master *string) Option {
+// Master specifies the Mesos master hostname
+func Master(master string) Option {
 	return func(p *Profile) {
-		if ptrStrSet(master) {
-			p.Master = *master
+		if master != "" {
+			p.Master = master
 		}
 	}
 }
 
-func Command(cmd *string) Option {
+type CommandOpts struct {
+	Shell bool
+	User  string
+	Value string
+	Envs  []mesos.Environment_Variable
+}
+
+// Command sets Mesos CommandInfo options
+func Command(opts CommandOpts) Option {
 	return func(p *Profile) {
-		if ptrStrSet(cmd) {
-			p.TaskInfo.Command.Value = cmd
+		if opts.User != "" {
+			p.TaskInfo.Command.User = proto.String(opts.User)
+		}
+		if opts.Value != "" {
+			if opts.Shell {
+				p.TaskInfo.Command.Value = proto.String(opts.Value)
+			} else {
+				p.TaskInfo.Command.Arguments = strings.Split(opts.Value, " ")
+			}
+		}
+		for _, env := range opts.Envs {
+			p.TaskInfo.Command.Environment.Variables = append(p.TaskInfo.Command.Environment.Variables, env)
 		}
 	}
 }
 
-func TaskID(id *string) Option {
+type ContainerOpts struct {
+	Docker bool
+	//Image  *mesos.Image
+	Image string
+	// Docker specific opts
+	Privileged     bool
+	ForcePullImage bool
+	NetworkMode    mesos.ContainerInfo_DockerInfo_Network
+	Parameters     []mesos.Parameter
+	PortMappings   []mesos.ContainerInfo_DockerInfo_PortMapping
+}
+
+func Container(opts ContainerOpts) Option {
 	return func(p *Profile) {
-		if ptrStrSet(id) {
-			p.TaskInfo.TaskID.Value = *id
+		if !opts.Docker {
+			// TODO: Support Docker/appc images for "universal" containerizer
+			return
 		}
+		// All Docker-specific opts below
+		p.TaskInfo.Container.Type = mesos.ContainerInfo_DOCKER.Enum()
+		p.TaskInfo.Container.Docker = &mesos.ContainerInfo_DockerInfo{}
+		if opts.Image != "" {
+			p.TaskInfo.Container.Docker.Image = opts.Image
+		}
+		for _, param := range opts.Parameters {
+			p.TaskInfo.Container.Docker.Parameters = append(p.TaskInfo.Container.Docker.Parameters, param)
+		}
+		for _, mapping := range opts.PortMappings {
+			p.TaskInfo.Container.Docker.PortMappings = append(p.TaskInfo.Container.Docker.PortMappings, mapping)
+		}
+		p.TaskInfo.Container.Docker.Network = opts.NetworkMode.Enum()
+		p.TaskInfo.Container.Docker.Privileged = proto.Bool(opts.Privileged)
+		p.TaskInfo.Container.Docker.ForcePullImage = proto.Bool(opts.ForcePullImage)
 	}
 }
 
-func User(user *string) Option {
+func TaskInfo(info *mesos.TaskInfo) Option {
 	return func(p *Profile) {
-		if ptrStrSet(user) {
-			p.TaskInfo.Command.User = user
-		}
+		p.TaskInfo = info
 	}
-}
-
-func ptrStrSet(s *string) bool {
-	if s == nil {
-		return false
-	}
-	if *s == "" {
-		return false
-	}
-	return true
 }
 
 func (p *Profile) With(opts ...Option) *Profile {
@@ -136,6 +173,9 @@ func LoadProfile(path, name string) (*Profile, error) {
 	}
 	if _, ok := config.Profiles[name]; !ok {
 		return nil, fmt.Errorf("Cannot load profile: %s", name)
+	}
+	if config.Profiles[name].TaskInfo == nil {
+		config.Profiles[name].TaskInfo = defaults().TaskInfo
 	}
 	return config.Profiles[name], nil
 }
