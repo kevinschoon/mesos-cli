@@ -3,6 +3,9 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gogo/protobuf/proto"
+	"github.com/mesos/mesos-go"
+	"github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -17,22 +20,80 @@ const (
 func defaults() *Profile {
 	return &Profile{
 		Master: "http://localhost:5050",
+		TaskInfo: &mesos.TaskInfo{
+			TaskID: mesos.TaskID{
+				Value: uuid.NewV4().String(),
+			},
+			Command: &mesos.CommandInfo{
+				Environment: &mesos.Environment{
+					Variables: []mesos.Environment_Variable{},
+				},
+			},
+			Container: &mesos.ContainerInfo{
+				Volumes: []mesos.Volume{},
+			},
+			Resources: []mesos.Resource{
+				mesos.Resource{
+					Name:   "cpus",
+					Type:   mesos.SCALAR.Enum(),
+					Role:   proto.String("*"),
+					Scalar: &mesos.Value_Scalar{Value: 0.1},
+				},
+			},
+			Labels: &mesos.Labels{},
+		},
 	}
 }
 
 // Profile contains environment specific options
 type Profile struct {
-	Master string `json:"master"`
-	Scheme string `json:"scheme"`
+	Master   string `json:"master"`
+	TaskInfo *mesos.TaskInfo
 }
 
 // Options are functional profile options
 type Option func(*Profile)
 
-func Master(m string) Option {
+func Master(master *string) Option {
 	return func(p *Profile) {
-		p.Master = m
+		if ptrStrSet(master) {
+			p.Master = *master
+		}
 	}
+}
+
+func Command(cmd *string) Option {
+	return func(p *Profile) {
+		if ptrStrSet(cmd) {
+			p.TaskInfo.Command.Value = cmd
+		}
+	}
+}
+
+func TaskID(id *string) Option {
+	return func(p *Profile) {
+		if ptrStrSet(id) {
+			p.TaskInfo.TaskID.Value = *id
+		}
+	}
+}
+
+func User(user *string) Option {
+	return func(p *Profile) {
+		if ptrStrSet(user) {
+			p.TaskInfo.Command.User = user
+		}
+	}
+}
+
+func ptrStrSet(s *string) bool {
+	if s == nil {
+		return false
+	}
+	if *s == "" {
+		return false
+	}
+	return true
 }
 
 func (p *Profile) With(opts ...Option) *Profile {
