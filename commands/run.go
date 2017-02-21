@@ -37,6 +37,8 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 		)
 		envs := &Envs{}
 		cmd.VarOpt("e env", envs, "Environment variables")
+		volumes := &Volumes{}
+		cmd.VarOpt("v volume", volumes, "Container volume mappings")
 		// Docker-only options
 		net := &NetworkMode{mode: "BRIDGE"}
 		cmd.VarOpt("net", net, "Network Mode [Docker only]")
@@ -77,6 +79,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 						Privileged:   *privileged,
 						Image:        *image,
 						Parameters:   *params,
+						Volumes:      *volumes,
 						NetworkMode:  net.Mode(),
 						PortMappings: *mappings,
 					},
@@ -152,6 +155,39 @@ func (mappings PortMappings) String() string {
 	var s string
 	for _, mapping := range mappings {
 		s += fmt.Sprintf("%d:%d/%s", mapping.HostPort, mapping.ContainerPort, *mapping.Protocol)
+	}
+	return s
+}
+
+type Volumes []mesos.Volume
+
+func (vols *Volumes) Set(v string) error {
+	// TODO Need to support image and other parameters
+	split := strings.Split(v, ":")
+	if len(split) < 2 {
+		return fmt.Errorf("Bad volume: %s", v)
+	}
+	vol := mesos.Volume{
+		HostPath:      split[0],
+		ContainerPath: split[1],
+	}
+	if len(split) == 3 {
+		split[2] = strings.ToUpper(split[2])
+		if !(split[2] == "RW" || split[2] == "RO") {
+			return fmt.Errorf("Bad volume: %s", v)
+		}
+		vol.Mode = mesos.Volume_Mode(mesos.Volume_Mode_value[split[2]]).Enum()
+	} else {
+		vol.Mode = mesos.RO.Enum()
+	}
+	*vols = append(*vols, vol)
+	return nil
+}
+
+func (vols Volumes) String() string {
+	var s string
+	for _, vol := range vols {
+		s += fmt.Sprintf("%s:%s", vol.HostPath, vol.ContainerPath)
 	}
 	return s
 }

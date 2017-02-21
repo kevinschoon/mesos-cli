@@ -100,12 +100,16 @@ type ContainerOpts struct {
 	Privileged     bool
 	ForcePullImage bool
 	NetworkMode    mesos.ContainerInfo_DockerInfo_Network
+	Volumes        []mesos.Volume
 	Parameters     []mesos.Parameter
 	PortMappings   []mesos.ContainerInfo_DockerInfo_PortMapping
 }
 
 func Container(opts ContainerOpts) Option {
 	return func(p *Profile) {
+		for _, vol := range opts.Volumes {
+			p.TaskInfo.Container.Volumes = append(p.TaskInfo.Container.Volumes, vol)
+		}
 		if !opts.Docker {
 			// TODO: Support Docker/appc images for "universal" containerizer
 			return
