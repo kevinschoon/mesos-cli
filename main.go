@@ -33,9 +33,7 @@ func main() {
 		profile = p
 	}
 	for _, cmd := range commands.Commands {
-		cmd.SetProfile(func() *config.Profile { return profile })
-		app.Command(cmd.Name(), cmd.Desc(), cmd.Init())
+		app.Command(cmd.Name(), cmd.Desc(), cmd.Init(func() *config.Profile { return profile }))
 	}
-
 	app.Run(os.Args)
 }

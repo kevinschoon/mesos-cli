@@ -12,13 +12,17 @@ const (
 	containerName string = "mesos_cli"
 )
 
+// TODO: Add support for passing environment variables
+// to the mesos container.
+// Add support running in the "foreground" where stdout/stderr
+// are streamed back to the caller.
+
 type Local struct{}
 
-func (_ Local) Name() string       { return "local" }
-func (_ Local) Desc() string       { return "Run a local Mesos cluster" }
-func (_ Local) SetProfile(Profile) {}
+func (_ Local) Name() string { return "local" }
+func (_ Local) Desc() string { return "Run a local Mesos cluster" }
 
-func (local Local) Init() func(*cli.Cmd) {
+func (local Local) Init(_ Profile) func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		var (
 			container *docker.APIContainers

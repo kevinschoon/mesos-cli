@@ -130,6 +130,7 @@ func New(profile *config.Profile) *Runner {
 	))
 	caller = LoggingCaller().Apply(caller)
 	return &Runner{
+		task:     profile.TaskInfo,
 		shutdown: make(chan struct{}),
 		caller:   caller,
 		random:   rand.New(rand.NewSource(time.Now().Unix())),
@@ -140,8 +141,7 @@ func New(profile *config.Profile) *Runner {
 	}
 }
 
-func (r *Runner) Run(task *mesos.TaskInfo) error {
-	r.task = task
+func (r *Runner) Run() error {
 	return controller.New().Run(controller.Config{
 		Context:            r,
 		Framework:          r.framework,

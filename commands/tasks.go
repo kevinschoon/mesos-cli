@@ -4,80 +4,86 @@ import (
 	"fmt"
 	"github.com/gosuri/uitable"
 	"github.com/jawher/mow.cli"
+	"github.com/mesos/mesos-go"
 	master "github.com/mesos/mesos-go/master/calls"
 	"github.com/vektorlab/mesos-cli/config"
 	"github.com/vektorlab/mesos-cli/filter"
-	"github.com/vektorlab/mesos-cli/options"
 )
 
-type Tasks struct {
-	Hostname *string
-	TaskID   *string
-	Truncate *bool
-	Fuzzy    *bool
-	States   options.States
-	profile  Profile
-}
+type Tasks struct{}
 
 func (_ Tasks) Name() string { return "tasks" }
 func (_ Tasks) Desc() string { return "List Mesos tasks" }
-func (t *Tasks) SetProfile(p Profile) {
-	t.profile = func() *config.Profile {
-		profile := p()
-		if *t.Hostname != "" {
-			profile = profile.With(
-				config.Master(*t.Hostname),
-			)
-		}
-		return profile
-	}
-}
 
-func (t *Tasks) filters() []filter.Filter {
-	filters := []filter.Filter{
-		filter.TaskStateFilter(t.States),
-	}
-	if *t.TaskID != "" {
-		filters = append(filters, filter.TaskIDFilter(*t.TaskID, *t.Fuzzy))
-	}
-	return filters
-}
-
-func (t *Tasks) Action() {
-	resp, err := NewCaller(t.profile()).CallMaster(master.GetTasks())
-	failOnErr(err)
-
-	table := uitable.New()
-	table.AddRow("ID", "FRAMEWORK", "STATE", "CPU", "MEM", "GPU", "DISK")
-
-	for _, task := range filter.AsTasks(filter.FromMaster(resp).FindMany(t.filters()...)) {
-		frameworkID := task.FrameworkID.Value
-		if *t.Truncate {
-			frameworkID = truncStr(frameworkID, 8)
-		}
-		table.AddRow(
-			task.TaskID.Value,
-			frameworkID,
-			task.GetState().String(),
-			Scalar("cpus", task.Resources),
-			Scalar("mem", task.Resources),
-			Scalar("gpus", task.Resources),
-			Scalar("disk", task.Resources),
-		)
-	}
-
-	fmt.Println(table)
-
-}
-
-func (t *Tasks) Init() func(*cli.Cmd) {
+func (t *Tasks) Init(profile Profile) func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS]"
-		t.Hostname = cmd.StringOpt("master", "", "Mesos Master")
-		t.Truncate = cmd.BoolOpt("truncate", true, "truncate long values")
-		t.TaskID = cmd.StringOpt("task", "", "filter by task id")
-		t.Fuzzy = cmd.BoolOpt("fuzzy", true, "fuzzy matching on string values")
-		cmd.VarOpt("state", &t.States, "filter by task state")
-		cmd.Action = t.Action
+		var (
+			hostname = cmd.StringOpt("master", "", "Mesos master")
+			truncate = cmd.BoolOpt("truncate", true, "Truncate long values")
+			taskID   = cmd.StringOpt("task", "", "Filter by task id")
+			fuzzy    = cmd.BoolOpt("fuzzy", true, "Fuzzy matching on string values")
+			states   = states([]*mesos.TaskState{})
+		)
+		cmd.VarOpt("state", &states, "filter by task state")
+		cmd.Action = func() {
+
+			resp, err := NewCaller(
+				profile().With(config.Master(hostname)),
+			).CallMaster(master.GetTasks())
+			failOnErr(err)
+
+			filters := []filter.Filter{
+				filter.TaskStateFilter(states),
+			}
+
+			if *taskID != "" {
+				filters = append(filters, filter.TaskIDFilter(*taskID, *fuzzy))
+			}
+
+			table := uitable.New()
+			table.AddRow("ID", "FRAMEWORK", "STATE", "CPU", "MEM", "GPU", "DISK")
+
+			for _, task := range filter.AsTasks(filter.FromMaster(resp).FindMany(filters...)) {
+				frameworkID := task.FrameworkID.Value
+				if *truncate {
+					frameworkID = truncStr(frameworkID, 8)
+				}
+				table.AddRow(
+					task.TaskID.Value,
+					frameworkID,
+					task.GetState().String(),
+					Scalar("cpus", task.Resources),
+					Scalar("mem", task.Resources),
+					Scalar("gpus", task.Resources),
+					Scalar("disk", task.Resources),
+				)
+			}
+
+			fmt.Println(table)
+		}
 	}
+}
+
+type states []*mesos.TaskState
+
+//func NewStates() States {
+//	return states{mesos.TASK_RUNNING.Enum()}
+//}
+
+func (o *states) String() string {
+	return fmt.Sprintf("%v", *o)
+}
+
+func (o *states) Set(name string) error {
+	v, ok := mesos.TaskState_value[name]
+	if !ok {
+		return fmt.Errorf("Invalid state %s", name)
+	}
+	*o = append(*o, mesos.TaskState(v).Enum())
+	return nil
+}
+
+func (o *states) Clear() {
+	*o = []*mesos.TaskState{}
 }

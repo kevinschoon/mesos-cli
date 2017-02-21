@@ -20,6 +20,5 @@ type Profile func() *config.Profile
 type Command interface {
 	Name() string
 	Desc() string
-	SetProfile(Profile)
-	Init() func(*cli.Cmd)
+	Init(Profile) func(*cli.Cmd)
 }
