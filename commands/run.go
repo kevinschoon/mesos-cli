@@ -55,6 +55,11 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 
 		cmd.Action = func() {
 
+			if *command == "" && *image == "" {
+				cmd.PrintLongHelp()
+				os.Exit(1)
+			}
+
 			if *path != "" {
 				raw, err := ioutil.ReadFile(*path)
 				failOnErr(err)
