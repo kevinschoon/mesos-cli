@@ -120,6 +120,9 @@ func Container(opts ContainerOpts) Option {
 			p.TaskInfo.Container.Docker.Parameters = append(p.TaskInfo.Container.Docker.Parameters, param)
 		}
 		for _, mapping := range opts.PortMappings {
+			// Append a port resource for the requested host port
+			// The host port must be (by Mesos default) between 31000-32000
+			p.TaskInfo.Resources = append(p.TaskInfo.Resources, portOffer(mapping.HostPort))
 			p.TaskInfo.Container.Docker.PortMappings = append(p.TaskInfo.Container.Docker.PortMappings, mapping)
 		}
 		p.TaskInfo.Container.Docker.Network = opts.NetworkMode.Enum()
@@ -179,6 +182,15 @@ func LoadProfile(path, name string) (*Profile, error) {
 		config.Profiles[name].TaskInfo = defaults().TaskInfo
 	}
 	return config.Profiles[name], nil
+}
+
+func portOffer(port uint32) mesos.Resource {
+	return mesos.Resource{
+		Name:   "ports",
+		Type:   mesos.RANGES.Enum(),
+		Role:   proto.String("*"),
+		Ranges: &mesos.Value_Ranges{Range: []mesos.Value_Range{mesos.Value_Range{Begin: uint64(port), End: uint64(port)}}},
+	}
 }
 
 func HomeDir() string {
