@@ -78,6 +78,7 @@ func Command(opts CommandOpts) Option {
 		if opts.User != "" {
 			p.TaskInfo.Command.User = proto.String(opts.User)
 		}
+		p.TaskInfo.Command.Shell = proto.Bool(opts.Shell)
 		if opts.Value != "" {
 			if opts.Shell {
 				p.TaskInfo.Command.Value = proto.String(opts.Value)

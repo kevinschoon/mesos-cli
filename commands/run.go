@@ -25,7 +25,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 		var (
 			command  = cmd.StringArg("CMD", "", "Command to run")
 			user     = cmd.StringOpt("user", "root", "User to run as")
-			shell    = cmd.BoolOpt("shell", true, "Run as a shell command")
+			shell    = cmd.BoolOpt("shell", false, "Run as a shell command")
 			hostname = cmd.StringOpt("master", "", "Mesos master")
 			path     = cmd.StringOpt("path", "", "Path to a JSON file containing a Mesos TaskInfo")
 			dump     = cmd.BoolOpt("json", false, "Dump the task to JSON instead of running it")
@@ -38,7 +38,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 		envs := &Envs{}
 		cmd.VarOpt("e env", envs, "Environment variables")
 		// Docker-only options
-		net := &NetworkMode{}
+		net := &NetworkMode{mode: "BRIDGE"}
 		cmd.VarOpt("net", net, "Network Mode [Docker only]")
 		params := &Parameters{}
 		cmd.VarOpt("param", params, "Freeform Docker parameters [Docker only]")
@@ -77,7 +77,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 						Privileged:   *privileged,
 						Image:        *image,
 						Parameters:   *params,
-						NetworkMode:  net.mode,
+						NetworkMode:  net.Mode(),
 						PortMappings: *mappings,
 					},
 				),
@@ -96,21 +96,26 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 }
 
 type NetworkMode struct {
-	mode mesos.ContainerInfo_DockerInfo_Network
+	mode string
+	//mode mesos.ContainerInfo_DockerInfo_Network
 }
 
 func (n *NetworkMode) Set(v string) error {
-	mode, ok := mesos.ContainerInfo_DockerInfo_Network_value[strings.ToUpper(v)]
+	_, ok := mesos.ContainerInfo_DockerInfo_Network_value[strings.ToUpper(v)]
 	if !ok {
 		return fmt.Errorf("Bad network mode: %s", v)
 	}
-	n.mode = mesos.ContainerInfo_DockerInfo_Network(mode)
+	n.mode = strings.ToUpper(v)
 	return nil
 }
 
 func (n NetworkMode) String() string {
-	mode, _ := mesos.ContainerInfo_DockerInfo_Network_name[int32(n.mode)]
-	return mode
+	return n.mode
+}
+
+func (n NetworkMode) Mode() mesos.ContainerInfo_DockerInfo_Network {
+	m, _ := mesos.ContainerInfo_DockerInfo_Network_value[n.mode]
+	return mesos.ContainerInfo_DockerInfo_Network(m)
 }
 
 type PortMappings []mesos.ContainerInfo_DockerInfo_PortMapping
@@ -125,7 +130,7 @@ func (mappings *PortMappings) Set(v string) (err error) {
 	if err != nil {
 		return fmt.Errorf("Bad port mapping %s", v)
 	}
-	mapping.ContainerPort = uint32(host)
+	mapping.HostPort = uint32(host)
 	split = strings.Split(split[1], "/")
 	if len(split) == 2 {
 		split[1] = strings.ToLower(split[1])
