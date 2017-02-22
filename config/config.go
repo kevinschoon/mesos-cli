@@ -7,6 +7,7 @@ import (
 	"github.com/mesos/mesos-go"
 	"github.com/satori/go.uuid"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -32,11 +33,14 @@ type Profile struct {
 
 func (p *Profile) Log() *zap.Logger {
 	if p.log == nil {
-		var logger *zap.Logger
+		cfg := zapConfig(p.Debug)
 		if p.Debug {
-			logger, _ = zap.NewDevelopment()
-		} else {
-			logger, _ = zap.NewProduction()
+			cfg.Level.SetLevel(zap.DebugLevel)
+			cfg.EncoderConfig.CallerKey = "caller"
+		}
+		logger, err := cfg.Build()
+		if err != nil {
+			panic(err)
 		}
 		p.log = logger
 	}
@@ -114,6 +118,31 @@ func LoadProfile(path, name string) (profile *Profile, err error) {
 		profile.TaskInfo = defaults().TaskInfo
 	}
 	return profile, nil
+}
+
+func zapConfig(debug bool) *zap.Config {
+	return &zap.Config{
+		Level:       zap.NewAtomicLevel(),
+		Development: false,
+		Sampling: &zap.SamplingConfig{
+			Initial:    100,
+			Thereafter: 100,
+		},
+		Encoding: "console",
+		EncoderConfig: zapcore.EncoderConfig{
+			TimeKey:        "ts",
+			LevelKey:       "level",
+			NameKey:        "logger",
+			MessageKey:     "msg",
+			StacktraceKey:  "stacktrace",
+			EncodeLevel:    zapcore.LowercaseLevelEncoder,
+			EncodeTime:     zapcore.EpochTimeEncoder,
+			EncodeDuration: zapcore.SecondsDurationEncoder,
+		},
+		OutputPaths:      []string{"stderr"},
+		ErrorOutputPaths: []string{"stderr"},
+	}
+
 }
 
 func defaults() *Profile {
