@@ -9,20 +9,25 @@ import (
 	master "github.com/mesos/mesos-go/master/calls"
 	"github.com/vektorlab/mesos-cli/config"
 	"github.com/vektorlab/mesos-cli/filter"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 )
 
-func newCaller(endpoint *url.URL) operator.Caller {
+func newCaller(endpoint *url.URL, log *zap.Logger) operator.Caller {
 	return operator.NewCaller(
 		httpcli.New(
 			httpcli.Endpoint(endpoint.String()),
 			httpcli.RequestOptions(func(req *http.Request) {
 				buf, _ := ioutil.ReadAll(req.Body)
 				req.Body.Close()
-				fmt.Println(string(buf))
+				log.Debug(
+					"http request",
+					zap.String("url", req.URL.String()),
+					zap.String("body", string(buf)),
+				)
 				req.Body = ioutil.NopCloser(bytes.NewBuffer(buf))
 			},
 			),
@@ -30,7 +35,7 @@ func newCaller(endpoint *url.URL) operator.Caller {
 }
 
 func NewCaller(profile *config.Profile) operator.Caller {
-	return newCaller(profile.Endpoint())
+	return newCaller(profile.Endpoint(), profile.Log())
 }
 
 func NewAgentCaller(profile *config.Profile, id string) (operator.Caller, error) {
@@ -46,7 +51,7 @@ func NewAgentCaller(profile *config.Profile, id string) (operator.Caller, error)
 	endpoint.Host = fmt.Sprintf("%s:%d", agent.Hostname, agent.GetPort())
 	endpoint.Path = fmt.Sprintf("slave(1)/%s", config.OperatorAPIPath)
 	fmt.Println(endpoint)
-	return newCaller(endpoint), nil
+	return newCaller(endpoint, profile.Log()), nil
 }
 
 func Scalar(name string, resources mesos.Resources) (v float64) {
