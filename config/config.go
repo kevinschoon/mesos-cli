@@ -28,6 +28,7 @@ type Profile struct {
 	Master   string          `json:"master"`
 	TaskInfo *mesos.TaskInfo `json:"task_info"`
 	Debug    bool            `json:"debug"`
+	Restart  bool            `json:restart`
 	log      *zap.Logger
 }
 
@@ -57,6 +58,7 @@ func (p *Profile) With(opts ...Option) *Profile {
 func (p Profile) Framework() *mesos.FrameworkInfo {
 	return &mesos.FrameworkInfo{
 		ID:   &mesos.FrameworkID{Value: ""},
+		User: "root",
 		Name: "mesos-cli",
 	}
 }
@@ -169,6 +171,18 @@ func defaults() *Profile {
 					Role:   proto.String("*"),
 					Scalar: &mesos.Value_Scalar{Value: 0.1},
 				},
+				mesos.Resource{
+					Name:   "mem",
+					Type:   mesos.SCALAR.Enum(),
+					Role:   proto.String("*"),
+					Scalar: &mesos.Value_Scalar{Value: 64.0},
+				},
+				mesos.Resource{
+					Name:   "disk",
+					Type:   mesos.SCALAR.Enum(),
+					Role:   proto.String("*"),
+					Scalar: &mesos.Value_Scalar{Value: 64.0},
+				},
 			},
 			Labels: &mesos.Labels{},
 		},
@@ -187,6 +201,12 @@ func Master(master string) Option {
 func Debug(debug bool) Option {
 	return func(p *Profile) {
 		p.Debug = debug
+	}
+}
+
+func Restart(restart bool) Option {
+	return func(p *Profile) {
+		p.Restart = restart
 	}
 }
 

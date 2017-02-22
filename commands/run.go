@@ -31,6 +31,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 			dump     = cmd.BoolOpt("json", false, "Dump the task to JSON instead of running it")
 			docker   = cmd.BoolOpt("docker", false, "Run as a Docker container")
 			image    = cmd.StringOpt("image", "", "Image to run")
+			restart  = cmd.BoolOpt("restart", false, "Restart container on failure")
 
 			// Docker-only options
 			privileged = cmd.BoolOpt("privileged", false, "Run in privileged mode [docker only]")
@@ -68,8 +69,9 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 				profile().With(config.TaskInfo(info))
 			}
 
-			runner := runner.New(profile().With(
+			profile().With(
 				config.Master(*hostname),
+				config.Restart(*restart),
 				config.Command(
 					config.CommandOpts{
 						Value: *command,
@@ -89,7 +91,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 						PortMappings: *mappings,
 					},
 				),
-			))
+			)
 
 			if *dump {
 				raw, err := json.MarshalIndent(profile().TaskInfo, " ", " ")
@@ -97,8 +99,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 				fmt.Println(string(raw))
 				os.Exit(0)
 			}
-
-			failOnErr(runner.Run())
+			failOnErr(runner.Run(profile()))
 		}
 	}
 }

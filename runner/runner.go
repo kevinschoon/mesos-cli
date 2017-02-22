@@ -12,152 +12,197 @@ import (
 	"github.com/mesos/mesos-go/scheduler/calls"
 	"github.com/mesos/mesos-go/scheduler/events"
 	"github.com/vektorlab/mesos-cli/config"
+	"github.com/vektorlab/mesos-cli/state"
+	"go.uber.org/zap"
 	"math/rand"
 	"net/http"
+	"sync"
 	"time"
 )
-
-func LoggingCaller() calls.Decorator {
-	return func(h calls.Caller) calls.Caller {
-		return calls.CallerFunc(func(c *scheduler.Call) (mesos.Response, error) {
-			fmt.Println("Calling: ", c)
-			return h.Call(c)
-		})
-	}
-}
 
 type ErrRunnerFailed struct{ *scheduler.Event }
 
 func (e ErrRunnerFailed) Error() string {
-	et := scheduler.Event_Type_name[int32(*e.Type)]
-	msg := fmt.Sprintf("Runner has failed (%s)", et)
-	switch *e.Type {
-	case scheduler.Event_ERROR:
-		msg += fmt.Sprintf("\n %s", e.GetError().Message)
-	case scheduler.Event_FAILURE:
-		agentID := e.GetFailure().AgentID.Value
-		executorID := e.GetFailure().ExecutorID.Value
-		msg += fmt.Sprintf("\n agentID: %s, executorID: %s", agentID, executorID)
-	}
-	return msg
+	return fmt.Sprintf("Runner failed [%s]", e.Type.String())
 }
 
-// Runner implements a high level client for running
-// a task on Mesos. It accepts a mesos.TaskInfo, schedules
-// it, blocks until it is complete, and returns nil if it
-// completed successfully.
-type Runner struct {
-	shutdown  chan (struct{})
-	caller    calls.Caller
-	random    *rand.Rand
-	framework *mesos.FrameworkInfo
-	context   *controller.ContextAdapter
-	done      bool
-	task      *mesos.TaskInfo
-	status    *mesos.TaskStatus
-	scheduled bool
-}
-
-func (r Runner) getCaller() calls.Caller { return r.caller }
-
-func (r *Runner) Mux() *events.Mux {
+func Mux(db *state.State, c *Context) events.Handler {
 	return events.NewMux(
-		events.DefaultHandler(events.HandlerFunc(controller.DefaultHandler)),
+		events.DefaultHandler(
+			events.HandlerFunc(
+				func(e *scheduler.Event) (err error) {
+					// Unknown scheduler event
+					return ErrRunnerFailed{e}
+				}),
+		),
 		events.MapFuncs(map[scheduler.Event_Type]events.HandlerFunc{
-			scheduler.Event_ERROR: func(e *scheduler.Event) error {
-				return ErrRunnerFailed{e}
-			},
-			scheduler.Event_FAILURE: func(e *scheduler.Event) error {
-				return ErrRunnerFailed{e}
-			},
-			scheduler.Event_OFFERS: func(e *scheduler.Event) error {
-				// Magic begins here
-				offers := e.GetOffers().GetOffers()
-				for _, offer := range offers {
-					opts := calls.OfferOperations{}
-					if mesos.Resources(offer.Resources).
-						ContainsAll(mesos.Resources(r.task.Resources)) && !r.scheduled {
-						// AgentID is assigned to TaskInfo
-						r.task.AgentID = offer.GetAgentID()
-						opts = append(opts, calls.OpLaunch(*r.task))
-						r.scheduled = true
-					}
-					accept := calls.Accept(
-						opts.WithOffers(offer.ID),
-					).With(calls.RefuseSecondsWithJitter(r.random, 15*time.Second))
-					_, err := r.caller.Call(accept)
-					if err != nil {
-						return err
-					}
-				}
-				return nil
-			},
-			scheduler.Event_UPDATE: func(e *scheduler.Event) error {
-				err := events.AcknowledgeUpdates(r.getCaller).HandleEvent(e)
-				if err != nil {
-					return err
-				}
-				status := e.GetUpdate().GetStatus()
-				switch status.GetState() {
-				case mesos.TASK_FINISHED:
-					r.done = true
-					fmt.Println("Task completed")
-				}
-				return nil
-			},
 			scheduler.Event_SUBSCRIBED: func(e *scheduler.Event) (err error) {
-				frameworkID := e.GetSubscribed().GetFrameworkID().GetValue()
-				r.caller = calls.FrameworkCaller(frameworkID).Apply(r.caller)
-				fmt.Println("Subscribed!")
-				return nil
+				c.framework.ID.Value = e.Subscribed.FrameworkID.Value
+				// Apply the mesos FrameworkID to our caller
+				c.caller = calls.FrameworkCaller(c.framework.ID.Value).Apply(c.caller)
+				return err
+			},
+			scheduler.Event_OFFERS: func(e *scheduler.Event) (err error) {
+			loop:
+				for _, offer := range e.GetOffers().GetOffers() {
+					tasks := []mesos.TaskInfo{}
+					flattened := mesos.Resources(offer.Resources).Flatten()
+					for i := 0; i < db.Total(); i++ {
+						task := db.Pop()
+						if task == nil {
+							break
+						}
+						if flattened.ContainsAll(mesos.Resources(task.Resources).Flatten()) {
+							task.AgentID = offer.GetAgentID()
+							tasks = append(tasks, *task)
+							flattened.Subtract(task.Resources...)
+						} else {
+							db.Append(task)
+						}
+					}
+					accept := calls.Accept(calls.OfferOperations{calls.OpLaunch(tasks...)}.WithOffers(offer.ID))
+					_, err = c.caller.Call(accept)
+					if err != nil {
+						break loop
+					}
+				}
+				return err
+			},
+			scheduler.Event_INVERSE_OFFERS: func(e *scheduler.Event) (err error) {
+				return err
+			},
+			scheduler.Event_RESCIND: func(e *scheduler.Event) (err error) {
+				return err
+			},
+			scheduler.Event_RESCIND_INVERSE_OFFER: func(e *scheduler.Event) (err error) {
+				return err
+			},
+			scheduler.Event_UPDATE: func(e *scheduler.Event) (err error) {
+				err = events.AcknowledgeUpdates(func() calls.Caller { return c.caller }).HandleEvent(e)
+				db.Update(e.Update.Status)
+				return err
+			},
+			scheduler.Event_MESSAGE: func(e *scheduler.Event) (err error) {
+				return err
+			},
+			scheduler.Event_FAILURE: func(e *scheduler.Event) (err error) {
+				return err
+			},
+			scheduler.Event_ERROR: func(e *scheduler.Event) (err error) {
+				return err
+			},
+			scheduler.Event_HEARTBEAT: func(e *scheduler.Event) (err error) {
+				return err
 			},
 		}),
 	)
 }
 
-func New(profile *config.Profile) *Runner {
-	endpoint := profile.Endpoint()
-	endpoint.Path = config.SchedulerAPIPath
-	caller := httpsched.NewCaller(httpcli.New(
-		httpcli.Endpoint(endpoint.String()),
-		httpcli.Codec(&encoding.FramingJSONCodec),
-		httpcli.Do(httpcli.With(
-			httpcli.Transport(func(t *http.Transport) {
-				t.ResponseHeaderTimeout = 15 * time.Second
-				t.MaxIdleConnsPerHost = 2 // don't depend on go's default
-			}),
-		)),
-	))
-	caller = LoggingCaller().Apply(caller)
-	return &Runner{
-		task:     profile.TaskInfo,
-		shutdown: make(chan struct{}),
-		caller:   caller,
-		random:   rand.New(rand.NewSource(time.Now().Unix())),
-		framework: &mesos.FrameworkInfo{
-			ID:   &mesos.FrameworkID{Value: ""},
-			Name: "mesos-cli",
-		},
-	}
-}
-
-func (r *Runner) Run() error {
-	return controller.New().Run(controller.Config{
-		Context:            r,
-		Framework:          r.framework,
-		Caller:             r.caller,
-		Handler:            r.Mux(),
-		RegistrationTokens: backoff.Notifier(1*time.Second, 15*time.Second, r.shutdown),
+func caller(profile *config.Profile) calls.Caller {
+	wrap := calls.Decorator(func(h calls.Caller) calls.Caller {
+		return calls.CallerFunc(func(call *scheduler.Call) (mesos.Response, error) {
+			LogCall(call, profile.Log())
+			return h.Call(call)
+		})
 	})
+	return wrap.Apply(
+		httpsched.NewCaller(httpcli.New(
+			httpcli.Endpoint(profile.Scheduler().String()),
+			httpcli.Codec(&encoding.FramingJSONCodec),
+			httpcli.Do(httpcli.With(
+				httpcli.Transport(func(t *http.Transport) {
+					t.ResponseHeaderTimeout = 15 * time.Second
+					t.MaxIdleConnsPerHost = 2
+				}),
+			)),
+		)),
+	)
 }
 
-func (r *Runner) Done() bool { return r.done }
-
-func (r *Runner) Error(err error) {
-	r.shutdown <- struct{}{}
-	r.done = true
+func handler(profile *config.Profile, db *state.State, ctx *Context) events.Handler {
+	wrap := events.Decorator(
+		func(h events.Handler) events.Handler {
+			return events.HandlerFunc(
+				func(e *scheduler.Event) error {
+					LogEvent(e, profile.Log())
+					return h.HandleEvent(e)
+				},
+			)
+		},
+	)
+	return wrap.Apply(Mux(db, ctx))
 }
 
-func (r *Runner) FrameworkID() string {
-	return r.framework.GetID().Value
+func Run(profile *config.Profile) (err error) {
+	var wg sync.WaitGroup
+	// TODO: Expand to support multiple tasks and LaunchGroups/Nested Containers
+	db := state.New([]*mesos.TaskInfo{profile.Task()}, profile.Restart)
+	sched := controller.New()
+	ctx := &Context{
+		caller:    caller(profile),
+		framework: profile.Framework(),
+		shutdown:  make(chan struct{}),
+		random:    rand.New(rand.NewSource(time.Now().Unix())),
+	}
+	cfg := controller.Config{
+		Context:            ctx,
+		Framework:          ctx.framework,
+		Caller:             ctx.caller,
+		Handler:            handler(profile, db, ctx),
+		RegistrationTokens: backoff.Notifier(1*time.Second, 15*time.Second, ctx.shutdown),
+	}
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		err = sched.Run(cfg)
+		if err != nil {
+			profile.Log().Warn(
+				"scheduler",
+				zap.String("error", err.Error()),
+			)
+		} else {
+			profile.Log().Info(
+				"scheduler",
+				zap.String("message", "scheduler has shut down"),
+			)
+		}
+		db.Done()
+	}()
+	go func() {
+		defer wg.Done()
+		err = db.Monitor()
+		if err != nil {
+			profile.Log().Warn(
+				"state",
+				zap.String("error", err.Error()),
+			)
+		} else {
+			profile.Log().Info("state",
+				zap.String("message", "state db has shutdown"),
+			)
+		}
+		//ctx.caller.Call(calls.TearDown()) TODO
+		ctx.done = true
+	}()
+	wg.Wait()
+	return err
+}
+
+type Context struct {
+	caller    calls.Caller
+	scheduled bool
+	shutdown  chan struct{}
+	done      bool
+	err       error
+	framework *mesos.FrameworkInfo
+	random    *rand.Rand
+}
+
+func (c Context) Done() bool { return c.done }
+func (c *Context) Error(err error) {
+	c.err = err
+	c.done = true
+}
+func (c Context) FrameworkID() string {
+	return c.framework.ID.Value
 }
