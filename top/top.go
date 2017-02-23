@@ -1,5 +1,6 @@
 package top
 
+/*
 import (
 	ui "github.com/gizak/termui"
 	"github.com/vektorlab/toplib"
@@ -82,7 +83,6 @@ func initTop() *toplib.Top {
 }
 
 // TODO: Update toplib so samples can be sent individually
-/*
 func collect(client *Client) ([]*toplib.Sample, error) {
 	samples := []*toplib.Sample{}
 	tasks, err := client.Tasks(TaskFilterAll)
