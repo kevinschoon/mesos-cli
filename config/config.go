@@ -28,7 +28,7 @@ type Profile struct {
 	Master   string          `json:"master"`
 	TaskInfo *mesos.TaskInfo `json:"task_info"`
 	Debug    bool            `json:"debug"`
-	Restart  bool            `json:restart`
+	Restart  bool            `json:"restart"`
 	log      *zap.Logger
 }
 
@@ -80,7 +80,7 @@ func (p Profile) Endpoint() *url.URL {
 }
 
 type Config struct {
-	Profiles map[string]*Profile `json:profiles`
+	Profiles map[string]*Profile `json:"profiles"`
 }
 
 // LoadProfile loads a user configuration
