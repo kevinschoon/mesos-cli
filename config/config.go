@@ -26,7 +26,7 @@ type Option func(*Profile)
 // Profile contains environment specific options
 type Profile struct {
 	Master   string          `json:"master"`
-	TaskInfo *mesos.TaskInfo `json:"task_info"`
+	TaskInfo *mesos.TaskInfo `json:"-"`
 	Debug    bool            `json:"debug"`
 	Restart  bool            `json:"restart"`
 	log      *zap.Logger
