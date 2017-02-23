@@ -1,121 +1,78 @@
-hash: bfd83c7158866fbe4291a8980e966b0a116a1ce83b3647badc70700449764f1b
-updated: 2017-01-20T13:41:15.871775787-05:00
+hash: dc41c1b8f73eea27cbc592d36c5a5abcfd282c8bfff91dab9f933a40bee9a403
+updated: 2017-02-23T15:48:48.538732295+08:00
 imports:
-- name: github.com/Azure/go-ansiterm
-  version: fa152c58bc15761d0200cb75fe958b89a9d4888e
-  subpackages:
-  - winterm
-- name: github.com/docker/docker
-  version: 49bf474f9ed7ce7143a59d1964ff7b7fd9b52178
-  subpackages:
-  - api/types
-  - api/types/blkiodev
-  - api/types/container
-  - api/types/filters
-  - api/types/mount
-  - api/types/network
-  - api/types/registry
-  - api/types/strslice
-  - api/types/swarm
-  - api/types/versions
-  - opts
-  - pkg/archive
-  - pkg/fileutils
-  - pkg/homedir
-  - pkg/idtools
-  - pkg/ioutils
-  - pkg/jsonlog
-  - pkg/jsonmessage
-  - pkg/longpath
-  - pkg/pools
-  - pkg/promise
-  - pkg/stdcopy
-  - pkg/system
-  - pkg/term
-  - pkg/term/windows
-- name: github.com/docker/go-connections
-  version: eb315e36415380e7c2fdee175262560ff42359da
-  subpackages:
-  - nat
-- name: github.com/docker/go-units
-  version: e30f1e79f3cd72542f2026ceec18d3bd67ab859c
-- name: github.com/fsouza/go-dockerclient
-  version: 53f04ab33b89eef256c320c36435a10b672d473d
 - name: github.com/gizak/termui
-  version: 991cd3d3809135dc24daf6188dc6edcaf3d7d2d9
+  version: 24acd523c756fd9728824cdfac66aad9d8982fb7
+  subpackages:
+  - extra
 - name: github.com/gogo/protobuf
-  version: 265e960d45b331a5055057ef0f29088cf1eb91ce
+  version: 909568be09de550ed094403c2bf8a261b5bb730a
   subpackages:
   - proto
-- name: github.com/golang/glog
-  version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
 - name: github.com/gosuri/uitable
   version: 36ee7e946282a3fb1cfecd476ddc9b35d8847e42
   subpackages:
   - util/strutil
   - util/wordwrap
-- name: github.com/hashicorp/go-cleanhttp
-  version: ad28ea4487f05916463e2423a55166280e8254b5
 - name: github.com/jawher/mow.cli
-  version: 0de3d3b4ed00f261460d12ecde4efa90fbfcd8ed
+  version: d3ffbc2f98b83e09dc8efd55ecec75eb5fd656ec
 - name: github.com/maruel/panicparse
   version: ad661195ed0e88491e0f14be6613304e3b1141d6
   subpackages:
   - stack
 - name: github.com/mattn/go-runewidth
-  version: 737072b4e32b7a5018b4a7125da8d12de90e8045
+  version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
 - name: github.com/mesos/mesos-go
-  version: 7228b13084ce3ea645dbf7c8ecb5704301a6eadf
+  version: 156693d3ee524473464229fedfb853f5527d22ee
+  repo: git@github.com:vektorlab/mesos-go.git
+  vcs: git
   subpackages:
-  - auth
-  - auth/callback
-  - auth/sasl
-  - auth/sasl/mech
-  - auth/sasl/mech/crammd5
-  - detector
-  - detector/zoo
-  - mesosproto
-  - mesosproto/scheduler
-  - mesosutil
-  - mesosutil/process
-  - messenger
-  - messenger/sessionid
+  - agent
+  - agent/calls
+  - allocator
+  - backoff
+  - encoding
+  - encoding/framing
+  - encoding/proto
+  - extras/metrics
+  - extras/scheduler/controller
+  - httpcli
+  - httpcli/httpsched
+  - httpcli/operator
+  - maintenance
+  - master
+  - master/calls
+  - quota
+  - recordio
   - scheduler
-  - upid
-- name: github.com/Microsoft/go-winio
-  version: 307e919c663683a9000576fdc855acaf9534c165
+  - scheduler/calls
+  - scheduler/events
 - name: github.com/mitchellh/go-wordwrap
   version: ad45545899c7b13c020ea92b2072220eefad42b8
 - name: github.com/nsf/termbox-go
-  version: abe82ce5fb7a42fbd6784a5ceb71aff977e09ed8
-- name: github.com/opencontainers/runc
-  version: 0fefa36f3ac057f579adca3016cc260a0f805d3e
+  version: 3540b76b9c77679aeffd0a47e00243fb0ce47133
+- name: github.com/pquerna/ffjson
+  version: de51d9f018fa9a60153a04c94a031eff81ac4502
   subpackages:
-  - libcontainer/system
-  - libcontainer/user
-- name: github.com/pborman/uuid
-  version: 1b00554d822231195d1babd97ff4a781231955c9
-- name: github.com/samuel/go-zookeeper
-  version: 1d7be4effb13d2d908342d349d71a284a7542693
-  subpackages:
-  - zk
-- name: github.com/Sirupsen/logrus
-  version: 61e43dc76f7ee59a82bdf3d71033dc12bea4c77d
+  - fflib/v1
+  - fflib/v1/internal
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/vektorlab/toplib
-  version: f63225bce986ada002c2d39bcb72529d966d526b
-- name: golang.org/x/net
-  version: f2499483f923065a842d38eb4c7f1927e6fc6e6d
+  version: 6d9787e14ce504a552d5b29209964e02f2e802e2
+- name: go.uber.org/atomic
+  version: 3b8db5e93c4c02efbc313e17b2e796b0914a01fb
+- name: go.uber.org/zap
+  version: 72313cde80537dd4dc9b7b80eda6d7ed796c4232
   subpackages:
-  - context
-  - context/ctxhttp
-- name: golang.org/x/sys
-  version: d75a52659825e75fff6158388dddc6a5b04f9ba5
-  subpackages:
-  - unix
-  - windows
+  - buffer
+  - internal/bufferpool
+  - internal/exit
+  - internal/multierror
+  - zapcore
 testImports:
 - name: github.com/davecgh/go-spew
-  version: 04cdfd42973bb9c8589fd6a731800cf222fde1a9
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
   subpackages:
   - spew
 - name: github.com/pmezard/go-difflib
@@ -123,6 +80,6 @@ testImports:
   subpackages:
   - difflib
 - name: github.com/stretchr/testify
-  version: 2402e8e7a02fc811447d11f881aa9746cdc57983
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
   subpackages:
   - assert

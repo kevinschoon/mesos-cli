@@ -1,13 +1,43 @@
 package: github.com/vektorlab/mesos-cli
+ignore: 
+  - github.com/fsouza/go-dockerclient
 import:
+- package: github.com/fsouza/go-dockerclient
+- package: github.com/gizak/termui
+  version: ^2.2.0
 - package: github.com/gogo/protobuf
+  version: ^0.3.0
   subpackages:
   - proto
+- package: github.com/gosuri/uitable
 - package: github.com/jawher/mow.cli
 - package: github.com/mesos/mesos-go
+  version: operator
+  repo: git@github.com:vektorlab/mesos-go.git
+  vcs: git
   subpackages:
-  - mesosproto
+  - agent
+  - agent/calls
+  - backoff
+  - encoding
+  - extras/scheduler/controller
+  - httpcli
+  - httpcli/httpsched
+  - httpcli/operator
+  - master
+  - master/calls
   - scheduler
-- package: github.com/docker/docker
-  version: 1.13.x
-- package: github.com/gosuri/uitable
+  - scheduler/calls
+  - scheduler/events
+- package: github.com/satori/go.uuid
+  version: ^1.1.0
+- package: github.com/vektorlab/toplib
+- package: go.uber.org/zap
+  version: ^1.0.0-rc.1
+  subpackages:
+  - zapcore
+testImport:
+- package: github.com/stretchr/testify
+  version: ^1.1.4
+  subpackages:
+  - assert
