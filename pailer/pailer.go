@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
-	"fmt"
 	"github.com/mesos/mesos-go/agent"
 	"github.com/mesos/mesos-go/agent/calls"
 	"github.com/mesos/mesos-go/httpcli/operator"
@@ -147,7 +146,6 @@ func Monitor(caller operator.Caller, w io.Writer, lines int, pag *FilePaginator)
 		defer wg.Done()
 		for err == nil {
 			err = pag.Next(caller)
-			fmt.Println(pag.offset, pag.Max, pag.Follow)
 		}
 		pag.Close()
 	}()

@@ -49,8 +49,7 @@ func NewAgentCaller(profile *config.Profile, id string) (operator.Caller, error)
 	}
 	endpoint := profile.Endpoint()
 	endpoint.Host = fmt.Sprintf("%s:%d", agent.Hostname, agent.GetPort())
-	endpoint.Path = fmt.Sprintf("slave(1)/%s", config.OperatorAPIPath)
-	fmt.Println(endpoint)
+	endpoint.Path = fmt.Sprintf("slave(1)%s", config.OperatorAPIPath)
 	return newCaller(endpoint, profile.Log()), nil
 }
 
