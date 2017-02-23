@@ -199,6 +199,30 @@ mesos read 5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-S0  /opt/mesos/0/slaves/5b7a7d41
 ...
 ```
 
+## agents
+`mesos agents` lists all the agents running in the cluster
+
+```bash
+mesos agents
+```
+
+```
+ID                                     	HOSTNAME             	VERSION	UPTIME                 	CPUS     	MEM         	GPUS     	DISK        
+23d60c9d-dab0-4af9-8336-a7cb501ea2c1-S0	localhost.localdomain	1.1.0  	412626h27m31.603293767s	0.00/4.00	0.00/6867.00	0.00/0.00	0.00/5114.00
+```
+
+## top
+`mesos top` provides a top-like overview of tasks, agent, and cluster status (work in progress)
+
+```
+mesos-cli top [OPTIONS] COMMAND [arg...]
+```
+
+### Example
+```bash
+mesos top
+```
+
 ## local
 
 `mesos local` provides a wrapper for launching a local Mesos cluster for development and testing purposes.
