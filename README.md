@@ -1,46 +1,52 @@
 # mesos-cli
 
-Standalone commandline tool for interacting with an [Apache Mesos]("http://mesos.apache.com") cluster.
+Standalone commandline tool for running containers on and interacting with [Apache Mesos]("http://mesos.apache.com").
 
-Existing CLI tools for Mesos are tightly integrated into their parent projects(e.g. [[0]](https://github.com/apache/mesos/tree/master/src/cli), [[1]](https://github.com/mesosphere/mesos-cli)) and dependent on cumbersome libmesos packages.
+`mesos-cli` interacts entirely with the new Mesos HTTP [scheduler](http://mesos.apache.org/documentation/latest/scheduler-http-api/) and [operator](http://mesos.apache.org/documentation/latest/operator-http-api/) APIs.
 
-`mesos-cli` is a lightweight alternative to these tools, leveraging the excellent [mesos-go]("https://github.com/mesos/mesos-go") library to communicate with Mesos via HTTP. `mesos-cli` additionally aims to add more convenient features than the original toolset.
+`mesos-cli` is under active development and not yet stable.
 
-`mesos-cli` is under development and not ready for use in a production environment.
+# Distinctive Features & Roadmap
 
-# Distinctive Features
-
-
-| Feature                                                                             |implemented|
-|-------------------------------------------------------------------------------------|-----------|
-| Built ontop of the new Mesos HTTP V1 API                                            |✓          |
-| Simple installation without platform specific libmesos drivers                      |✓          |
-| Full support for latest Mesos features, e.g health checks, etc                      |✓          |
-| Streamimg sandbox file content content to console (including task stdout and stderr)|✓          |
-| Support for running Mesos TaskGroups                                                |           |
-| Ability to search and filter across most Mesos types                                |~          |
-| Pure integration with Apache Mesos outside of the DC/OS ecosystem                   |✓          |
-| Top-like interface for monitoring a cluster                                         |~          |
-| Subscribe to and monitor master event stream                                        |~          |
-| Single command to launch a local cluster with low resource usage                    |✓          |
-| Easily test running a container on Mesos                                            |✓          |
-| Support for running batch jobs as a DAG                                             |           |
-| Export to task to Kubernetes or Marathon                                            |✓          |
-| Simple interface for lauguage agnostic executors                                    |           |
+| Feature                                                                             |ready|roadmap|
+|-------------------------------------------------------------------------------------|-----|-------|
+| Built ontop of the new Mesos HTTP V1 API                                            |✓    |       |
+| Simple installation without platform specific libmesos drivers                      |✓    |       |
+| Full support for latest Mesos features, e.g health checks, etc                      |     |✓      |
+| Streamimg sandbox file content content to console (including task stdout and stderr)|✓    |       |
+| Support for running Mesos TaskGroups (pods)                                         |     |✓      |
+| Ability to search and filter across most Mesos types                                |     |✓      |
+| Pure integration with Apache Mesos outside of the DC/OS ecosystem                   |✓    |       |
+| Top-like interface for monitoring a cluster                                         |     |✓      |
+| Subscribe to and monitor master event stream                                        |     |✓      |
+| Lightweight scheduler for running arbitrary containers                              |✓    |       |
+| Support for running multiple containers for batch-style jobs as a DAG               |     |✓      |
+| Export to task to Kubernetes or Marathon                                            |     |✓      |
+| Simple interface for lauguage agnostic executors                                    |     |✓      |
+| Effortlessly run a local Mesos cluster                                              |✓    |       |
 
 # Installation
+
+## Binaries
 
 You can download binary packages for your platform (linux/darwin) from the [releases](https://github.com/vektorlab/mesos-cli/releases) section. 
 
     PLATFORM=linux
-    wget https://github.com/vektorlab/mesos-cli/releases/download/v0.0.3/mesos-cli-v0.0.3-$PLATFORM-amd64 -o /usr/local/bin/mesos-cli
+    wget https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-v0.0.5-$PLATFORM-amd64 -o /usr/local/bin/mesos-cli
 
  If you don't mind potentially overriding the default `mesos` command you may add an alias:
 
      echo "alias mesos=mesos-cli" >> $HOME/.bashrc
+     
+ ## Docker
+ 
+    docker pull quay.io/vektorcloud/mesos-cli
+    echo "alias mesos=docker run --rm -ti -v $HOME/.meoss-cli.json:/root/.mesos-cli.json --net host quay.io/vektorcloud/mesos-cli >> $HOME/.bashrc"
 
 # Profiles
-You can configure "profiles" by creating a JSON file at `~/.mesos-cli.json`:
+You can configure "profiles" by creating a JSON file at `~/.mesos-cli.json`. This will be created the first time you invoke command.
+
+Example:
 
 ```json
 {
@@ -63,79 +69,71 @@ You can configure "profiles" by creating a JSON file at `~/.mesos-cli.json`:
 `mesos-cli` currently supports the following subcommands:
 
 ## run
-`mesos run` implements the functionality of the [mesos-execute](https://github.com/apache/mesos/blob/master/src/cli/execute.cpp)
-with some additional features. You can also specify a file containing a JSON encoded Mesos 
-[TaskInfo](https://github.com/mesos/mesos-go/blob/master/mesosproto/mesos.proto#L1038-L1072) object with the `--task` flag.
+`mesos run` launches a lightweight scheduler for running a container on the target cluster.
 
 ```
 mesos-cli run [OPTIONS] [ARG...]
+Usage: mesos-cli run [OPTIONS] [CMD]
 ```
+Option| Description
+------------------- |--------------------
+  --user="root"     |       User to run as
+  --shell=false     |       Run as a shell command
+  --master=""       |       Mesos master
+  --path=""         |       Path to a JSON file containing a Mesos TaskInfo
+  --json=false      |       Dump the task to JSON instead of running it
+  --docker=false    |      Run as a Docker container
+  --image=""        |      Image to run
+  --restart=false   |     Restart container on failure
+  --privileged=false|   Run in privileged mode [docker only]
+  -e, --env=        |  Environment variables
+  -v, --volume=     |   Container volume mappings
+  --net=BRIDGE      |   Network Mode [Docker only]
+  --param=          |   Freeform Docker parameters [Docker only]
+  -p, --port=       |   Port mappings [Docker only]
 
-### Example
-With Docker containerizer:
+
+### Examples
+
+Launch a new task with the Mesos containerizer and restart it on exit
 
 ```bash
-mesos run --tail --image alpine:latest --shell 'date'
-....
-Wed Dec 14 23:16:50 UTC 2016
-....
-```
+    mesos run --restart --shell 'echo $(date); sleep 2'
+ ```
+ 
+Run an app with Docker and keep it online
 
-Or with native Mesos containerizer:
 ```bash
-mesos run --shell 'echo $(date) >> stdout'
+    mesos run --restart --docker -p 31000:80 --image nginx:latest 
+    mesos tasks --state TASK_RUNNING # Check it's state
+    curl localhost:31000
 ```
-*note:* Since native mesos containerizer doesn't redirect stdout/stderr by default you need to literally write to a file called `stdout`/`stderr` in the sandbox directory.
 
-### Options
 
-Option | Description
---- | ---
---master="127.0.0.1:5050" | Mesos Master
---task="" | Path to a Mesos TaskInfo JSON file
---param=[] | Docker parameters
--i, --image="" | Docker image to run
--v, --volume=[] | Volume mappings
--p, --ports=[] | Port mappings
--e, --env=[] | Environment Variables
--s, --shell="" | Shell command to execute
--t, --tail=false | Tail command output
--n, --name=mesos-cli | Task Name
--u, --user=root | User to run as
--c, --cpus=0.1 | CPU Resources to allocate
--m, --mem=128.0 | Memory Resources (mb) to allocate
--d, --disk=32.0 | Disk Resources (mb) to allocate
---privileged=false | Give extended privileges to this container
--f, --forcePullImage=false | Always pull the container image
-
-## ps
+## Tasks
 
 List currently running tasks on a cluster
 
 ```
-mesos-cli ps [OPTIONS]
+mesos-cli tasks [OPTIONS]
 ```
 
 ### Options
 
 Option | Description
 --- | ---
---master="127.0.0.1:5050" |  Mesos Master
---limit=2000              |  maximum number of tasks to return per request
---max=250                 |  maximum number of tasks to list
---truncate=true           |  truncate some values
---all=false               |  Show all tasks
---framework=""            |  Filter FrameworkID
---fuzzy=true              |  Fuzzy match Task name or Task ID prefix
---name=""                 |  Filter Task name
---id=""                   |  Filter Task ID
---state=["TASK_RUNNING"]  |  Filter based on Task state
+--master=""    |    Mesos master
+--truncate=true|   Truncate long values
+--task=""      |  Filter by task id
+--fuzzy=true   | Fuzzy matching on string values
+--state=[]     |filter by task state
+
 
 
 ### Example
 
 ```bash
-mesos ps --state "TASK_FINISHED" --max=2
+mesos ps --state "TASK_FINISHED"
 ```
 
 ```
@@ -144,12 +142,12 @@ mesos ps --state "TASK_FINISHED" --max=2
     mesos-cli b620d6e2  TASK_FINISHED 0.1 128 0   32  
 ```
 
-## ls
+## List
 
 List the sandbox directory of a task
 
 ```
-Usage: mesos-cli ls [OPTIONS] TASKID
+Usage: mesos-cli list [OPTIONS] ID PATH
 ```
 
 ### Options
@@ -168,58 +166,37 @@ Option | Description
 
 ### Example
 ```bash
-mesos ls --id nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0
-```
+mesos list --master http://localhost:5050 5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-S0  /opt/mesos/0/slaves/5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-S0/frameworks/5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-0115/executors/807fe9fa-55df-40fa-ab4f-20e359d51d43/runs/4295fd85-5023-4b0d-a9c8-1d9bdce309ba
 
-```
 UID 	GID 	MODE      	MODIFIED                     	SIZE  	PATH
 root	root	-rw-r--r--	2017-01-07 22:35:46 -0500 EST	1527  	stderr
 root	root	-rw-r--r--	2017-01-08 17:39:03 -0500 EST	642717	stdout
 ```
 
-## cat
+## Read
 
 Output the contents of a file
 
 ```
-mesos-cli cat [OPTIONS] TASKID FILE
+mesos-cli read [OPTIONS] TASKID FILE
 ```
 
 ### Options
 
 Option | Description
 --- | ---
---master="127.0.0.1:5050"  | Mesos Master
--n, --lines=0              | Output the last N lines
--t, --tail=false           | Tail output
---all=false                | Show all tasks
---framework=""             | Filter FrameworkID
---fuzzy=true               | Fuzzy match Task name or Task ID prefix
---name=""                  | Filter Task name
---id=""                    | Filter Task ID
---state=[]                 | Filter based on Task state
+-f, --follow=false  | follow the content
+-n, --nlines=0      | number of lines to read
+-m, --master=""     | mesos master
+
 
 
 ### Example
 ```bash
-mesos cat --id=nginx.d6592dd7-d52a-11e6-bb61-6e9c129136b0 stdout
-```
+mesos read 5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-S0  /opt/mesos/0/slaves/5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-S0/frameworks/5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-0115/executors/807fe9fa-55df-40fa-ab4f-20e359d51d43/runs/4295fd85-5023-4b0d-a9c8-1d9bdce309ba/stdout
 
-```
 172.17.0.1 - - [08/Jan/2017:03:35:46 +0000] "GET / HTTP/1.1" 200 612 "http://localhost:8080/ui/" "Mozilla/5.0 (X11;...
 ...
-```
-
-## top
-`mesos top` provides a top-like overview of tasks, agent, and cluster status (work in progress)
-
-```
-mesos-cli top [OPTIONS] COMMAND [arg...]
-```
-
-### Example
-```bash
-mesos top
 ```
 
 ## local
@@ -246,9 +223,3 @@ Option | Description
 --profile | Profile to load
 --config | Path to load config from
 --level | Level of verbosity
-
-## TODO
-
-  * Support multiple TaskInfos array
-  * Improve logging output
-  * mesos top
