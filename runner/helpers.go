@@ -28,7 +28,9 @@ func LogEvent(e *scheduler.Event, log *zap.Logger) {
 		log.Info(
 			"EVENT",
 			eventType,
-			zap.String("data", string(e.Update.Status.Data)),
+			//zap.String("data", string(e.Update.Status.Data)),
+			zap.String("state", e.Update.Status.State.String()),
+			zap.String("message", e.Update.Status.Message),
 		)
 	case scheduler.Event_OFFERS:
 		log.Info(
