@@ -3,6 +3,7 @@ package state
 import (
 	"fmt"
 	"github.com/mesos/mesos-go"
+	"github.com/satori/go.uuid"
 )
 
 type ErrTaskTerminal struct {
@@ -15,7 +16,7 @@ func (e ErrTaskTerminal) Error() string {
 		"Task %s entered a terminal state %s %s",
 		e.task.Value,
 		e.status.State.String(),
-		*e.status.Message,
+		e.status.Message,
 	)
 }
 
@@ -43,6 +44,8 @@ func New(tasks []*mesos.TaskInfo, restart bool) *State {
 		restart: restart,
 	}
 	for _, task := range tasks {
+		// Assign a random task id
+		task.TaskID.Value = uuid.NewV4().String()
 		// Push the task into pending chan
 		state.pending <- task
 		// Record the TaskID
@@ -93,10 +96,18 @@ loop:
 					err = ErrTaskTerminal{status.TaskID, status}
 					break loop
 				}
-				// Push the task back into the pending chan
-				s.pending <- s.tasks[status.TaskID.Value]
+
+				task := s.tasks[status.TaskID.Value]
+				// Remove the old ID
+				delete(s.tasks, task.TaskID.Value)
+				delete(s.states, task.TaskID.Value)
+				// Generate a new ID
+				task.TaskID.Value = uuid.NewV4().String()
 				// Reset the task state
-				s.states[status.TaskID.Value] = mesos.TaskState(0)
+				s.tasks[task.TaskID.Value] = task
+				s.states[task.TaskID.Value] = mesos.TaskState(0)
+				// Push the task back into the pending chan
+				s.pending <- s.tasks[task.TaskID.Value]
 				continue loop
 			}
 			s.states[status.TaskID.Value] = *status.State
