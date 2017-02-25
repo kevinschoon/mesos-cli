@@ -22,15 +22,15 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS] [CMD]"
 		var (
-			command  = cmd.StringArg("CMD", "", "Command to run")
-			user     = cmd.StringOpt("user", "root", "User to run as")
-			shell    = cmd.BoolOpt("shell", false, "Run as a shell command")
-			hostname = cmd.StringOpt("master", "", "Mesos master")
-			path     = cmd.StringOpt("path", "", "Path to a JSON file containing Mesos TaskInfos")
-			dump     = cmd.BoolOpt("json", false, "Dump the task to JSON instead of running it")
-			docker   = cmd.BoolOpt("docker", false, "Run as a Docker container")
-			image    = cmd.StringOpt("image", "", "Image to run")
-			restart  = cmd.BoolOpt("restart", false, "Restart container on failure")
+			command   = cmd.StringArg("CMD", "", "Command to run")
+			user      = cmd.StringOpt("user", "root", "User to run as")
+			shell     = cmd.BoolOpt("shell", false, "Run as a shell command")
+			hostname  = cmd.StringOpt("master", "", "Mesos master")
+			tasksPath = cmd.StringOpt("tasks", "", "Path to a JSON file containing Mesos TaskInfos")
+			dump      = cmd.BoolOpt("json", false, "Dump the task to JSON instead of running it")
+			docker    = cmd.BoolOpt("docker", false, "Run as a Docker container")
+			image     = cmd.StringOpt("image", "", "Image to run")
+			restart   = cmd.BoolOpt("restart", false, "Restart container on failure")
 
 			// Docker-only options
 			privileged = cmd.BoolOpt("privileged", false, "Run in privileged mode [docker only]")
@@ -55,7 +55,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 
 		cmd.Action = func() {
 
-			if *command == "" && *image == "" && *path == "" {
+			if *command == "" && *image == "" && *tasksPath == "" {
 				cmd.PrintLongHelp()
 				os.Exit(1)
 			}
@@ -63,7 +63,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 			profile := profile()
 			tasks := []*mesos.TaskInfo{}
 
-			if *path == "" {
+			if *tasksPath == "" {
 				profile.With(
 					config.Master(*hostname),
 					config.Restart(*restart),
@@ -89,7 +89,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 				)
 				tasks = append(tasks, profile.Task())
 			} else {
-				infos, err := config.TasksFromFile(*path)
+				infos, err := config.TasksFromFile(*tasksPath)
 				failOnErr(err)
 				for _, info := range infos {
 					tasks = append(tasks, info)
