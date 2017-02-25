@@ -7,7 +7,7 @@ DARWIN_PACKAGE ?= mesos-cli-darwin-amd64
 
 
 .PHONY: all
-all: test vet bench build
+all: test vet bench docs build
 
 .PHONY: test
 test:
@@ -19,6 +19,10 @@ vet:
 .PHONY: bench
 bench:
 	cd filter && go test -test.bench Messages*
+
+.PHONY: docs
+docs:
+	cd docs && hugo -d .
 
 .PHONY: build
 build:
