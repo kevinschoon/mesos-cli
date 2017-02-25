@@ -286,6 +286,18 @@ func TaskInfo(info *mesos.TaskInfo) Option {
 	}
 }
 
+func TasksFromFile(path string) ([]*mesos.TaskInfo, error) {
+	raw, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	tasks := []*mesos.TaskInfo{}
+	if err = json.Unmarshal(raw, &tasks); err != nil {
+		return nil, err
+	}
+	return tasks, nil
+}
+
 func portOffer(port uint32) mesos.Resource {
 	return mesos.Resource{
 		Name:   "ports",

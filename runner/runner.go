@@ -133,10 +133,10 @@ func handler(profile *config.Profile, db *state.State, ctx *Context) events.Hand
 	return wrap.Apply(Mux(db, ctx))
 }
 
-func Run(profile *config.Profile) (err error) {
+func Run(profile *config.Profile, tasks []*mesos.TaskInfo) (err error) {
 	var wg sync.WaitGroup
 	// TODO: Expand to support multiple tasks and LaunchGroups/Nested Containers
-	db := state.New([]*mesos.TaskInfo{profile.Task()}, profile.Restart)
+	db := state.New(tasks, profile.Restart)
 	sched := controller.New()
 	ctx := &Context{
 		caller:    caller(profile),

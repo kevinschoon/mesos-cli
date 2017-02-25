@@ -8,7 +8,6 @@ import (
 	"github.com/mesos/mesos-go"
 	"github.com/vektorlab/mesos-cli/config"
 	"github.com/vektorlab/mesos-cli/runner"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -27,7 +26,7 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 			user     = cmd.StringOpt("user", "root", "User to run as")
 			shell    = cmd.BoolOpt("shell", false, "Run as a shell command")
 			hostname = cmd.StringOpt("master", "", "Mesos master")
-			path     = cmd.StringOpt("path", "", "Path to a JSON file containing a Mesos TaskInfo")
+			path     = cmd.StringOpt("path", "", "Path to a JSON file containing Mesos TaskInfos")
 			dump     = cmd.BoolOpt("json", false, "Dump the task to JSON instead of running it")
 			docker   = cmd.BoolOpt("docker", false, "Run as a Docker container")
 			image    = cmd.StringOpt("image", "", "Image to run")
@@ -56,57 +55,60 @@ func (r *Run) Init(profile Profile) func(*cli.Cmd) {
 
 		cmd.Action = func() {
 
-			if *command == "" && *image == "" {
+			if *command == "" && *image == "" && *path == "" {
 				cmd.PrintLongHelp()
 				os.Exit(1)
 			}
 
-			if *path != "" {
-				raw, err := ioutil.ReadFile(*path)
+			profile := profile()
+			tasks := []*mesos.TaskInfo{}
+
+			if *path == "" {
+				profile.With(
+					config.Master(*hostname),
+					config.Restart(*restart),
+					config.Command(
+						config.CommandOpts{
+							Value: *command,
+							User:  *user,
+							Shell: *shell,
+							Envs:  *envs,
+						},
+					),
+					config.Container(
+						config.ContainerOpts{
+							Docker:       *docker,
+							Privileged:   *privileged,
+							Image:        *image,
+							Parameters:   *params,
+							Volumes:      *volumes,
+							NetworkMode:  net.Mode(),
+							PortMappings: *mappings,
+						},
+					),
+				)
+				tasks = append(tasks, profile.Task())
+			} else {
+				infos, err := config.TasksFromFile(*path)
 				failOnErr(err)
-				info := &mesos.TaskInfo{}
-				failOnErr(json.Unmarshal(raw, info))
-				profile().With(config.TaskInfo(info))
+				for _, info := range infos {
+					tasks = append(tasks, info)
+				}
 			}
 
-			profile().With(
-				config.Master(*hostname),
-				config.Restart(*restart),
-				config.Command(
-					config.CommandOpts{
-						Value: *command,
-						User:  *user,
-						Shell: *shell,
-						Envs:  *envs,
-					},
-				),
-				config.Container(
-					config.ContainerOpts{
-						Docker:       *docker,
-						Privileged:   *privileged,
-						Image:        *image,
-						Parameters:   *params,
-						Volumes:      *volumes,
-						NetworkMode:  net.Mode(),
-						PortMappings: *mappings,
-					},
-				),
-			)
-
 			if *dump {
-				raw, err := json.MarshalIndent(profile().TaskInfo, " ", " ")
+				raw, err := json.MarshalIndent(tasks, " ", " ")
 				failOnErr(err)
 				fmt.Println(string(raw))
 				os.Exit(0)
 			}
-			failOnErr(runner.Run(profile()))
+			failOnErr(runner.Run(profile, tasks))
 		}
 	}
 }
 
 type NetworkMode struct {
 	mode string
-	//mode mesos.ContainerInfo_DockerInfo_Network
 }
 
 func (n *NetworkMode) Set(v string) error {
