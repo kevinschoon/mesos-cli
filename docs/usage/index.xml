@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Usages on mesos-cli</title>
+    <link>https://vektorlab.github.io/mesos-cli/usage/index.xml</link>
+    <description>Recent content in Usages on mesos-cli</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 25 Feb 2017 15:37:28 +0800</lastBuildDate>
+    <atom:link href="https://vektorlab.github.io/mesos-cli/usage/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Usage</title>
+      <link>https://vektorlab.github.io/mesos-cli/usage/</link>
+      <pubDate>Sat, 25 Feb 2017 15:37:28 +0800</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/usage/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; is broken into several subcommands, you can find detailed options for each command by passing
+the adding the &lt;code&gt;--help&lt;/code&gt; flag.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mesos --help
+
+Usage: mesos-cli [OPTIONS] COMMAND [arg...]
+
+Alternative Apache Mesos CLI
+
+Options:
+  --profile=&amp;quot;default&amp;quot;                      Profile to load
+  --config=&amp;quot;/home/kevin/.mesos-cli.json&amp;quot;   Path to load config from
+  --debug=false                            Enable debugging
+  --version                                Show the version and exit
+
+Commands:
+  agents       List Mesos Agents
+  list         List files in a Mesos sandbox
+  local        Run a local Mesos cluster
+  read         Read the contents of a file
+  run          Run tasks on Mesos
+  tasks        List Mesos tasks
+  top          Display a Mesos top interface
+
+Run &#39;mesos-cli COMMAND --help&#39; for more information on a command.
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>list</title>
+      <link>https://vektorlab.github.io/mesos-cli/usage/list/</link>
+      <pubDate>Sat, 25 Feb 2017 15:35:21 +0800</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/usage/list/</guid>
+      <description>
+
+&lt;p&gt;List the sandbox directory of a task&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Usage: mesos-cli list [OPTIONS] ID PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;options&#34;&gt;Options&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;master=&amp;ldquo;127.0.0.1:5050&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Mesos Master&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;-a, &amp;ndash;absolute=false&lt;/td&gt;
+&lt;td&gt;Show absolute file paths&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;all=false&lt;/td&gt;
+&lt;td&gt;Show all tasks&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;framework=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Filter FrameworkID&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;fuzzy=true&lt;/td&gt;
+&lt;td&gt;Fuzzy match Task name or Task ID prefix&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;name=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Filter Task name&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;id=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Filter Task ID&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;state=[]&lt;/td&gt;
+&lt;td&gt;Filter based on Task state&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mesos list --master http://localhost:5050 5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-S0  /opt/mesos/0/slaves/5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-S0/frameworks/5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-0115/executors/807fe9fa-55df-40fa-ab4f-20e359d51d43/runs/4295fd85-5023-4b0d-a9c8-1d9bdce309ba
+
+UID 	GID 	MODE      	MODIFIED                     	SIZE  	PATH
+root	root	-rw-r--r--	2017-01-07 22:35:46 -0500 EST	1527  	stderr
+root	root	-rw-r--r--	2017-01-08 17:39:03 -0500 EST	642717	stdout
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>read</title>
+      <link>https://vektorlab.github.io/mesos-cli/usage/read/</link>
+      <pubDate>Sat, 25 Feb 2017 15:35:20 +0800</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/usage/read/</guid>
+      <description>
+
+&lt;p&gt;Read the contents of a file on the given agent at the given path&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mesos-cli read [OPTIONS] TASKID FILE
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;options&#34;&gt;Options&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;-f, &amp;ndash;follow=false&lt;/td&gt;
+&lt;td&gt;follow the content&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;-n, &amp;ndash;nlines=0&lt;/td&gt;
+&lt;td&gt;number of lines to read&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;-m, &amp;ndash;master=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;mesos master&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mesos read 5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-S0  /opt/mesos/0/slaves/5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-S0/frameworks/5b7a7d41-1f2a-4b6d-93fd-48354d7fa785-0115/executors/807fe9fa-55df-40fa-ab4f-20e359d51d43/runs/4295fd85-5023-4b0d-a9c8-1d9bdce309ba/stdout
+
+172.17.0.1 - - [08/Jan/2017:03:35:46 +0000] &amp;quot;GET / HTTP/1.1&amp;quot; 200 612 &amp;quot;http://localhost:8080/ui/&amp;quot; &amp;quot;Mozilla/5.0 (X11;...
+...
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>agents</title>
+      <link>https://vektorlab.github.io/mesos-cli/usage/agents/</link>
+      <pubDate>Sat, 25 Feb 2017 15:35:12 +0800</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/usage/agents/</guid>
+      <description>&lt;p&gt;List all Mesos Agents running on the target cluster.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Usage: mesos-cli agents [OPTIONS]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;master=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Mesos Master&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>run</title>
+      <link>https://vektorlab.github.io/mesos-cli/usage/run/</link>
+      <pubDate>Sat, 25 Feb 2017 15:35:09 +0800</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/usage/run/</guid>
+      <description>
+
+&lt;p&gt;Launch a lightweight scheduler for running containers on the target cluster.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Usage: mesos-cli run [OPTIONS] [CMD]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;user=&amp;ldquo;root&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;User to run as&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;shell=false&lt;/td&gt;
+&lt;td&gt;Run as a shell command&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;master=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Mesos master&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;path=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Path to a JSON file containing a Mesos TaskInfo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;json=false&lt;/td&gt;
+&lt;td&gt;Dump the task to JSON instead of running it&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;docker=false&lt;/td&gt;
+&lt;td&gt;Run as a Docker container&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;image=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Image to run&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;restart=false&lt;/td&gt;
+&lt;td&gt;Restart container on failure&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;privileged=false&lt;/td&gt;
+&lt;td&gt;Run in privileged mode [docker only]&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;-e, &amp;ndash;env=&lt;/td&gt;
+&lt;td&gt;Environment variables&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;-v, &amp;ndash;volume=&lt;/td&gt;
+&lt;td&gt;Container volume mappings&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;net=BRIDGE&lt;/td&gt;
+&lt;td&gt;Network Mode [Docker only]&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;param=&lt;/td&gt;
+&lt;td&gt;Freeform Docker parameters [Docker only]&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;-p, &amp;ndash;port=&lt;/td&gt;
+&lt;td&gt;Port mappings [Docker only]&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;examples&#34;&gt;Examples&lt;/h3&gt;
+
+&lt;p&gt;Launch a new task with the Mesos containerizer and restart it on exit&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;    mesos run --restart --shell &#39;echo $(date); sleep 2&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Run an app with Docker and keep it online&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;    mesos run --restart --docker -p 31000:80 --image nginx:latest 
+    mesos tasks --state TASK_RUNNING # Check it&#39;s state
+    curl localhost:31000
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>local</title>
+      <link>https://vektorlab.github.io/mesos-cli/usage/local/</link>
+      <pubDate>Sat, 25 Feb 2017 15:35:05 +0800</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/usage/local/</guid>
+      <description>
+
+&lt;p&gt;Launch a local Mesos cluster for development and testing purposes. This command requires that you have Docker installed locally, and uses the [vektorcloud/mesos](&amp;ldquo;&lt;a href=&#34;https://github.com/vektorcloud/mesos&amp;quot;&#34;&gt;https://github.com/vektorcloud/mesos&amp;quot;&lt;/a&gt;) image.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mesos-cli local [OPTIONS] COMMAND [arg...]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;commands&#34;&gt;Commands&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Command&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;up&lt;/td&gt;
+&lt;td&gt;Start the local cluster&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;down&lt;/td&gt;
+&lt;td&gt;Stop the local cluster&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;status&lt;/td&gt;
+&lt;td&gt;Display the status of the local cluster&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;rm&lt;/td&gt;
+&lt;td&gt;Remove the local cluster&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;global-options&#34;&gt;Global Options&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;profile&lt;/td&gt;
+&lt;td&gt;Profile to load&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;config&lt;/td&gt;
+&lt;td&gt;Path to load config from&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;level&lt;/td&gt;
+&lt;td&gt;Level of verbosity&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>tasks</title>
+      <link>https://vektorlab.github.io/mesos-cli/usage/tasks/</link>
+      <pubDate>Sat, 25 Feb 2017 15:35:05 +0800</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/usage/tasks/</guid>
+      <description>
+
+&lt;p&gt;List and filter tasks on the target cluster.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mesos-cli tasks [OPTIONS]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;options&#34;&gt;Options&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;master=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Mesos master&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;truncate=true&lt;/td&gt;
+&lt;td&gt;Truncate long values&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;task=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Filter by task id&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;fuzzy=true&lt;/td&gt;
+&lt;td&gt;Fuzzy matching on string values&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;state=[]&lt;/td&gt;
+&lt;td&gt;filter by task state&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mesos tasks --state &amp;quot;TASK_FINISHED&amp;quot;
+
+ID        FRAMEWORK STATE         CPU MEM GPU DISK
+mesos-cli b620d6e2  TASK_FINISHED 0.1 128 0   32  
+mesos-cli b620d6e2  TASK_FINISHED 0.1 128 0   32  
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/usage/</loc>
+    <lastmod>2017-02-25T15:37:28+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/usage/list/</loc>
+    <lastmod>2017-02-25T15:35:21+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/usage/read/</loc>
+    <lastmod>2017-02-25T15:35:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/getting-started/</loc>
+    <lastmod>2017-02-25T15:35:12+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/usage/agents/</loc>
+    <lastmod>2017-02-25T15:35:12+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/usage/run/</loc>
+    <lastmod>2017-02-25T15:35:09+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/usage/local/</loc>
+    <lastmod>2017-02-25T15:35:05+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/usage/tasks/</loc>
+    <lastmod>2017-02-25T15:35:05+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/getting-started/</loc>
+    <lastmod>2017-02-25T15:35:12+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/usage/</loc>
+    <lastmod>2017-02-25T15:37:28+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/</loc>
+    <lastmod>2017-02-25T15:37:28+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+</urlset>

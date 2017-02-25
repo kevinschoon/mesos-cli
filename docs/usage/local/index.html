@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="generator" content="Hugo 0.18.1" />
+    <meta name="description" content="">
+
+
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+
+    
+    <title>local</title>
+    <link href="https://vektorlab.github.io/mesos-cli/css/nucleus.css" rel="stylesheet">
+    <link href="https://vektorlab.github.io/mesos-cli/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://vektorlab.github.io/mesos-cli/css/hybrid.css" rel="stylesheet">
+    <link href="https://vektorlab.github.io/mesos-cli/css/featherlight.min.css" rel="stylesheet">
+    <link href="https://vektorlab.github.io/mesos-cli/css/perfect-scrollbar.min.css" rel="stylesheet">
+    <link href="https://vektorlab.github.io/mesos-cli/css/horsey.css" rel="stylesheet">
+    <link href="https://vektorlab.github.io/mesos-cli/css/theme.css" rel="stylesheet">
+    <link href="https://vektorlab.github.io/mesos-cli/css/hugo-theme.css" rel="stylesheet">
+    <script src="https://vektorlab.github.io/mesos-cli/js/jquery-2.x.min.js"></script>
+    <style type="text/css">:root #header + #content > #left > #rlblock_left
+    {display:none !important;}</style>
+    <link href="/css/vektor.css" rel="stylesheet">
+
+  </head>
+  <body class="" data-url="/mesos-cli/usage/local/">
+    <nav id="sidebar">
+  <div id="header-wrapper">
+    <div id="header">
+      <img src="/img/logo.png" alt="logo" />
+<h1 style="color: #fff; font-size: 2rem;"> mesos-cli </h1>
+
+    </div>
+    
+</div>
+
+
+  <div class="highlightable">
+    <ul class="topics">
+      
+      
+        
+      
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/mesos-cli/getting-started/">
+        <a href="/mesos-cli/getting-started/">
+          <span>
+            
+             Getting Started
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  parent" data-nav-id="/mesos-cli/usage/">
+        <a href="/mesos-cli/usage/">
+          <span>
+            
+             Usage
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/mesos-cli/usage/list/">
+              <a href="/mesos-cli/usage/list/">
+                <span>list     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/mesos-cli/usage/read/">
+              <a href="/mesos-cli/usage/read/">
+                <span>read     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/mesos-cli/usage/agents/">
+              <a href="/mesos-cli/usage/agents/">
+                <span>agents     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/mesos-cli/usage/run/">
+              <a href="/mesos-cli/usage/run/">
+                <span>run     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item active" data-nav-id="/mesos-cli/usage/local/">
+              <a href="/mesos-cli/usage/local/">
+                <span>local     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/mesos-cli/usage/tasks/">
+              <a href="/mesos-cli/usage/tasks/">
+                <span>tasks     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+    </ul>
+    <hr>
+     
+    <section id="footer">
+      <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fa fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+    </section>
+  </div>
+</nav>
+
+        <section id="body">
+        <div id="overlay"></div>
+
+        <div class="padding highlightable">
+
+            <div id="top-bar">
+              
+              <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                  <span id="sidebar-toggle-span">
+                      <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                        <i class="fa fa-bars"></i>
+                      </a>
+                  </span>
+                
+                
+                
+                
+                  
+                
+                  
+                    
+                    
+                <a href="/mesos-cli/usage/" itemprop="url"><span itemprop="title">Usage</span></a> <i class="fa fa-angle-right"></i>
+                    
+                  
+                
+                <span itemprop="title"> local</span>
+              </div>
+              
+
+            </div>
+            
+    	        <div id="body-inner">
+                
+                <h1>local</h1>
+                
+
+
+
+<p>Launch a local Mesos cluster for development and testing purposes. This command requires that you have Docker installed locally, and uses the [vektorcloud/mesos](&ldquo;<a href="https://github.com/vektorcloud/mesos&quot;">https://github.com/vektorcloud/mesos&quot;</a>) image.</p>
+
+<pre><code>mesos-cli local [OPTIONS] COMMAND [arg...]
+</code></pre>
+
+<h3 id="commands">Commands</h3>
+
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>up</td>
+<td>Start the local cluster</td>
+</tr>
+
+<tr>
+<td>down</td>
+<td>Stop the local cluster</td>
+</tr>
+
+<tr>
+<td>status</td>
+<td>Display the status of the local cluster</td>
+</tr>
+
+<tr>
+<td>rm</td>
+<td>Remove the local cluster</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="global-options">Global Options</h2>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>&ndash;profile</td>
+<td>Profile to load</td>
+</tr>
+
+<tr>
+<td>&ndash;config</td>
+<td>Path to load config from</td>
+</tr>
+
+<tr>
+<td>&ndash;level</td>
+<td>Level of verbosity</td>
+</tr>
+</tbody>
+</table>
+
+
+      
+      </div>
+    </div>
+
+    <div id="navigation">
+        
+        
+        
+    </div>
+
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://vektorlab.github.io/mesos-cli/js/clipboard.min.js"></script>
+    <script src="https://vektorlab.github.io/mesos-cli/js/perfect-scrollbar.min.js"></script>
+    <script src="https://vektorlab.github.io/mesos-cli/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="https://vektorlab.github.io/mesos-cli/js/jquery.sticky-kit.min.js"></script>
+    <script src="https://vektorlab.github.io/mesos-cli/js/featherlight.min.js"></script>
+    <script src="https://vektorlab.github.io/mesos-cli/js/html5shiv-printshiv.min.js"></script>
+    <script src="https://vektorlab.github.io/mesos-cli/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://vektorlab.github.io/mesos-cli/js/modernizr.custom.71422.js"></script>
+    <script src="https://vektorlab.github.io/mesos-cli/js/learn.js"></script>
+    <script src="https://vektorlab.github.io/mesos-cli/js/hugo-learn.js"></script>
+    
+
+  </body>
+</html>
+

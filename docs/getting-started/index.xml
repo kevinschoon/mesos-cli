@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Getting-starteds on mesos-cli</title>
+    <link>https://vektorlab.github.io/mesos-cli/getting-started/index.xml</link>
+    <description>Recent content in Getting-starteds on mesos-cli</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 25 Feb 2017 15:35:12 +0800</lastBuildDate>
+    <atom:link href="https://vektorlab.github.io/mesos-cli/getting-started/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Getting Started</title>
+      <link>https://vektorlab.github.io/mesos-cli/getting-started/</link>
+      <pubDate>Sat, 25 Feb 2017 15:35:12 +0800</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/getting-started/</guid>
+      <description>
+
+&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; is a command-line tool for running containers on and interacting with &lt;a href=&#34;http://mesos.apache.com&#34;&gt;Apache Mesos&lt;/a&gt;. It is designed to be lightweight and more featureful than the &lt;a href=&#34;https://github.com/apache/mesos/tree/master/src/cli&#34;&gt;native&lt;/a&gt; CLI tool provided with Apache Mesos. Additionally, it seeks to act as a stand-alone and extensible task scheduler on Mesos.&lt;/p&gt;
+
+&lt;p&gt;By interacting entirely with the new Mesos HTTP &lt;a href=&#34;http://mesos.apache.org/documentation/latest/scheduler-http-api/&#34;&gt;scheduler&lt;/a&gt; API as a general purpose Mesos framework, &lt;strong&gt;mesos-cli&lt;/strong&gt; does not require the Mesos Master server to establish a direct network connection to it, which makes it more flexible than other frameworks.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;mesos-cli is under active development and not yet considered stable!&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;distinctive-features-roadmap&#34;&gt;Distinctive Features &amp;amp; Roadmap&lt;/h1&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Feature&lt;/th&gt;
+&lt;th&gt;ready&lt;/th&gt;
+&lt;th&gt;roadmap&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Built ontop of the new Mesos HTTP V1 API&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Simple installation without platform specific libmesos drivers&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Streamimg sandbox file content content to console (including task stdout and stderr)&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Effortlessly run a local Mesos cluster&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Pure integration with Apache Mesos outside of the DC/OS ecosystem&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Lightweight scheduler for running arbitrary containers&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Ability to search and filter across most Mesos types&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Support for running Mesos TaskGroups (pods)&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Ability to search and filter across most Mesos types&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Top-like interface for monitoring a cluster&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Subscribe to and monitor master event stream&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Export to task to Kubernetes or Marathon&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Run support running docker-compose files directly against Mesos&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Full support for latest Mesos features, e.g health checks, etc&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h1 id=&#34;installation&#34;&gt;Installation&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; can be installed by downloading the latest release for your architecture or it can be run from a Docker container.&lt;/p&gt;
+
+&lt;h2 id=&#34;binaries&#34;&gt;Binaries&lt;/h2&gt;
+
+&lt;p&gt;You can download binary packages for your platform (linux/darwin) from the &lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases&#34;&gt;releases&lt;/a&gt; section on Github or below:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-linux-amd64-v0.0.5&#34;&gt;Linux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-darwin-amd64-v0.0.5&#34;&gt;OSX/Darwin&lt;/a&gt;
+
+
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;docker&#34;&gt;Docker&lt;/h2&gt;
+
+&lt;p&gt;A Docker container is also available for download:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;docker pull quay.io/vektorcloud/mesos-cli
+docker run --rm -ti quay.io/vektorcloud/mesos-cli tasks --master http://your-mesos-server:5050
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t mind potentially overriding the default &lt;code&gt;mesos&lt;/code&gt; command you may add an alias:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; # With a binary installation
+ echo &amp;quot;alias mesos=mesos-cli&amp;quot; &amp;gt;&amp;gt; $HOME/.bashrc
+ # With a Docker installation
+ echo &amp;quot;alias mesos=docker run --rm -ti -v $HOME/.meoss-cli.json:/root/.mesos-cli.json --net host quay.io/vektorcloud/mesos-cli &amp;gt;&amp;gt; $HOME/.bashrc&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;test-your-installation&#34;&gt;Test Your Installation&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; has built-in support for launching a local cluster for testing and development.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# Launch a local Mesos cluster
+mesos local up
+# List agents running on your cluster
+mesos agents
+
+ID                                      HOSTNAME                CPUS    MEM     GPUS    DISK   
+48bf0171-3c61-49ed-9e05-3ac1a9274478-S0 localhost.localdomain   4.00    6867.00 0.00    5114.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;profiles&#34;&gt;Profiles&lt;/h3&gt;
+
+&lt;p&gt;You can configure &amp;ldquo;profiles&amp;rdquo; by creating a JSON file at &lt;code&gt;~/.mesos-cli.json&lt;/code&gt;. This file is automatically created for you the first time you invoke &lt;strong&gt;mesos-cli&lt;/strong&gt;. You can choose an alternative profile for use with any command. All options specified in a profile may be overriden by specifying the same option on the command-line.&lt;/p&gt;
+
+&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;profiles&amp;quot;: {
+    &amp;quot;default&amp;quot;: {
+      &amp;quot;master&amp;quot;: &amp;quot;http://localhost:5050&amp;quot;,
+      &amp;quot;debug&amp;quot;: false,
+      &amp;quot;restart&amp;quot;: false
+    },
+    &amp;quot;production&amp;quot;: {
+      &amp;quot;master&amp;quot;: &amp;quot;http://localhost:5050&amp;quot;,
+      &amp;quot;debug&amp;quot;: false,
+      &amp;quot;restart&amp;quot;: true
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
