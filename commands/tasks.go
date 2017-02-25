@@ -23,6 +23,7 @@ func (t *Tasks) Init(profile Profile) func(*cli.Cmd) {
 			truncate = cmd.BoolOpt("truncate", true, "Truncate long values")
 			taskID   = cmd.StringOpt("task", "", "Filter by task id")
 			fuzzy    = cmd.BoolOpt("fuzzy", true, "Fuzzy matching on string values")
+			all      = cmd.BoolOpt("a all", false, "Show all tasks")
 			states   = states([]*mesos.TaskState{})
 		)
 		cmd.VarOpt("state", &states, "filter by task state")
@@ -33,8 +34,14 @@ func (t *Tasks) Init(profile Profile) func(*cli.Cmd) {
 			).CallMaster(master.GetTasks())
 			failOnErr(err)
 
-			filters := []filter.Filter{
-				filter.TaskStateFilter(states),
+			filters := []filter.Filter{}
+
+			if len(states) > 0 && !*all {
+				filters = append(filters, filter.TaskStateFilter(states))
+			} else {
+				if !*all {
+					filters = append(filters, filter.TaskStateFilter([]*mesos.TaskState{mesos.TASK_RUNNING.Enum()}))
+				}
 			}
 
 			if *taskID != "" {
@@ -66,10 +73,6 @@ func (t *Tasks) Init(profile Profile) func(*cli.Cmd) {
 }
 
 type states []*mesos.TaskState
-
-//func NewStates() States {
-//	return states{mesos.TASK_RUNNING.Enum()}
-//}
 
 func (o *states) String() string {
 	return fmt.Sprintf("%v", *o)
