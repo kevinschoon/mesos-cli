@@ -1,0 +1,4 @@
+languageCode = "en-us"
+title = "mesos-cli"
+baseurl = "https://vektorlab.github.io/mesos-cli"
+theme = "hugo-theme-learn"
