@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Notices on mesos-cli</title>
+    <link>https://vektorlab.github.io/mesos-cli/notice/index.xml</link>
+    <description>Recent content in Notices on mesos-cli</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="https://vektorlab.github.io/mesos-cli/notice/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Notice</title>
+      <link>https://vektorlab.github.io/mesos-cli/notice/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/notice/</guid>
+      <description>
+
+&lt;h1 id=&#34;credits&#34;&gt;Credits&lt;/h1&gt;
+
+&lt;h4 id=&#34;documentation&#34;&gt;Documentation&lt;/h4&gt;
+
+&lt;p&gt;This documentation is generated with &lt;a href=&#34;http://gohugo.io&#34;&gt;Hugo&lt;/a&gt; and the &lt;a href=&#34;https://github.com/matcornic/hugo-theme-learn&#34;&gt;hugo-theme-learn&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;licenses&#34;&gt;Licenses&lt;/h1&gt;
+
+&lt;h4 id=&#34;apache-mesos&#34;&gt;Apache Mesos&lt;/h4&gt;
+
+&lt;p&gt;Apache Mesos is licensed under &lt;a href=&#34;https://raw.githubusercontent.com/apache/mesos/master/LICENSE&#34;&gt;Apache License 2.0&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;mesos-go&#34;&gt;mesos-go&lt;/h4&gt;
+
+&lt;p&gt;The &lt;a href=&#34;https://github.com/mesos/mesos-go&#34;&gt;mesos-go&lt;/a&gt; project is licensed under &lt;a href=&#34;https://raw.githubusercontent.com/mesos/mesos-go/master/LICENSE&#34;&gt;Apache License 2.0&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

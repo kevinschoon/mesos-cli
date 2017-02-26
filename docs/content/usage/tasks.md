@@ -1,8 +1,7 @@
 +++
-date = "2017-02-25T15:35:05+08:00"
 title = "tasks"
-draft = false
-
+next = "/notice"
+prev = "/usage/run"
 +++
 
 List and filter tasks on the target cluster.

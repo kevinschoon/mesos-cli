@@ -1,8 +1,8 @@
 +++
-date = "2017-02-25T15:37:28+08:00"
 title = "Usage"
-draft = false
-
+chapter = true
+next = "/usage/agents"
+prev = "/getting-started"
 +++
 
 **mesos-cli** is broken into several subcommands, you can find detailed options for each command by passing

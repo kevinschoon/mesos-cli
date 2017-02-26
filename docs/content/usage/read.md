@@ -1,8 +1,7 @@
 +++
-date = "2017-02-25T15:35:20+08:00"
 title = "read"
-draft = false
-
+next = "/usage/run"
+prev = "/usage/local"
 +++
 
 Read the contents of a file on the given agent at the given path

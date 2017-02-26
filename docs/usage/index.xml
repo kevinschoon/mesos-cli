@@ -6,13 +6,12 @@
     <description>Recent content in Usages on mesos-cli</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Feb 2017 15:37:28 +0800</lastBuildDate>
     <atom:link href="https://vektorlab.github.io/mesos-cli/usage/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Usage</title>
       <link>https://vektorlab.github.io/mesos-cli/usage/</link>
-      <pubDate>Sat, 25 Feb 2017 15:37:28 +0800</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://vektorlab.github.io/mesos-cli/usage/</guid>
       <description>&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; is broken into several subcommands, you can find detailed options for each command by passing
@@ -45,9 +44,38 @@ Run &#39;mesos-cli COMMAND --help&#39; for more information on a command.
     </item>
     
     <item>
+      <title>agents</title>
+      <link>https://vektorlab.github.io/mesos-cli/usage/agents/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/usage/agents/</guid>
+      <description>&lt;p&gt;List all Mesos Agents running on the target cluster.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Usage: mesos-cli agents [OPTIONS]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;master=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Mesos Master&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+    </item>
+    
+    <item>
       <title>list</title>
       <link>https://vektorlab.github.io/mesos-cli/usage/list/</link>
-      <pubDate>Sat, 25 Feb 2017 15:35:21 +0800</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://vektorlab.github.io/mesos-cli/usage/list/</guid>
       <description>
@@ -122,9 +150,85 @@ root	root	-rw-r--r--	2017-01-08 17:39:03 -0500 EST	642717	stdout
     </item>
     
     <item>
+      <title>local</title>
+      <link>https://vektorlab.github.io/mesos-cli/usage/local/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/usage/local/</guid>
+      <description>
+
+&lt;p&gt;Launch a local Mesos cluster for development and testing purposes. This command requires that you have Docker installed locally, and uses the [vektorcloud/mesos](&amp;ldquo;&lt;a href=&#34;https://github.com/vektorcloud/mesos&amp;quot;&#34;&gt;https://github.com/vektorcloud/mesos&amp;quot;&lt;/a&gt;) image.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mesos-cli local [OPTIONS] COMMAND [arg...]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;commands&#34;&gt;Commands&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Command&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;up&lt;/td&gt;
+&lt;td&gt;Start the local cluster&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;down&lt;/td&gt;
+&lt;td&gt;Stop the local cluster&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;status&lt;/td&gt;
+&lt;td&gt;Display the status of the local cluster&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;rm&lt;/td&gt;
+&lt;td&gt;Remove the local cluster&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;global-options&#34;&gt;Global Options&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;profile&lt;/td&gt;
+&lt;td&gt;Profile to load&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;config&lt;/td&gt;
+&lt;td&gt;Path to load config from&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;level&lt;/td&gt;
+&lt;td&gt;Level of verbosity&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+    </item>
+    
+    <item>
       <title>read</title>
       <link>https://vektorlab.github.io/mesos-cli/usage/read/</link>
-      <pubDate>Sat, 25 Feb 2017 15:35:20 +0800</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://vektorlab.github.io/mesos-cli/usage/read/</guid>
       <description>
@@ -173,38 +277,9 @@ root	root	-rw-r--r--	2017-01-08 17:39:03 -0500 EST	642717	stdout
     </item>
     
     <item>
-      <title>agents</title>
-      <link>https://vektorlab.github.io/mesos-cli/usage/agents/</link>
-      <pubDate>Sat, 25 Feb 2017 15:35:12 +0800</pubDate>
-      
-      <guid>https://vektorlab.github.io/mesos-cli/usage/agents/</guid>
-      <description>&lt;p&gt;List all Mesos Agents running on the target cluster.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Usage: mesos-cli agents [OPTIONS]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Option&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&amp;ndash;master=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
-&lt;td&gt;Mesos Master&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-</description>
-    </item>
-    
-    <item>
       <title>run</title>
       <link>https://vektorlab.github.io/mesos-cli/usage/run/</link>
-      <pubDate>Sat, 25 Feb 2017 15:35:09 +0800</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://vektorlab.github.io/mesos-cli/usage/run/</guid>
       <description>
@@ -312,85 +387,9 @@ root	root	-rw-r--r--	2017-01-08 17:39:03 -0500 EST	642717	stdout
     </item>
     
     <item>
-      <title>local</title>
-      <link>https://vektorlab.github.io/mesos-cli/usage/local/</link>
-      <pubDate>Sat, 25 Feb 2017 15:35:05 +0800</pubDate>
-      
-      <guid>https://vektorlab.github.io/mesos-cli/usage/local/</guid>
-      <description>
-
-&lt;p&gt;Launch a local Mesos cluster for development and testing purposes. This command requires that you have Docker installed locally, and uses the [vektorcloud/mesos](&amp;ldquo;&lt;a href=&#34;https://github.com/vektorcloud/mesos&amp;quot;&#34;&gt;https://github.com/vektorcloud/mesos&amp;quot;&lt;/a&gt;) image.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;mesos-cli local [OPTIONS] COMMAND [arg...]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;commands&#34;&gt;Commands&lt;/h3&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Command&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;up&lt;/td&gt;
-&lt;td&gt;Start the local cluster&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;down&lt;/td&gt;
-&lt;td&gt;Stop the local cluster&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;status&lt;/td&gt;
-&lt;td&gt;Display the status of the local cluster&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;rm&lt;/td&gt;
-&lt;td&gt;Remove the local cluster&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;global-options&#34;&gt;Global Options&lt;/h2&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Option&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&amp;ndash;profile&lt;/td&gt;
-&lt;td&gt;Profile to load&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&amp;ndash;config&lt;/td&gt;
-&lt;td&gt;Path to load config from&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&amp;ndash;level&lt;/td&gt;
-&lt;td&gt;Level of verbosity&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-</description>
-    </item>
-    
-    <item>
       <title>tasks</title>
       <link>https://vektorlab.github.io/mesos-cli/usage/tasks/</link>
-      <pubDate>Sat, 25 Feb 2017 15:35:05 +0800</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://vektorlab.github.io/mesos-cli/usage/tasks/</guid>
       <description>

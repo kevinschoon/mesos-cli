@@ -1,8 +1,7 @@
 +++
-draft = false
-date = "2017-02-25T15:35:21+08:00"
 title = "list"
-
+next = "/usage/local"
+prev = "/usage/agents"
 +++
 
 List the sandbox directory of a task

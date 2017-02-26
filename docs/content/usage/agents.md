@@ -1,8 +1,7 @@
 +++
-date = "2017-02-25T15:35:12+08:00"
 title = "agents"
-draft = false
-
+prev = "/usage"
+next = "/usage/list"
 +++
 
 List all Mesos Agents running on the target cluster.
