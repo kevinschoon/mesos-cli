@@ -5,7 +5,7 @@ next = "/usage"
 prev = "/getting-started/installation"
 +++
 
- If you don't mind potentially overriding the default `mesos` command you may add an alias:
+It is recommended that you create a bash alias for mesos-cli, note that if the default `mesos` executable is installed on your system this will override it.
 
      # With a binary installation
      echo "alias mesos=mesos-cli" >> $HOME/.bashrc

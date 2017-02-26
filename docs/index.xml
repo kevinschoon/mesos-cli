@@ -16,7 +16,7 @@
       <guid>https://vektorlab.github.io/mesos-cli/getting-started/</guid>
       <description>
 
-&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; is a command-line tool for running containers on and interacting with &lt;a href=&#34;http://mesos.apache.com&#34;&gt;Apache Mesos&lt;/a&gt;. It is designed to be lightweight and more featureful than the &lt;a href=&#34;https://github.com/apache/mesos/tree/master/src/cli&#34;&gt;native&lt;/a&gt; CLI tool provided with Apache Mesos. Additionally, it seeks to act as a stand-alone and extensible task scheduler on Mesos.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; is a command-line tool for running containers on and interacting with &lt;a href=&#34;http://mesos.apache.com&#34;&gt;Apache Mesos&lt;/a&gt;. It is designed to be lightweight and more featureful than the &lt;a href=&#34;https://github.com/apache/mesos/tree/master/src/cli&#34;&gt;native&lt;/a&gt; CLI tool provided with Mesos. Additionally, it seeks to act as a stand-alone and extensible task scheduler on Mesos.&lt;/p&gt;
 
 &lt;p&gt;By interacting entirely with the new Mesos HTTP &lt;a href=&#34;http://mesos.apache.org/documentation/latest/scheduler-http-api/&#34;&gt;scheduler&lt;/a&gt; API as a general purpose Mesos framework, &lt;strong&gt;mesos-cli&lt;/strong&gt; does not require the Mesos Master server to establish a direct network connection to it, which makes it more flexible than other frameworks.&lt;/p&gt;
 
@@ -71,13 +71,7 @@
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td&gt;Ability to search and filter across most Mesos types&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;✓&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Support for running Mesos TaskGroups (pods)&lt;/td&gt;
+&lt;td&gt;Full support for latest Mesos features, e.g health checks, etc&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;✓&lt;/td&gt;
 &lt;/tr&gt;
@@ -101,50 +95,12 @@
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td&gt;Export to task to Kubernetes or Marathon&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;✓&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Run support running docker-compose files directly against Mesos&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;✓&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Full support for latest Mesos features, e.g health checks, etc&lt;/td&gt;
+&lt;td&gt;Run docker-compose files directly against Mesos&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;✓&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-
-&lt;h1 id=&#34;installation&#34;&gt;Installation&lt;/h1&gt;
-
-&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; can be installed by downloading the latest release for your architecture or it can be run from a Docker container.&lt;/p&gt;
-
-&lt;h2 id=&#34;binaries&#34;&gt;Binaries&lt;/h2&gt;
-
-&lt;p&gt;You can download binary packages for your platform (linux/darwin) from the &lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases&#34;&gt;releases&lt;/a&gt; section on Github or below:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-linux-amd64-v0.0.5&#34;&gt;Linux&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-darwin-amd64-v0.0.5&#34;&gt;OSX/Darwin&lt;/a&gt;
-
-
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;docker&#34;&gt;Docker&lt;/h2&gt;
-
-&lt;p&gt;A Docker container is also available for download:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;docker pull quay.io/vektorcloud/mesos-cli
-docker run --rm -ti quay.io/vektorcloud/mesos-cli tasks --master http://your-mesos-server:5050
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
 </description>
     </item>
     
@@ -156,7 +112,7 @@ docker run --rm -ti quay.io/vektorcloud/mesos-cli tasks --master http://your-mes
       <guid>https://vektorlab.github.io/mesos-cli/getting-started/configuration/</guid>
       <description>
 
-&lt;p&gt;If you don&amp;rsquo;t mind potentially overriding the default &lt;code&gt;mesos&lt;/code&gt; command you may add an alias:&lt;/p&gt;
+&lt;p&gt;It is recommended that you create a bash alias for mesos-cli, note that if the default &lt;code&gt;mesos&lt;/code&gt; executable is installed on your system this will override it.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt; # With a binary installation
  echo &amp;quot;alias mesos=mesos-cli&amp;quot; &amp;gt;&amp;gt; $HOME/.bashrc
@@ -233,32 +189,93 @@ ID                                      HOSTNAME                CPUS    MEM     
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://vektorlab.github.io/mesos-cli/usage/</guid>
-      <description>&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; is broken into several subcommands, you can find detailed options for each command by passing
-the adding the &lt;code&gt;--help&lt;/code&gt; flag.&lt;/p&gt;
+      <description>
 
-&lt;pre&gt;&lt;code&gt;$ mesos --help
+&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; is broken into several subcommands, you can find detailed options for each command by passing the &lt;code&gt;--help&lt;/code&gt; flag.&lt;/p&gt;
 
-Usage: mesos-cli [OPTIONS] COMMAND [arg...]
-
-Alternative Apache Mesos CLI
-
-Options:
-  --profile=&amp;quot;default&amp;quot;                      Profile to load
-  --config=&amp;quot;/home/kevin/.mesos-cli.json&amp;quot;   Path to load config from
-  --debug=false                            Enable debugging
-  --version                                Show the version and exit
-
-Commands:
-  agents       List Mesos Agents
-  list         List files in a Mesos sandbox
-  local        Run a local Mesos cluster
-  read         Read the contents of a file
-  run          Run tasks on Mesos
-  tasks        List Mesos tasks
-  top          Display a Mesos top interface
-
-Run &#39;mesos-cli COMMAND --help&#39; for more information on a command.
+&lt;pre&gt;&lt;code&gt;Usage: mesos-cli [OPTIONS] COMMAND [arg...]
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;options&#34;&gt;Options&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;profile=&amp;ldquo;default&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Profile to load&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;config=&amp;ldquo;/home/kevin/.mesos-cli.json&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Path to load config from&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;debug=false&lt;/td&gt;
+&lt;td&gt;Enable debugging&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;version&lt;/td&gt;
+&lt;td&gt;Show the version and exit&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;subcommands&#34;&gt;Subcommands&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Command&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;agents&lt;/td&gt;
+&lt;td&gt;List Mesos Agents&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;list&lt;/td&gt;
+&lt;td&gt;List files in a Mesos sandbox&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;local&lt;/td&gt;
+&lt;td&gt;Run a local Mesos cluster&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;read&lt;/td&gt;
+&lt;td&gt;Read the contents of a file&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;run&lt;/td&gt;
+&lt;td&gt;Run tasks on Mesos&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;tasks&lt;/td&gt;
+&lt;td&gt;List Mesos tasks&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;top&lt;/td&gt;
+&lt;td&gt;Display a Mesos top interface&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 </description>
     </item>
     
@@ -268,10 +285,14 @@ Run &#39;mesos-cli COMMAND --help&#39; for more information on a command.
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://vektorlab.github.io/mesos-cli/usage/agents/</guid>
-      <description>&lt;p&gt;List all Mesos Agents running on the target cluster.&lt;/p&gt;
+      <description>
+
+&lt;p&gt;List all Mesos Agents running on the target cluster.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;Usage: mesos-cli agents [OPTIONS]
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;options&#34;&gt;Options&lt;/h3&gt;
 
 &lt;table&gt;
 &lt;thead&gt;
@@ -308,7 +329,6 @@ Run &#39;mesos-cli COMMAND --help&#39; for more information on a command.
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-linux-amd64-v0.0.5&#34;&gt;Linux&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-darwin-amd64-v0.0.5&#34;&gt;OSX/Darwin&lt;/a&gt;
-
 
 &lt;br /&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -408,12 +428,40 @@ root	root	-rw-r--r--	2017-01-08 17:39:03 -0500 EST	642717	stdout
       <guid>https://vektorlab.github.io/mesos-cli/usage/local/</guid>
       <description>
 
-&lt;p&gt;Launch a local Mesos cluster for development and testing purposes. This command requires that you have Docker installed locally, and uses the [vektorcloud/mesos](&amp;ldquo;&lt;a href=&#34;https://github.com/vektorcloud/mesos&amp;quot;&#34;&gt;https://github.com/vektorcloud/mesos&amp;quot;&lt;/a&gt;) image.&lt;/p&gt;
+&lt;p&gt;Launch a local Mesos cluster for development and testing purposes. This command requires that you have Docker installed locally, and uses the &lt;a href=&#34;https://github.com/vektorcloud/mesos&#34;&gt;vektorcloud/mesos&lt;/a&gt; image.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;mesos-cli local [OPTIONS] COMMAND [arg...]
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;commands&#34;&gt;Commands&lt;/h3&gt;
+&lt;h2 id=&#34;options&#34;&gt;Options&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;profile&lt;/td&gt;
+&lt;td&gt;Profile to load&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;config&lt;/td&gt;
+&lt;td&gt;Path to load config from&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;level&lt;/td&gt;
+&lt;td&gt;Level of verbosity&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;subcommands&#34;&gt;Subcommands&lt;/h3&gt;
 
 &lt;table&gt;
 &lt;thead&gt;
@@ -442,34 +490,6 @@ root	root	-rw-r--r--	2017-01-08 17:39:03 -0500 EST	642717	stdout
 &lt;tr&gt;
 &lt;td&gt;rm&lt;/td&gt;
 &lt;td&gt;Remove the local cluster&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;global-options&#34;&gt;Global Options&lt;/h2&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Option&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&amp;ndash;profile&lt;/td&gt;
-&lt;td&gt;Profile to load&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&amp;ndash;config&lt;/td&gt;
-&lt;td&gt;Path to load config from&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&amp;ndash;level&lt;/td&gt;
-&lt;td&gt;Level of verbosity&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -539,6 +559,8 @@ root	root	-rw-r--r--	2017-01-08 17:39:03 -0500 EST	642717	stdout
 
 &lt;pre&gt;&lt;code&gt;Usage: mesos-cli run [OPTIONS] [CMD]
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;options&#34;&gt;Options&lt;/h3&gt;
 
 &lt;table&gt;
 &lt;thead&gt;

@@ -9,6 +9,8 @@ Launch a lightweight scheduler for running containers on the target cluster.
 ```
 Usage: mesos-cli run [OPTIONS] [CMD]
 ```
+### Options
+
 Option| Description
 ------------------- |--------------------
   --user="root"     |       User to run as

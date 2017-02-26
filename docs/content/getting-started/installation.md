@@ -14,7 +14,6 @@ You can download binary packages for your platform (linux/darwin) from the [rele
   - [Linux](https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-linux-amd64-v0.0.5)
   - [OSX/Darwin](https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-darwin-amd64-v0.0.5)
 
-
      
 ## Docker
 

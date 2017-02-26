@@ -16,7 +16,7 @@
       <guid>https://vektorlab.github.io/mesos-cli/getting-started/</guid>
       <description>
 
-&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; is a command-line tool for running containers on and interacting with &lt;a href=&#34;http://mesos.apache.com&#34;&gt;Apache Mesos&lt;/a&gt;. It is designed to be lightweight and more featureful than the &lt;a href=&#34;https://github.com/apache/mesos/tree/master/src/cli&#34;&gt;native&lt;/a&gt; CLI tool provided with Apache Mesos. Additionally, it seeks to act as a stand-alone and extensible task scheduler on Mesos.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; is a command-line tool for running containers on and interacting with &lt;a href=&#34;http://mesos.apache.com&#34;&gt;Apache Mesos&lt;/a&gt;. It is designed to be lightweight and more featureful than the &lt;a href=&#34;https://github.com/apache/mesos/tree/master/src/cli&#34;&gt;native&lt;/a&gt; CLI tool provided with Mesos. Additionally, it seeks to act as a stand-alone and extensible task scheduler on Mesos.&lt;/p&gt;
 
 &lt;p&gt;By interacting entirely with the new Mesos HTTP &lt;a href=&#34;http://mesos.apache.org/documentation/latest/scheduler-http-api/&#34;&gt;scheduler&lt;/a&gt; API as a general purpose Mesos framework, &lt;strong&gt;mesos-cli&lt;/strong&gt; does not require the Mesos Master server to establish a direct network connection to it, which makes it more flexible than other frameworks.&lt;/p&gt;
 
@@ -71,13 +71,7 @@
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td&gt;Ability to search and filter across most Mesos types&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;✓&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Support for running Mesos TaskGroups (pods)&lt;/td&gt;
+&lt;td&gt;Full support for latest Mesos features, e.g health checks, etc&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;✓&lt;/td&gt;
 &lt;/tr&gt;
@@ -101,50 +95,12 @@
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td&gt;Export to task to Kubernetes or Marathon&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;✓&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Run support running docker-compose files directly against Mesos&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;✓&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Full support for latest Mesos features, e.g health checks, etc&lt;/td&gt;
+&lt;td&gt;Run docker-compose files directly against Mesos&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;✓&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-
-&lt;h1 id=&#34;installation&#34;&gt;Installation&lt;/h1&gt;
-
-&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; can be installed by downloading the latest release for your architecture or it can be run from a Docker container.&lt;/p&gt;
-
-&lt;h2 id=&#34;binaries&#34;&gt;Binaries&lt;/h2&gt;
-
-&lt;p&gt;You can download binary packages for your platform (linux/darwin) from the &lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases&#34;&gt;releases&lt;/a&gt; section on Github or below:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-linux-amd64-v0.0.5&#34;&gt;Linux&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-darwin-amd64-v0.0.5&#34;&gt;OSX/Darwin&lt;/a&gt;
-
-
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;docker&#34;&gt;Docker&lt;/h2&gt;
-
-&lt;p&gt;A Docker container is also available for download:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;docker pull quay.io/vektorcloud/mesos-cli
-docker run --rm -ti quay.io/vektorcloud/mesos-cli tasks --master http://your-mesos-server:5050
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
 </description>
     </item>
     
@@ -165,7 +121,6 @@ docker run --rm -ti quay.io/vektorcloud/mesos-cli tasks --master http://your-mes
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-linux-amd64-v0.0.5&#34;&gt;Linux&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-darwin-amd64-v0.0.5&#34;&gt;OSX/Darwin&lt;/a&gt;
-
 
 &lt;br /&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -188,7 +143,7 @@ docker run --rm -ti quay.io/vektorcloud/mesos-cli tasks --master http://your-mes
       <guid>https://vektorlab.github.io/mesos-cli/getting-started/configuration/</guid>
       <description>
 
-&lt;p&gt;If you don&amp;rsquo;t mind potentially overriding the default &lt;code&gt;mesos&lt;/code&gt; command you may add an alias:&lt;/p&gt;
+&lt;p&gt;It is recommended that you create a bash alias for mesos-cli, note that if the default &lt;code&gt;mesos&lt;/code&gt; executable is installed on your system this will override it.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt; # With a binary installation
  echo &amp;quot;alias mesos=mesos-cli&amp;quot; &amp;gt;&amp;gt; $HOME/.bashrc

@@ -31,7 +31,6 @@
     <div id="header">
       <a href="/mesos-cli/getting-started"><img src="/mesos-cli/img/logo.png" alt="logo" /></a>
 <h1 style="color: #fff; font-size: 2rem;"> mesos-cli </h1>
-<a href="https://github.com/vektorlab/mesos-cli">github</a>
 
     </div>
     
@@ -241,12 +240,40 @@
 
 
 
-<p>Launch a local Mesos cluster for development and testing purposes. This command requires that you have Docker installed locally, and uses the [vektorcloud/mesos](&ldquo;<a href="https://github.com/vektorcloud/mesos&quot;">https://github.com/vektorcloud/mesos&quot;</a>) image.</p>
+<p>Launch a local Mesos cluster for development and testing purposes. This command requires that you have Docker installed locally, and uses the <a href="https://github.com/vektorcloud/mesos">vektorcloud/mesos</a> image.</p>
 
 <pre><code>mesos-cli local [OPTIONS] COMMAND [arg...]
 </code></pre>
 
-<h3 id="commands">Commands</h3>
+<h2 id="options">Options</h2>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>&ndash;profile</td>
+<td>Profile to load</td>
+</tr>
+
+<tr>
+<td>&ndash;config</td>
+<td>Path to load config from</td>
+</tr>
+
+<tr>
+<td>&ndash;level</td>
+<td>Level of verbosity</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="subcommands">Subcommands</h3>
 
 <table>
 <thead>
@@ -275,34 +302,6 @@
 <tr>
 <td>rm</td>
 <td>Remove the local cluster</td>
-</tr>
-</tbody>
-</table>
-
-<h2 id="global-options">Global Options</h2>
-
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Description</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>&ndash;profile</td>
-<td>Profile to load</td>
-</tr>
-
-<tr>
-<td>&ndash;config</td>
-<td>Path to load config from</td>
-</tr>
-
-<tr>
-<td>&ndash;level</td>
-<td>Level of verbosity</td>
 </tr>
 </tbody>
 </table>
