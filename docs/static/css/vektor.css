@@ -1,7 +1,11 @@
 /* background behind the logo*/
 #header {
-    background: #345979;
-    border-color: #323431;
+  background: #345979;
+  border-color: #323431;
+}
+
+#header img {
+  width: 90px;
 }
 
 #header-wrapper {
