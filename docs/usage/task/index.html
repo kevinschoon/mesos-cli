@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="/mesos-cli/img/favicon.ico" type="image/x-icon" />
 
     
-    <title>configuration</title>
+    <title>task</title>
     <link href="https://vektorlab.github.io/mesos-cli/css/nucleus.css" rel="stylesheet">
     <link href="https://vektorlab.github.io/mesos-cli/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://vektorlab.github.io/mesos-cli/css/hybrid.css" rel="stylesheet">
@@ -25,7 +25,7 @@
     <link href="/mesos-cli/css/vektor.css" rel="stylesheet">
 
   </head>
-  <body class="" data-url="/mesos-cli/getting-started/configuration/">
+  <body class="" data-url="/mesos-cli/usage/task/">
     <nav id="sidebar">
   <div id="header-wrapper">
     <div id="header">
@@ -63,7 +63,7 @@
       
       
       
-      <li class="dd-item  parent" data-nav-id="/mesos-cli/getting-started/">
+      <li class="dd-item  " data-nav-id="/mesos-cli/getting-started/">
         <a href="/mesos-cli/getting-started/">
           <span>
             
@@ -85,7 +85,7 @@
           
           
           
-            <li class="dd-item active" data-nav-id="/mesos-cli/getting-started/configuration/">
+            <li class="dd-item " data-nav-id="/mesos-cli/getting-started/configuration/">
               <a href="/mesos-cli/getting-started/configuration/">
                 <span>configuration     </i></span>
               </a>
@@ -104,7 +104,7 @@
       
       
       
-      <li class="dd-item  " data-nav-id="/mesos-cli/usage/">
+      <li class="dd-item  parent" data-nav-id="/mesos-cli/usage/">
         <a href="/mesos-cli/usage/">
           <span>
             
@@ -158,7 +158,7 @@
           
           
           
-            <li class="dd-item " data-nav-id="/mesos-cli/usage/task/">
+            <li class="dd-item active" data-nav-id="/mesos-cli/usage/task/">
               <a href="/mesos-cli/usage/task/">
                 <span>task     </i></span>
               </a>
@@ -225,17 +225,17 @@
                 
                 
                   
-                    
-                    
-                <a href="/mesos-cli/getting-started/" itemprop="url"><span itemprop="title">Getting Started</span></a> <i class="fa fa-angle-right"></i>
-                    
-                  
                 
                   
                 
                   
+                    
+                    
+                <a href="/mesos-cli/usage/" itemprop="url"><span itemprop="title">Usage</span></a> <i class="fa fa-angle-right"></i>
+                    
+                  
                 
-                <span itemprop="title"> configuration</span>
+                <span itemprop="title"> task</span>
               </div>
               
 
@@ -243,52 +243,117 @@
             
     	        <div id="body-inner">
                 
-                <h1>configuration</h1>
+                <h1>task</h1>
                 
 
 
 
-<p>It is recommended that you create a bash alias for mesos-cli, note that if the default <code>mesos</code> executable is installed on your system this will override it.</p>
+<p>Task generates a valid mesos TaskInfo <a href="https://github.com/apache/mesos/blob/master/include/mesos/v1/mesos.proto#L1551">protobuf object</a> and encodes it in JSON (or YAML). It (soon!) will support flags for the entire gamut of options available to a Mesos scheduler. It is intended that this command be conconvenient for use wih the <a href="/mesos-cli/usage/run">run</a> command.</p>
 
-<pre><code> # With a binary installation
- echo &quot;alias mesos=mesos-cli&quot; &gt;&gt; $HOME/.bashrc
- # With a Docker installation
- echo &quot;alias mesos=docker run --rm -ti -v $HOME/.meoss-cli.json:/root/.mesos-cli.json --net host quay.io/vektorcloud/mesos-cli &gt;&gt; $HOME/.bashrc&quot;
+<pre><code>Usage: mesos-cli task [OPTIONS] [CMD]
 </code></pre>
 
-<h3 id="test-your-installation">Test Your Installation</h3>
+<h3 id="arguments">Arguments</h3>
 
-<p><strong>mesos-cli</strong> has built-in support for launching a local cluster for testing and development.</p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
 
-<pre><code># Launch a local Mesos cluster
-mesos local up
-# List agents running on your cluster
-mesos agents
+<tbody>
+<tr>
+<td>CMD=&ldquo;&rdquo;</td>
+<td>Command to run</td>
+</tr>
+</tbody>
+</table>
 
-ID                                      HOSTNAME                CPUS    MEM     GPUS    DISK   
-48bf0171-3c61-49ed-9e05-3ac1a9274478-S0 localhost.localdomain   4.00    6867.00 0.00    5114.0
+<h3 id="options">Options</h3>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>&ndash;name=mesos-cli</td>
+<td>Friendly task name</td>
+</tr>
+
+<tr>
+<td>&ndash;user=&ldquo;root&rdquo;</td>
+<td>User to run as</td>
+</tr>
+
+<tr>
+<td>&ndash;shell=false</td>
+<td>Run as a shell command</td>
+</tr>
+
+<tr>
+<td>-e, &ndash;env=</td>
+<td>Environment variables</td>
+</tr>
+
+<tr>
+<td>-v, &ndash;volume=</td>
+<td>Container volumes</td>
+</tr>
+
+<tr>
+<td>-i, &ndash;image=</td>
+<td>Image to run</td>
+</tr>
+
+<tr>
+<td>&ndash;privileged=false</td>
+<td>Run Docker in privileged mode</td>
+</tr>
+
+<tr>
+<td>-p, &ndash;port=</td>
+<td>Port mappings [Docker only]</td>
+</tr>
+
+<tr>
+<td>&ndash;param=</td>
+<td>Docker parameters [Docker only]</td>
+</tr>
+
+<tr>
+<td>&ndash;net=BRIDGE</td>
+<td>Network Mode [Docker only]</td>
+</tr>
+
+<tr>
+<td>&ndash;encoding=&ldquo;json&rdquo;</td>
+<td>Output encoding [json/yaml]</td>
+</tr>
+
+<tr>
+<td>&ndash;docker=false</td>
+<td>Run as a Docker container</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="examples">Examples</h3>
+
+<p>Launch a new task with the Mesos containerizer.</p>
+
+<pre><code class="language-bash">mesos task --shell 'echo $(date); sleep 2' | mesos run -
 </code></pre>
 
-<h3 id="profiles">Profiles</h3>
+<p>Generate a new task and save it to a file.</p>
 
-<p>You can configure &ldquo;profiles&rdquo; by creating a JSON file at <code>~/.mesos-cli.json</code>. This file is automatically created for you the first time you invoke <strong>mesos-cli</strong>. You can choose an alternative profile for use with any command. All options specified in a profile may be overriden by specifying the same option on the command-line.</p>
-
-<p>Example:</p>
-
-<pre><code class="language-json">{
-  &quot;profiles&quot;: {
-    &quot;default&quot;: {
-      &quot;master&quot;: &quot;http://localhost:5050&quot;,
-      &quot;debug&quot;: false,
-      &quot;restart&quot;: false
-    },
-    &quot;production&quot;: {
-      &quot;master&quot;: &quot;http://localhost:5050&quot;,
-      &quot;debug&quot;: false,
-      &quot;restart&quot;: true
-    }
-  }
-}
+<pre><code class="language-bash">mesos task --encoding=yaml --shell 'echo $(date); sleep 2' &gt; my-task.yaml
 </code></pre>
 
 
@@ -298,8 +363,8 @@ ID                                      HOSTNAME                CPUS    MEM     
 
     <div id="navigation">
         
-        <a class="nav nav-prev" href="https://vektorlab.github.io/mesos-cli/getting-started/installation"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://vektorlab.github.io/mesos-cli/usage" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://vektorlab.github.io/mesos-cli/usage/tasks"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://vektorlab.github.io/mesos-cli/usage/run" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

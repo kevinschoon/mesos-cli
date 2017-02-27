@@ -158,6 +158,14 @@
           
           
           
+            <li class="dd-item " data-nav-id="/mesos-cli/usage/task/">
+              <a href="/mesos-cli/usage/task/">
+                <span>task     </i></span>
+              </a>
+            </li>
+          
+          
+          
             <li class="dd-item " data-nav-id="/mesos-cli/usage/tasks/">
               <a href="/mesos-cli/usage/tasks/">
                 <span>tasks     </i></span>
@@ -240,10 +248,29 @@
 
 
 
-<p>Launch a lightweight scheduler for running containers on the target cluster.</p>
+<p>Launch a lightweight scheduler for running containers on the target cluster. Run accepts a JSON or YAML encoded document.
+By default run will attempt to load <code>Mesosfile</code> from the current directory.</p>
 
-<pre><code>Usage: mesos-cli run [OPTIONS] [CMD]
+<pre><code>Usage: mesos-cli run [OPTIONS] FILE
 </code></pre>
+
+<h3 id="arguments">Arguments</h3>
+
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>FILE=&ldquo;Mesosfile&rdquo;</td>
+<td>File containing Mesos TaskInfos, - for stdin</td>
+</tr>
+</tbody>
+</table>
 
 <h3 id="options">Options</h3>
 
@@ -257,73 +284,13 @@
 
 <tbody>
 <tr>
-<td>&ndash;user=&ldquo;root&rdquo;</td>
-<td>User to run as</td>
-</tr>
-
-<tr>
-<td>&ndash;shell=false</td>
-<td>Run as a shell command</td>
-</tr>
-
-<tr>
-<td>&ndash;master=&ldquo;&rdquo;</td>
-<td>Mesos master</td>
-</tr>
-
-<tr>
-<td>&ndash;path=&ldquo;&rdquo;</td>
-<td>Path to a JSON file containing a Mesos TaskInfo</td>
-</tr>
-
-<tr>
-<td>&ndash;json=false</td>
-<td>Dump the task to JSON instead of running it</td>
-</tr>
-
-<tr>
-<td>&ndash;docker=false</td>
-<td>Run as a Docker container</td>
-</tr>
-
-<tr>
-<td>&ndash;image=&ldquo;&rdquo;</td>
-<td>Image to run</td>
+<td>-m, &ndash;master=&ldquo;&rdquo;</td>
+<td>Mesos Master</td>
 </tr>
 
 <tr>
 <td>&ndash;restart=false</td>
-<td>Restart container on failure</td>
-</tr>
-
-<tr>
-<td>&ndash;privileged=false</td>
-<td>Run in privileged mode [docker only]</td>
-</tr>
-
-<tr>
-<td>-e, &ndash;env=</td>
-<td>Environment variables</td>
-</tr>
-
-<tr>
-<td>-v, &ndash;volume=</td>
-<td>Container volume mappings</td>
-</tr>
-
-<tr>
-<td>&ndash;net=BRIDGE</td>
-<td>Network Mode [Docker only]</td>
-</tr>
-
-<tr>
-<td>&ndash;param=</td>
-<td>Freeform Docker parameters [Docker only]</td>
-</tr>
-
-<tr>
-<td>-p, &ndash;port=</td>
-<td>Port mappings [Docker only]</td>
+<td>Restart containers on failure</td>
 </tr>
 </tbody>
 </table>
@@ -332,13 +299,12 @@
 
 <p>Launch a new task with the Mesos containerizer and restart it on exit</p>
 
-<pre><code class="language-bash">    mesos run --restart --shell 'echo $(date); sleep 2'
+<pre><code class="language-bash">mesos task --shell 'echo $(date); sleep 2' | mesos run --restart -
 </code></pre>
 
 <p>Run an app with Docker and keep it online</p>
 
-<pre><code class="language-bash">    mesos run --restart --docker -p 31000:80 --image nginx:latest 
-    mesos tasks --state TASK_RUNNING # Check it's state
+<pre><code class="language-bash">    mesos task --docker -p 31000:80 --image nginx:latest  | mesos run -
     curl localhost:31000
 </code></pre>
 
