@@ -6,7 +6,7 @@ By interacting entirely with the new Mesos HTTP [scheduler](http://mesos.apache.
 
 **mesos-cli is under active development and not yet considered stable!**
 
-Check out the documentation for mesos-cli [here](https://vektorlab.github.com/mesos-cli).
+Check out the documentation for mesos-cli [here](https://vektorlab.github.io/mesos-cli).
 
 
 # Distinctive Features & Roadmap
