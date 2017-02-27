@@ -11,6 +11,7 @@ var Commands = []Command{
 	&Local{},
 	&Read{},
 	&Run{},
+	&Task{},
 	&Tasks{},
 	&Top{},
 }
