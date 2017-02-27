@@ -327,8 +327,8 @@ ID                                      HOSTNAME                CPUS    MEM     
 &lt;p&gt;You can download binary packages for your platform (linux/darwin) from the &lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases&#34;&gt;releases&lt;/a&gt; section on Github or below:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-linux-amd64-v0.0.5&#34;&gt;Linux&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.5/mesos-cli-darwin-amd64-v0.0.5&#34;&gt;OSX/Darwin&lt;/a&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.6/mesos-cli-linux-amd64-v0.0.6&#34;&gt;Linux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.6/mesos-cli-darwin-amd64-v0.0.6&#34;&gt;OSX/Darwin&lt;/a&gt;
 
 &lt;br /&gt;&lt;/li&gt;
 &lt;/ul&gt;
