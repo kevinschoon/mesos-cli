@@ -1,8 +1,7 @@
 package: github.com/vektorlab/mesos-cli
-ignore: 
-  - github.com/fsouza/go-dockerclient
 import:
 - package: github.com/fsouza/go-dockerclient
+- package: github.com/ghodss/yaml
 - package: github.com/gizak/termui
   version: ^2.2.0
 - package: github.com/gogo/protobuf
@@ -13,7 +12,7 @@ import:
 - package: github.com/jawher/mow.cli
 - package: github.com/mesos/mesos-go
   version: operator
-  repo: git@github.com:vektorlab/mesos-go.git
+  repo: https://github.com/vektorlab/mesos-go.git
   vcs: git
   subpackages:
   - agent

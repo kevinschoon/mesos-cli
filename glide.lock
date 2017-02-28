@@ -1,10 +1,50 @@
-hash: dc41c1b8f73eea27cbc592d36c5a5abcfd282c8bfff91dab9f933a40bee9a403
-updated: 2017-02-23T15:48:48.538732295+08:00
+hash: 2554ef895f779742646012559f6452ab262357ba4e90520fd4b939b37bce5a29
+updated: 2017-02-28T05:11:19.492607934Z
 imports:
+- name: github.com/Azure/go-ansiterm
+  version: fa152c58bc15761d0200cb75fe958b89a9d4888e
+  subpackages:
+  - winterm
+- name: github.com/docker/docker
+  version: 7fb83eb7629856756e3ed7b1f20cedc87584354b
+  subpackages:
+  - api/types
+  - api/types/blkiodev
+  - api/types/container
+  - api/types/filters
+  - api/types/mount
+  - api/types/network
+  - api/types/registry
+  - api/types/strslice
+  - api/types/swarm
+  - api/types/versions
+  - opts
+  - pkg/archive
+  - pkg/fileutils
+  - pkg/homedir
+  - pkg/idtools
+  - pkg/ioutils
+  - pkg/jsonlog
+  - pkg/jsonmessage
+  - pkg/longpath
+  - pkg/pools
+  - pkg/promise
+  - pkg/stdcopy
+  - pkg/system
+  - pkg/term
+  - pkg/term/windows
+- name: github.com/docker/go-connections
+  version: 1b14b2d192e2f91cdc2bc6bf9aee0b0e116eed42
+  subpackages:
+  - nat
+- name: github.com/docker/go-units
+  version: 0dadbb0345b35ec7ef35e228dabb8de89a65bf52
+- name: github.com/fsouza/go-dockerclient
+  version: 54fbd1ff920ca5fd5ec53068d513c14c3a25bba9
+- name: github.com/ghodss/yaml
+  version: 04f313413ffd65ce25f2541bfd2b2ceec5c0908c
 - name: github.com/gizak/termui
   version: 24acd523c756fd9728824cdfac66aad9d8982fb7
-  subpackages:
-  - extra
 - name: github.com/gogo/protobuf
   version: 909568be09de550ed094403c2bf8a261b5bb730a
   subpackages:
@@ -14,17 +54,15 @@ imports:
   subpackages:
   - util/strutil
   - util/wordwrap
+- name: github.com/hashicorp/go-cleanhttp
+  version: 3573b8b52aa7b37b9358d966a898feb387f62437
 - name: github.com/jawher/mow.cli
   version: d3ffbc2f98b83e09dc8efd55ecec75eb5fd656ec
-- name: github.com/maruel/panicparse
-  version: ad661195ed0e88491e0f14be6613304e3b1141d6
-  subpackages:
-  - stack
 - name: github.com/mattn/go-runewidth
   version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
 - name: github.com/mesos/mesos-go
   version: 156693d3ee524473464229fedfb853f5527d22ee
-  repo: git@github.com:vektorlab/mesos-go.git
+  repo: https://github.com/vektorlab/mesos-go.git
   vcs: git
   subpackages:
   - agent
@@ -47,10 +85,15 @@ imports:
   - scheduler
   - scheduler/calls
   - scheduler/events
-- name: github.com/mitchellh/go-wordwrap
-  version: ad45545899c7b13c020ea92b2072220eefad42b8
-- name: github.com/nsf/termbox-go
-  version: 3540b76b9c77679aeffd0a47e00243fb0ce47133
+- name: github.com/Microsoft/go-winio
+  version: fff283ad5116362ca252298cfc9b95828956d85d
+- name: github.com/Nvveen/Gotty
+  version: cd527374f1e5bff4938207604a14f2e38a9cf512
+- name: github.com/opencontainers/runc
+  version: c50d024500f3b7ffaf902d3a7b3001edd50285ae
+  subpackages:
+  - libcontainer/system
+  - libcontainer/user
 - name: github.com/pquerna/ffjson
   version: de51d9f018fa9a60153a04c94a031eff81ac4502
   subpackages:
@@ -58,18 +101,32 @@ imports:
   - fflib/v1/internal
 - name: github.com/satori/go.uuid
   version: 879c5887cd475cd7864858769793b2ceb0d44feb
+- name: github.com/Sirupsen/logrus
+  version: 0208149b40d863d2c1a2f8fe5753096a9cf2cc8b
 - name: github.com/vektorlab/toplib
   version: 6d9787e14ce504a552d5b29209964e02f2e802e2
 - name: go.uber.org/atomic
   version: 3b8db5e93c4c02efbc313e17b2e796b0914a01fb
 - name: go.uber.org/zap
-  version: 72313cde80537dd4dc9b7b80eda6d7ed796c4232
+  version: a03b90bc236f3def382f17743518889a31f8187c
   subpackages:
   - buffer
   - internal/bufferpool
   - internal/exit
   - internal/multierror
   - zapcore
+- name: golang.org/x/net
+  version: 906cda9512f77671ab44f8c8563b13a8e707b230
+  subpackages:
+  - context
+  - context/ctxhttp
+- name: golang.org/x/sys
+  version: e4594059fe4cde2daf423055a596c2cd1e6c9adf
+  subpackages:
+  - unix
+  - windows
+- name: gopkg.in/yaml.v2
+  version: a3f3340b5840cee44f372bddb5880fcbc419b46a
 testImports:
 - name: github.com/davecgh/go-spew
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
