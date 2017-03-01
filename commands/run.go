@@ -15,7 +15,7 @@ type Run struct{}
 func (_ Run) Name() string { return "run" }
 func (_ Run) Desc() string { return "Run tasks on Mesos" }
 
-func (_ Run) Init(profile Profile) func(*cli.Cmd) {
+func (_ Run) Init(profile config.ProfileFn) func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS] FILE"
 

@@ -8,6 +8,7 @@ import (
 	"github.com/mesos/mesos-go"
 	"github.com/vektorlab/mesos-cli/commands/flags"
 	"github.com/vektorlab/mesos-cli/commands/options"
+	"github.com/vektorlab/mesos-cli/config"
 )
 
 type Task struct{}
@@ -15,7 +16,7 @@ type Task struct{}
 func (_ Task) Name() string { return "task" }
 func (_ Task) Desc() string { return "Generate a Mesos Task" }
 
-func (_ Task) Init(_ Profile) func(*cli.Cmd) {
+func (_ Task) Init(_ config.ProfileFn) func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 
 		cmd.Spec = "[OPTIONS] [CMD]"

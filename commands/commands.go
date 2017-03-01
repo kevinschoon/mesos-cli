@@ -8,7 +8,6 @@ import (
 var Commands = []Command{
 	&Agents{},
 	&List{},
-	&Local{},
 	&Read{},
 	&Run{},
 	&Task{},
@@ -16,10 +15,8 @@ var Commands = []Command{
 	&Top{},
 }
 
-type Profile func() *config.Profile
-
 type Command interface {
 	Name() string
 	Desc() string
-	Init(Profile) func(*cli.Cmd)
+	Init(config.ProfileFn) func(*cli.Cmd)
 }

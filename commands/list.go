@@ -9,9 +9,7 @@ import (
 	"strings"
 )
 
-type List struct {
-	profile Profile
-}
+type List struct{}
 
 func (_ List) Name() string { return "list" }
 func (_ List) Desc() string { return "List files in a Mesos sandbox" }
@@ -19,7 +17,7 @@ func (_ List) Desc() string { return "List files in a Mesos sandbox" }
 // TODO: The HTTP operator API does not provide a way to pull down the sandbox
 // paths of tasks that are not currently running. Once I work around this I will implement
 // a way to search across all agents from a root path like /<agentid>/<framework>/<executor>/<containerid>/...
-func (l *List) Init(profile Profile) func(*cli.Cmd) {
+func (l *List) Init(profile config.ProfileFn) func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS] ID PATH"
 		var (

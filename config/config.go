@@ -20,6 +20,9 @@ const (
 // Options are functional profile options
 type Option func(*Profile)
 
+// ProfileFn returns a Profile
+type ProfileFn func() *Profile
+
 // Profile contains environment specific options
 type Profile struct {
 	Master  string `json:"master"`
