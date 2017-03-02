@@ -1,7 +1,7 @@
 PACKAGES ?= $(shell go list ./...|grep -v vendor)
 VERSION ?= $(shell git describe)
 GITSHA ?= $(shell git rev-parse HEAD)
-LDFLAGS ?= -X main.Version=$(VERSION) -X main.GitSHA=$(GITSHA)
+LDFLAGS ?= -w -s -X main.Version=$(VERSION) -X main.GitSHA=$(GITSHA)
 LINUX_PACKAGE ?= mesos-cli-linux-amd64
 DARWIN_PACKAGE ?= mesos-cli-darwin-amd64
 
