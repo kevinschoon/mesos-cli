@@ -16,7 +16,7 @@ func Up(fn func() *Client) func(cmd *cli.Cmd) {
 			image, err := client.FindImage(Repository)
 			failOnErr(err)
 			if image == nil || *force {
-				failOnErr(client.PullImage(Repository, "latest"))
+				failOnErr(client.PullImage(Repository))
 				image, err = client.FindImage(Repository)
 				failOnErr(err)
 			}
@@ -25,12 +25,12 @@ func Up(fn func() *Client) func(cmd *cli.Cmd) {
 			if *remove {
 				if container != nil {
 					failOnErr(client.RemoveContainer(container.ID, *force))
-					container, err = client.CreateContainer(ContainerName, image, *envs)
+					container, err = client.CreateContainer(ContainerName, Repository, *envs)
 					failOnErr(err)
 				}
 			}
 			if container == nil {
-				container, err = client.CreateContainer(ContainerName, image, *envs)
+				container, err = client.CreateContainer(ContainerName, Repository, *envs)
 				failOnErr(err)
 			}
 			failOnErr(client.StartContainer(container.ID))

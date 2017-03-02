@@ -2,14 +2,14 @@ package local
 
 import (
 	"fmt"
-	docker "github.com/docker/engine-api/client"
+	docker "github.com/docker/docker/client"
 	"github.com/jawher/mow.cli"
 	"github.com/vektorlab/mesos-cli/config"
 	"os"
 )
 
 const (
-	Repository    string = "quay.io/vektorcloud/mesos"
+	Repository    string = "quay.io/vektorcloud/mesos:latest"
 	ContainerName string = "mesos_cli"
 )
 
