@@ -11,7 +11,7 @@ all: test docs build
 
 .PHONY: test
 test:
-	go $@ -v -race $(PACKAGES)
+	go $@ -v $(PACKAGES)
 	go vet $(PACKAGES)
 	cd filter && go test -test.bench Messages*
 
