@@ -2,19 +2,15 @@ machine:
   services:
     - docker
 
-dependencies:
+compile:
   override:
-    - docker info
+    - docker run --rm -ti -v $PWD:/go/src/github.com/vektorlab/mesos-cli -w /go/src/github.com/vektorlab/mesos-cli quay.io/vektorcloud/go:1.8 sh -c 'glide install && make test && go build -o ./release/mesos-cli-alpine'
     - |
       if [[ "$CIRCLE_BRANCH" == "master" ]]; then
         docker build -t quay.io/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest .
       else
         docker build -t quay.io/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH} .
       fi
-
-test:
-  override:
-    - docker run --rm -ti -v $PWD:/go/src/github.com/vektorlab/mesos-cli -w /go/src/github.com/vektorlab/mesos-cli quay.io/vektorcloud/go:1.8 sh -c 'glide install && make test && go build -o ./release/mesos-cli-alpine'
 
 deployment:
   hub:
