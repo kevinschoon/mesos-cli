@@ -1,9 +1,15 @@
 package: github.com/vektorlab/mesos-cli
 import:
-- package: github.com/fsouza/go-dockerclient
+- package: github.com/vektorlab/toplib
+- package: github.com/docker/docker
+  version: ^17.3.0-ce-rc1
+  subpackages:
+  - api/types
+  - api/types/container
+  - api/types/network
+  - api/types/strslice
+  - client
 - package: github.com/ghodss/yaml
-- package: github.com/gizak/termui
-  version: ^2.2.0
 - package: github.com/gogo/protobuf
   version: ^0.3.0
   subpackages:
@@ -30,9 +36,8 @@ import:
   - scheduler/events
 - package: github.com/satori/go.uuid
   version: ^1.1.0
-- package: github.com/vektorlab/toplib
 - package: go.uber.org/zap
-  version: ^1.0.0-rc.1
+  version: ^1.0.0-rc.2
   subpackages:
   - zapcore
 testImport:

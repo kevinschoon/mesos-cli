@@ -1,50 +1,40 @@
-hash: 2554ef895f779742646012559f6452ab262357ba4e90520fd4b939b37bce5a29
-updated: 2017-02-28T05:11:19.492607934Z
+hash: 4442a19d6ba63589e7ad4ac7b336e438a45aa9c2c71b5eb7164f533ccaa733c8
+updated: 2017-03-02T16:39:56.371863296+08:00
 imports:
-- name: github.com/Azure/go-ansiterm
-  version: fa152c58bc15761d0200cb75fe958b89a9d4888e
+- name: github.com/docker/distribution
+  version: 50133d63723f8fa376e632a853739990a133be16
   subpackages:
-  - winterm
+  - digestset
+  - reference
 - name: github.com/docker/docker
-  version: 7fb83eb7629856756e3ed7b1f20cedc87584354b
+  version: ce07fb6b0f1b8765b92022e45f96bd4349812e06
   subpackages:
   - api/types
   - api/types/blkiodev
   - api/types/container
+  - api/types/events
   - api/types/filters
   - api/types/mount
   - api/types/network
+  - api/types/reference
   - api/types/registry
   - api/types/strslice
   - api/types/swarm
+  - api/types/time
   - api/types/versions
-  - opts
-  - pkg/archive
-  - pkg/fileutils
-  - pkg/homedir
-  - pkg/idtools
-  - pkg/ioutils
-  - pkg/jsonlog
-  - pkg/jsonmessage
-  - pkg/longpath
-  - pkg/pools
-  - pkg/promise
-  - pkg/stdcopy
-  - pkg/system
-  - pkg/term
-  - pkg/term/windows
+  - api/types/volume
+  - client
+  - pkg/tlsconfig
 - name: github.com/docker/go-connections
   version: 1b14b2d192e2f91cdc2bc6bf9aee0b0e116eed42
   subpackages:
   - nat
+  - sockets
+  - tlsconfig
 - name: github.com/docker/go-units
   version: 0dadbb0345b35ec7ef35e228dabb8de89a65bf52
-- name: github.com/fsouza/go-dockerclient
-  version: 54fbd1ff920ca5fd5ec53068d513c14c3a25bba9
 - name: github.com/ghodss/yaml
   version: 04f313413ffd65ce25f2541bfd2b2ceec5c0908c
-- name: github.com/gizak/termui
-  version: 24acd523c756fd9728824cdfac66aad9d8982fb7
 - name: github.com/gogo/protobuf
   version: 909568be09de550ed094403c2bf8a261b5bb730a
   subpackages:
@@ -54,8 +44,6 @@ imports:
   subpackages:
   - util/strutil
   - util/wordwrap
-- name: github.com/hashicorp/go-cleanhttp
-  version: 3573b8b52aa7b37b9358d966a898feb387f62437
 - name: github.com/jawher/mow.cli
   version: d3ffbc2f98b83e09dc8efd55ecec75eb5fd656ec
 - name: github.com/mattn/go-runewidth
@@ -87,13 +75,10 @@ imports:
   - scheduler/events
 - name: github.com/Microsoft/go-winio
   version: fff283ad5116362ca252298cfc9b95828956d85d
-- name: github.com/Nvveen/Gotty
-  version: cd527374f1e5bff4938207604a14f2e38a9cf512
-- name: github.com/opencontainers/runc
-  version: c50d024500f3b7ffaf902d3a7b3001edd50285ae
-  subpackages:
-  - libcontainer/system
-  - libcontainer/user
+- name: github.com/opencontainers/go-digest
+  version: aa2ec055abd10d26d539eb630a92241b781ce4bc
+- name: github.com/pkg/errors
+  version: bfd5150e4e41705ded2129ec33379de1cb90b513
 - name: github.com/pquerna/ffjson
   version: de51d9f018fa9a60153a04c94a031eff81ac4502
   subpackages:
@@ -120,6 +105,7 @@ imports:
   subpackages:
   - context
   - context/ctxhttp
+  - proxy
 - name: golang.org/x/sys
   version: e4594059fe4cde2daf423055a596c2cd1e6c9adf
   subpackages:
