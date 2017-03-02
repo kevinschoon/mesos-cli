@@ -2,7 +2,7 @@ machine:
   services:
     - docker
   environment:
-    build: docker run --rm -ti -v $PWD:/go/src/github.com/vektorlab/mesos-cli -w /go/src/github.com/vektorlab/mesos-cli quay.io/vektorcloud/go:1.8
+    build: "docker run --rm -ti -v $PWD:/go/src/github.com/vektorlab/mesos-cli -w /go/src/github.com/vektorlab/mesos-cli quay.io/vektorcloud/go:1.8"
 
 dependencies:
   override:
@@ -12,7 +12,7 @@ dependencies:
 
 test:
   override:
-    build: $build make test
+    - $build make test
 
 compile:
   override:
