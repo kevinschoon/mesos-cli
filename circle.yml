@@ -7,6 +7,10 @@ dependencies:
     - docker info
     - docker pull quay.io/vektorcloud/go:1.8
 
+test:
+  override:
+    - echo
+
 compile:
   override:
     - docker run --rm -ti -v $PWD:/go/src/github.com/vektorlab/mesos-cli -w /go/src/github.com/vektorlab/mesos-cli quay.io/vektorcloud/go:1.8 sh -c 'glide install && make test && go build -o ./release/mesos-cli-alpine'
