@@ -17,7 +17,7 @@ func (_ Run) Desc() string { return "Run tasks on Mesos" }
 
 func (_ Run) Init(profile config.ProfileFn) func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
-		cmd.Spec = "[OPTIONS] FILE"
+		cmd.Spec = "[OPTIONS] [FILE]"
 
 		var (
 			file     = cmd.StringArg("FILE", "Mesosfile", "File containing Mesos TaskInfos, - for stdin")
