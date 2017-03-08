@@ -797,5 +797,40 @@ mesos-cli b620d6e2  TASK_FINISHED 0.1 128 0   32
 </description>
     </item>
     
+    <item>
+      <title>top</title>
+      <link>https://vektorlab.github.io/mesos-cli/usage/top/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/usage/top/</guid>
+      <description>
+
+&lt;p&gt;Display a Mesos top interface&lt;/p&gt;
+
+&lt;h3 id=&#34;options&#34;&gt;Options&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Option&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;master=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Mesos master&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mesos top
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>
