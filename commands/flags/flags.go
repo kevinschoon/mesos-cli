@@ -14,7 +14,10 @@ var Flags = []Flag{
 	Command,
 	Volumes,
 	Image,
-	Resources,
+	CPUs,
+	GPUs,
+	Memory,
+	Disk,
 	Privileged,
 	PortMapping,
 	Parameters,
@@ -134,27 +137,115 @@ func Image(task *mesos.TaskInfo, cmd *cli.Cmd) {
 	cmd.VarOpt("i image", image, "Image to run")
 }
 
-func Resources(task *mesos.TaskInfo, cmd *cli.Cmd) {
-	task.Resources = []mesos.Resource{
-		mesos.Resource{
-			Name:   "cpus",
-			Type:   mesos.SCALAR.Enum(),
-			Role:   proto.String("*"),
-			Scalar: &mesos.Value_Scalar{Value: 0.1},
+func CPUs(task *mesos.TaskInfo, cmd *cli.Cmd) {
+	cpus := flag{
+		set: func(v string) error {
+			val, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				return err
+			}
+			resource := mesos.Resource{
+				Name:   "cpus",
+				Type:   mesos.SCALAR.Enum(),
+				Role:   proto.String("*"),
+				Scalar: &mesos.Value_Scalar{Value: val},
+			}
+			task.Resources = append(task.Resources, resource)
+			return nil
 		},
-		mesos.Resource{
-			Name:   "mem",
-			Type:   mesos.SCALAR.Enum(),
-			Role:   proto.String("*"),
-			Scalar: &mesos.Value_Scalar{Value: 64.0},
-		},
-		mesos.Resource{
-			Name:   "disk",
-			Type:   mesos.SCALAR.Enum(),
-			Role:   proto.String("*"),
-			Scalar: &mesos.Value_Scalar{Value: 64.0},
+		str: func() string {
+			var value float64
+			v := mesos.Resources(task.Resources).SumScalars(mesos.NamedResources("cpus"))
+			if v != nil {
+				value = v.Value
+			}
+			return fmt.Sprintf("%f", value)
 		},
 	}
+	cmd.VarOpt("cpu", cpus, "CPU resources for this task")
+}
+func GPUs(task *mesos.TaskInfo, cmd *cli.Cmd) {
+	gpus := flag{
+		set: func(v string) error {
+			val, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				return err
+			}
+			resource := mesos.Resource{
+				Name:   "gpus",
+				Type:   mesos.SCALAR.Enum(),
+				Role:   proto.String("*"),
+				Scalar: &mesos.Value_Scalar{Value: val},
+			}
+			task.Resources = append(task.Resources, resource)
+			return nil
+		},
+		str: func() string {
+			var value float64
+			v := mesos.Resources(task.Resources).SumScalars(mesos.NamedResources("gpus"))
+			if v != nil {
+				value = v.Value
+			}
+			return fmt.Sprintf("%f", value)
+		},
+	}
+	cmd.VarOpt("gpu", gpus, "GPU resources for this task")
+}
+
+func Memory(task *mesos.TaskInfo, cmd *cli.Cmd) {
+	memory := flag{
+		set: func(v string) error {
+			val, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				return err
+			}
+			resource := mesos.Resource{
+				Name:   "mem",
+				Type:   mesos.SCALAR.Enum(),
+				Role:   proto.String("*"),
+				Scalar: &mesos.Value_Scalar{Value: val},
+			}
+			task.Resources = append(task.Resources, resource)
+			return nil
+		},
+		str: func() string {
+			var value float64
+			v := mesos.Resources(task.Resources).SumScalars(mesos.NamedResources("mem"))
+			if v != nil {
+				value = v.Value
+			}
+			return fmt.Sprintf("%f", value)
+		},
+	}
+	cmd.VarOpt("memory", memory, "Memory resources for this task")
+}
+
+func Disk(task *mesos.TaskInfo, cmd *cli.Cmd) {
+	disk := flag{
+		set: func(v string) error {
+			val, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				return err
+			}
+			resource := mesos.Resource{
+				Name:   "disk",
+				Type:   mesos.SCALAR.Enum(),
+				Role:   proto.String("*"),
+				Scalar: &mesos.Value_Scalar{Value: val},
+			}
+			task.Resources = append(task.Resources, resource)
+			return nil
+		},
+		str: func() string {
+			var value float64
+			v := mesos.Resources(task.Resources).SumScalars(mesos.NamedResources("disk"))
+			if v != nil {
+				value = v.Value
+			}
+			return fmt.Sprintf("%f", value)
+		},
+	}
+	cmd.VarOpt("disk", disk, "Disk resources for this task")
 }
 
 //

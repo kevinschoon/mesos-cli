@@ -41,12 +41,18 @@ func (_ Task) Init(_ config.ProfileFn) func(*cli.Cmd) {
 		var (
 			encoding = cmd.StringOpt("encoding", "json", "Output encoding [json/yaml]")
 			asDocker = cmd.BoolOpt("docker", false, "Run as a Docker container")
+			role     = cmd.StringOpt("role", "*", "Mesos role")
 		)
 
 		cmd.Action = func() {
 
-			options.AsDocker(*asDocker)(task)
-			options.WithPorts()(task)
+			options.Apply(
+				task,
+				options.WithContainerizer(*asDocker),
+				options.WithPorts(),
+				options.WithDefaultResources(),
+				options.WithRole(*role),
+			)
 
 			out := []*mesos.TaskInfo{task}
 			switch *encoding {
