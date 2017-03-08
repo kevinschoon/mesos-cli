@@ -126,7 +126,7 @@ func zapConfig(debug bool) *zap.Config {
 			NameKey:        "logger",
 			MessageKey:     "msg",
 			StacktraceKey:  "stacktrace",
-			EncodeLevel:    zapcore.CapitalLevelEncoder,
+			EncodeLevel:    zapcore.CapitalColorLevelEncoder,
 			EncodeTime:     zapcore.ISO8601TimeEncoder,
 			EncodeDuration: zapcore.SecondsDurationEncoder,
 		},
