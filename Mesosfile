@@ -1,3 +1,4 @@
+# vi:syntax=yaml
 - agent_id:
     value: ""
   command:
@@ -8,7 +9,7 @@
     user: root
   container:
     docker:
-      image: nginx
+      image: nginx:latest
       network: BRIDGE
       parameters: []
       port_mappings:
@@ -21,6 +22,13 @@
     volumes: null
   name: mesos-cli
   resources:
+  - name: ports
+    ranges:
+      range:
+      - begin: 31000
+        end: 31000
+    role: '*'
+    type: RANGES
   - name: cpus
     role: '*'
     scalar:
@@ -36,13 +44,6 @@
     scalar:
       value: 64
     type: SCALAR
-  - name: ports
-    ranges:
-      range:
-      - begin: 31000
-        end: 31000
-    role: '*'
-    type: RANGES
   task_id:
     value: ""
 
