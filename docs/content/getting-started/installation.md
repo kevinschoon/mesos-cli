@@ -11,8 +11,8 @@ prev = "/getting-started"
 
 You can download binary packages for your platform (linux/darwin) from the [releases](https://github.com/vektorlab/mesos-cli/releases) section on Github or below: 
 
-  - [Linux](https://github.com/vektorlab/mesos-cli/releases/download/v0.0.6/mesos-cli-linux-amd64-v0.0.6)
-  - [OSX/Darwin](https://github.com/vektorlab/mesos-cli/releases/download/v0.0.6/mesos-cli-darwin-amd64-v0.0.6)
+  - [Linux](https://github.com/vektorlab/mesos-cli/releases/download/v0.0.7/mesos-cli-linux-amd64-v0.0.7)
+  - [OSX/Darwin](https://github.com/vektorlab/mesos-cli/releases/download/v0.0.7/mesos-cli-darwin-amd64-v0.0.7)
 
      
 ## Docker
