@@ -3,6 +3,7 @@ package commands
 import (
 	"github.com/jawher/mow.cli"
 	"github.com/vektorlab/mesos-cli/config"
+	"github.com/vektorlab/mesos-cli/helper"
 	"github.com/vektorlab/mesos-cli/pailer"
 	"os"
 )
@@ -23,7 +24,7 @@ func (r *Read) Init(profile config.ProfileFn) func(*cli.Cmd) {
 			hostname = cmd.StringOpt("m master", "", "mesos master")
 		)
 		cmd.Action = func() {
-			caller, err := NewAgentCaller(profile().With(config.Master(*hostname)), *agentID)
+			caller, err := helper.NewAgentCaller(profile().With(config.Master(*hostname)), *agentID)
 			failOnErr(err)
 			pg := &pailer.FilePaginator{
 				Path:   *path,

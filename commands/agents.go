@@ -7,6 +7,7 @@ import (
 	master "github.com/mesos/mesos-go/master/calls"
 	"github.com/vektorlab/mesos-cli/config"
 	"github.com/vektorlab/mesos-cli/filter"
+	"github.com/vektorlab/mesos-cli/helper"
 )
 
 type Agents struct{}
@@ -19,7 +20,7 @@ func (a *Agents) Init(profile config.ProfileFn) func(*cli.Cmd) {
 		cmd.Spec = "[OPTIONS]"
 		hostname := cmd.StringOpt("master", "", "Mesos Master")
 		cmd.Action = func() {
-			resp, err := NewCaller(profile().With(
+			resp, err := helper.NewCaller(profile().With(
 				config.Master(*hostname),
 			)).CallMaster(master.GetAgents())
 			failOnErr(err)

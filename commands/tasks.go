@@ -8,6 +8,7 @@ import (
 	master "github.com/mesos/mesos-go/master/calls"
 	"github.com/vektorlab/mesos-cli/config"
 	"github.com/vektorlab/mesos-cli/filter"
+	"github.com/vektorlab/mesos-cli/helper"
 )
 
 type Tasks struct{}
@@ -29,7 +30,7 @@ func (t *Tasks) Init(profile config.ProfileFn) func(*cli.Cmd) {
 		cmd.VarOpt("state", &states, "filter by task state")
 		cmd.Action = func() {
 
-			resp, err := NewCaller(
+			resp, err := helper.NewCaller(
 				profile().With(config.Master(*hostname)),
 			).CallMaster(master.GetTasks())
 			failOnErr(err)

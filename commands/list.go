@@ -6,6 +6,7 @@ import (
 	"github.com/jawher/mow.cli"
 	agent "github.com/mesos/mesos-go/agent/calls"
 	"github.com/vektorlab/mesos-cli/config"
+	"github.com/vektorlab/mesos-cli/helper"
 	"strings"
 )
 
@@ -27,7 +28,7 @@ func (l *List) Init(profile config.ProfileFn) func(*cli.Cmd) {
 			hostname = cmd.StringOpt("master", "", "Mesos master")
 		)
 		cmd.Action = func() {
-			caller, err := NewAgentCaller(profile().With(config.Master(*hostname)), *agentID)
+			caller, err := helper.NewAgentCaller(profile().With(config.Master(*hostname)), *agentID)
 			failOnErr(err)
 			resp, err := caller.CallAgent(agent.ListFiles(*path))
 			failOnErr(err)
