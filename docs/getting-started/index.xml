@@ -71,6 +71,12 @@
 &lt;/tr&gt;
 
 &lt;tr&gt;
+&lt;td&gt;Top-like interface for monitoring a cluster&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
 &lt;td&gt;Full support for latest Mesos features, e.g health checks, etc&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;✓&lt;/td&gt;
@@ -78,12 +84,6 @@
 
 &lt;tr&gt;
 &lt;td&gt;Ability to search and filter across most Mesos types&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;✓&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Top-like interface for monitoring a cluster&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;✓&lt;/td&gt;
 &lt;/tr&gt;

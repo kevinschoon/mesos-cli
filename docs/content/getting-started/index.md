@@ -22,9 +22,9 @@ By interacting entirely with the new Mesos HTTP [scheduler](http://mesos.apache.
 | Effortlessly run a local Mesos cluster                                              |✓    |       |
 | Pure integration with Apache Mesos outside of the DC/OS ecosystem                   |✓    |       |
 | Lightweight scheduler for running arbitrary containers                              |✓    |       |
+| Top-like interface for monitoring a cluster                                         |✓    |       |
 | Full support for latest Mesos features, e.g health checks, etc                      |     |✓      |
 | Ability to search and filter across most Mesos types                                |     |✓      |
-| Top-like interface for monitoring a cluster                                         |     |✓      |
 | Subscribe to and monitor master event stream                                        |     |✓      |
 | Run docker-compose files directly against Mesos                                     |     |✓      |
 
