@@ -1,109 +1,49 @@
 package top
 
-/*
 import (
-	ui "github.com/gizak/termui"
+	"github.com/mesos/mesos-go"
+	"github.com/mesos/mesos-go/httpcli/operator"
+	master "github.com/mesos/mesos-go/master/calls"
+	"github.com/vektorlab/mesos-cli/config"
+	"github.com/vektorlab/mesos-cli/filter"
+	"github.com/vektorlab/mesos-cli/helper"
 	"github.com/vektorlab/toplib"
-	//"time"
+	"github.com/vektorlab/toplib/sample"
+	"github.com/vektorlab/toplib/section"
+	"time"
 )
 
-func initTop() *toplib.Top {
-	t := toplib.NewTop()
-	var (
-		cursor  = toplib.NewCursor()
-		toggles = toplib.NewToggles(
-			&toplib.Toggle{Name: "sort"},
-		)
-
-		sortMenu = toplib.NewMenu("ID", "FRAMEWORK", "STATE", "CPU", "MEM", "GPU", "DISK")
-		table    = toplib.NewTable("ID", "FRAMEWORK", "STATE", "CPU", "MEM", "GPU", "DISK")
-	)
-
-	defaultView := toplib.NewView(func() []*ui.Row {
-		return []*ui.Row{
-			toplib.NewHeader().Row(),
-			// Main section
-			ui.NewRow(
-				ui.NewCol(12, 0, table.Buffers(t.Recorder, cursor)...),
-			),
-			// Bottom toggles
-			ui.NewRow(
-				ui.NewCol(12, 0, toggles.Buffers()...),
-			),
-		}
-	})
-
-	defaultView.Handlers["/sys/kbd/<up>"] = func(ui.Event) {
-		if cursor.Up(t.Recorder.Samples()) {
-			t.Render()
-		}
-	}
-
-	defaultView.Handlers["/sys/kbd/<down>"] = func(ui.Event) {
-		if cursor.Down(t.Recorder.Samples()) {
-			t.Render()
-		}
-	}
-
-	defaultView.Handlers["/sys/kbd/s"] = func(ui.Event) {
-		if toggles.Toggle("sort", true) {
-			t.Views.Set("sort")
-		} else {
-			t.Views.Set("default")
-		}
-		t.Render()
-	}
-
-	sortView := toplib.NewView(func() []*ui.Row {
-		return []*ui.Row{
-			ui.NewRow(
-				ui.NewCol(3, 0, sortMenu),
-				ui.NewCol(9, 0, table.Buffers(t.Recorder, cursor)...),
-			),
-			ui.NewRow(
-				ui.NewCol(12, 0, toggles.Buffers()...),
-			),
-		}
-	})
-
-	sortView.Handlers["/sys/kbd/<up>"] = func(ui.Event) {
-		t.Recorder.SortField = sortMenu.Up()
-		t.Render()
-	}
-	sortView.Handlers["/sys/kbd/<down>"] = func(ui.Event) {
-		t.Recorder.SortField = sortMenu.Down()
-		t.Render()
-	}
-
-	t.Views.Add("default", defaultView)
-	t.Views.Add("sort", sortView)
-	t.Views.Set("default")
-
-	return t
-}
-
-// TODO: Update toplib so samples can be sent individually
-func collect(client *Client) ([]*toplib.Sample, error) {
-	samples := []*toplib.Sample{}
-	tasks, err := client.Tasks(TaskFilterAll)
+func collect(caller operator.Caller) ([]*sample.Sample, error) {
+	samples := []*sample.Sample{}
+	// NOTE: On large clusters this may be quite slow because the entire
+	// Task state must be downloaded.
+	resp, err := caller.CallMaster(master.GetTasks())
 	if err != nil {
 		return nil, err
 	}
-	for _, task := range tasks {
-		sample := toplib.NewSample(task.GetTaskId().GetValue())
-		sample.SetString("FRAMEWORK", task.GetFrameworkId().GetValue())
-		sample.SetString("STATE", task.GetState().String())
-		sample.SetFloat64("CPU", FilterScalar(task.GetResources(), "cpus"))
-		sample.SetFloat64("MEM", FilterScalar(task.GetResources(), "mem"))
-		sample.SetFloat64("GPU", FilterScalar(task.GetResources(), "gpu"))
-		sample.SetFloat64("DISK", FilterScalar(task.GetResources(), "disk"))
-		samples = append(samples, sample)
+	filters := []filter.Filter{filter.TaskStateFilter([]*mesos.TaskState{mesos.TASK_RUNNING.Enum()})}
+	for _, task := range filter.AsTasks(filter.FromMaster(resp).FindMany(filters...)) {
+		smpl := sample.NewSample(task.TaskID.Value)
+		smpl.SetString("AGENT", task.AgentID.Value)
+		resources := mesos.Resources(task.Resources)
+		cpus, _ := resources.CPUs()
+		mem, _ := resources.Memory()
+		disk, _ := resources.Disk()
+		smpl.SetFloat64("CPU", cpus)
+		smpl.SetFloat64("MEM", float64(mem))
+		smpl.SetFloat64("DISK", float64(disk))
+		samples = append(samples, smpl)
 	}
 	return samples, nil
 }
 
-func RunTop(client *Client) (err error) {
-	top := initTop()
+func Run(profile *config.Profile) error {
+	caller := helper.NewCaller(profile)
+	// TODO: Add more sections like Agents, framework, etc.
+	sections := []toplib.Section{
+		section.NewSamples("tasks", "ID", "AGENT", "CPU", "MEM", "DISK"),
+	}
+	top := toplib.NewTop(sections)
 	tick := time.NewTicker(1500 * time.Millisecond)
 	go func() {
 	loop:
@@ -113,7 +53,7 @@ func RunTop(client *Client) (err error) {
 				close(top.Samples)
 				break loop
 			case <-tick.C:
-				samples, err := collect(client)
+				samples, err := collect(caller)
 				if err != nil {
 					break loop
 				}
@@ -124,4 +64,3 @@ func RunTop(client *Client) (err error) {
 	}()
 	return toplib.Run(top)
 }
-*/
