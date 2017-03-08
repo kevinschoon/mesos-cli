@@ -15,7 +15,7 @@ type Agents struct{}
 func (_ Agents) Name() string { return "agents" }
 func (_ Agents) Desc() string { return "List Mesos Agents" }
 
-func (a *Agents) Init(profile config.ProfileFn) func(*cli.Cmd) {
+func (_ Agents) Init(profile config.ProfileFn) func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS]"
 		hostname := cmd.StringOpt("master", "", "Mesos Master")

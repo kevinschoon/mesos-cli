@@ -23,7 +23,7 @@ type Local struct{}
 func (_ Local) Name() string { return "local" }
 func (_ Local) Desc() string { return "Run a local Mesos cluster" }
 
-func (local Local) Init(profile config.ProfileFn) func(*cli.Cmd) {
+func (_ Local) Init(profile config.ProfileFn) func(*cli.Cmd) {
 	var client *Client
 	fn := func() *Client { return client }
 	return func(cmd *cli.Cmd) {

@@ -16,7 +16,7 @@ type Tasks struct{}
 func (_ Tasks) Name() string { return "tasks" }
 func (_ Tasks) Desc() string { return "List Mesos tasks" }
 
-func (t *Tasks) Init(profile config.ProfileFn) func(*cli.Cmd) {
+func (_ Tasks) Init(profile config.ProfileFn) func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS]"
 		var (

@@ -13,7 +13,7 @@ type Read struct{}
 func (_ Read) Name() string { return "read" }
 func (_ Read) Desc() string { return "Read the contents of a file" }
 
-func (r *Read) Init(profile config.ProfileFn) func(*cli.Cmd) {
+func (_ Read) Init(profile config.ProfileFn) func(*cli.Cmd) {
 	return func(cmd *cli.Cmd) {
 		cmd.Spec = "[OPTIONS] ID PATH"
 		var (
