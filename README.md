@@ -1,15 +1,24 @@
 # mesos-cli
 
-**mesos-cli** is a command-line tool for running containers on and interacting with [Apache Mesos](http://mesos.apache.com). It is designed to be lightweight and more featureful than the [native](https://github.com/apache/mesos/tree/master/src/cli) CLI tool provided with Mesos. Additionally, it seeks to act as a stand-alone and extensible task scheduler on Mesos.
+Featureful commandline interface for [Apache Mesos](http://mesos.apache.com).
 
-By interacting entirely with the new Mesos HTTP [scheduler](http://mesos.apache.org/documentation/latest/scheduler-http-api/) API as a general purpose Mesos framework, **mesos-cli** does not require the Mesos Master server to establish a direct network connection to it, which makes it more flexible than other frameworks.
+`mesos-cli` is designed to be a lightweight alternative to the [native tool](https://github.com/apache/mesos/tree/master/src/cli) provided with Mesos, with extended features for orchestration, management, and task scheduling.
+
+By interacting entirely with the new Mesos [HTTP scheduler API](http://mesos.apache.org/documentation/latest/scheduler-http-api/), `mesos-cli` does not require a direct network connection to the Mesos Master server, which makes it more flexible than other frameworks.
 
 **mesos-cli is under active development and not yet considered stable!**
 
 Check out the documentation for mesos-cli [here](https://vektorlab.github.io/mesos-cli).
 
+## Quickstart
+Simply run `mesos-cli` via the official Docker image to get started:
+```bash
+docker run --rm -ti quay.io/vektorcloud/mesos-cli:latest tasks --master http://your-mesos-server:5050
+```
+Full install and configuration documentation is available [here](https://vektorlab.github.io/mesos-cli/getting-started/)
 
-# Distinctive Features & Roadmap
+
+## Distinctive Features & Roadmap
 
 | Feature                                                                             |ready|roadmap|
 |-------------------------------------------------------------------------------------|-----|-------|
