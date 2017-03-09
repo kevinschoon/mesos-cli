@@ -2,11 +2,11 @@
 
 Featureful commandline interface for [Apache Mesos](http://mesos.apache.com).
 
+**NOTE**: *mesos-cli is under active development and not yet considered stable!*
+
 `mesos-cli` is designed to be a lightweight alternative to the [native tool](https://github.com/apache/mesos/tree/master/src/cli) provided with Mesos, with extended features for orchestration, management, and task scheduling.
 
 By interacting entirely with the new Mesos [HTTP scheduler API](http://mesos.apache.org/documentation/latest/scheduler-http-api/), `mesos-cli` does not require a direct network connection to the Mesos Master server, which makes it more flexible than other frameworks.
-
-**mesos-cli is under active development and not yet considered stable!**
 
 Check out the documentation for mesos-cli [here](https://vektorlab.github.io/mesos-cli).
 
@@ -18,7 +18,7 @@ docker run --rm -ti quay.io/vektorcloud/mesos-cli:latest tasks --master http://y
 Full install and configuration documentation is available [here](https://vektorlab.github.io/mesos-cli/getting-started/)
 
 ## Commands
----|---
+--- | ---
 [agents][usage_agents] | List Mesos Agents
 [list][usage_list] | List files in a Mesos sandbox
 [local][usage_local] | Run a local Mesos cluster
