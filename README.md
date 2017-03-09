@@ -18,6 +18,7 @@ docker run --rm -ti quay.io/vektorcloud/mesos-cli:latest tasks --master http://y
 Full install and configuration documentation is available [here](https://vektorlab.github.io/mesos-cli/getting-started/)
 
 ## Commands
+cmd | description
 --- | ---
 [agents][usage_agents] | List Mesos Agents
 [list][usage_list] | List files in a Mesos sandbox
