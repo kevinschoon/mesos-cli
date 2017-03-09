@@ -17,6 +17,15 @@ docker run --rm -ti quay.io/vektorcloud/mesos-cli:latest tasks --master http://y
 ```
 Full install and configuration documentation is available [here](https://vektorlab.github.io/mesos-cli/getting-started/)
 
+## Commands
+---|---
+[agents][usage_agents] | List Mesos Agents
+[list][usage_list] | List files in a Mesos sandbox
+[local][usage_local] | Run a local Mesos cluster
+[read][usage_read] | Read the contents of a file
+[run][usage_run] | Run tasks on Mesos
+[tasks][usage_tasks] | List Mesos tasks
+[top][usage_top] | Display a Mesos top interface
 
 ## Distinctive Features & Roadmap
 
@@ -34,3 +43,10 @@ Full install and configuration documentation is available [here](https://vektorl
 | Subscribe to and monitor master event stream                                        |     |✓      |
 | Run docker-compose files directly against Mesos                                     |     |✓      |
 
+[usage_agents]: https://vektorlab.github.io/mesos-cli/usage/agents
+[usage_list]: https://vektorlab.github.io/mesos-cli/usage/list
+[usage_local]: https://vektorlab.github.io/mesos-cli/usage/local
+[usage_read]: https://vektorlab.github.io/mesos-cli/usage/read
+[usage_run]: https://vektorlab.github.io/mesos-cli/usage/run
+[usage_tasks]: https://vektorlab.github.io/mesos-cli/usage/tasks
+[usage_top]: https://vektorlab.github.io/mesos-cli/usage/top
