@@ -16,11 +16,13 @@
       <guid>https://vektorlab.github.io/mesos-cli/getting-started/</guid>
       <description>
 
-&lt;p&gt;&lt;strong&gt;mesos-cli&lt;/strong&gt; is a command-line tool for running containers on and interacting with &lt;a href=&#34;http://mesos.apache.com&#34;&gt;Apache Mesos&lt;/a&gt;. It is designed to be lightweight and more featureful than the &lt;a href=&#34;https://github.com/apache/mesos/tree/master/src/cli&#34;&gt;native&lt;/a&gt; CLI tool provided with Mesos. Additionally, it seeks to act as a stand-alone and extensible task scheduler on Mesos.&lt;/p&gt;
+&lt;p&gt;Featureful commandline interface for &lt;a href=&#34;http://mesos.apache.com&#34;&gt;Apache Mesos&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;By interacting entirely with the new Mesos HTTP &lt;a href=&#34;http://mesos.apache.org/documentation/latest/scheduler-http-api/&#34;&gt;scheduler&lt;/a&gt; API as a general purpose Mesos framework, &lt;strong&gt;mesos-cli&lt;/strong&gt; does not require the Mesos Master server to establish a direct network connection to it, which makes it more flexible than other frameworks.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mesos-cli&lt;/code&gt; is designed to be a lightweight alternative to the &lt;a href=&#34;https://github.com/apache/mesos/tree/master/src/cli&#34;&gt;native tool&lt;/a&gt; provided with Mesos, with extended features for orchestration, management, and task scheduling.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;mesos-cli is under active development and not yet considered stable!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;By interacting entirely with the new Mesos &lt;a href=&#34;http://mesos.apache.org/documentation/latest/scheduler-http-api/&#34;&gt;HTTP scheduler API&lt;/a&gt;, &lt;code&gt;mesos-cli&lt;/code&gt; does not require a direct network connection to the Mesos Master server, which makes it more flexible than other frameworks.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;NOTE&lt;/strong&gt;: &lt;em&gt;mesos-cli is under active development and not yet considered stable!&lt;/em&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;distinctive-features-roadmap&#34;&gt;Distinctive Features &amp;amp; Roadmap&lt;/h1&gt;
 
