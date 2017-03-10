@@ -5,12 +5,14 @@ chapter = true
 next = "/getting-started/installation"
 +++
 
-**mesos-cli** is a command-line tool for running containers on and interacting with [Apache Mesos](http://mesos.apache.com). It is designed to be lightweight and more featureful than the [native](https://github.com/apache/mesos/tree/master/src/cli) CLI tool provided with Mesos. Additionally, it seeks to act as a stand-alone and extensible task scheduler on Mesos.
+Featureful commandline interface for [Apache Mesos](http://mesos.apache.com).
 
-By interacting entirely with the new Mesos HTTP [scheduler](http://mesos.apache.org/documentation/latest/scheduler-http-api/) API as a general purpose Mesos framework, **mesos-cli** does not require the Mesos Master server to establish a direct network connection to it, which makes it more flexible than other frameworks.
 
-**mesos-cli is under active development and not yet considered stable!**
+`mesos-cli` is designed to be a lightweight alternative to the [native tool](https://github.com/apache/mesos/tree/master/src/cli) provided with Mesos, with extended features for orchestration, management, and task scheduling.
 
+By interacting entirely with the new Mesos [HTTP scheduler API](http://mesos.apache.org/documentation/latest/scheduler-http-api/), `mesos-cli` does not require a direct network connection to the Mesos Master server, which makes it more flexible than other frameworks.
+
+**NOTE**: *mesos-cli is under active development and not yet considered stable!*
 
 # Distinctive Features & Roadmap
 

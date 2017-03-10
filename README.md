@@ -1,15 +1,34 @@
 # mesos-cli
 
-**mesos-cli** is a command-line tool for running containers on and interacting with [Apache Mesos](http://mesos.apache.com). It is designed to be lightweight and more featureful than the [native](https://github.com/apache/mesos/tree/master/src/cli) CLI tool provided with Mesos. Additionally, it seeks to act as a stand-alone and extensible task scheduler on Mesos.
+Featureful commandline interface for [Apache Mesos](http://mesos.apache.com).
 
-By interacting entirely with the new Mesos HTTP [scheduler](http://mesos.apache.org/documentation/latest/scheduler-http-api/) API as a general purpose Mesos framework, **mesos-cli** does not require the Mesos Master server to establish a direct network connection to it, which makes it more flexible than other frameworks.
+**NOTE**: *mesos-cli is under active development and not yet considered stable!*
 
-**mesos-cli is under active development and not yet considered stable!**
+`mesos-cli` is designed to be a lightweight alternative to the [native tool](https://github.com/apache/mesos/tree/master/src/cli) provided with Mesos, with extended features for orchestration, management, and task scheduling.
+
+By interacting entirely with the new Mesos [HTTP scheduler API](http://mesos.apache.org/documentation/latest/scheduler-http-api/), `mesos-cli` does not require a direct network connection to the Mesos Master server, which makes it more flexible than other frameworks.
 
 Check out the documentation for mesos-cli [here](https://vektorlab.github.io/mesos-cli).
 
+## Quickstart
+Simply run `mesos-cli` via the official Docker image to get started:
+```bash
+docker run --rm -ti quay.io/vektorcloud/mesos-cli:latest tasks --master http://your-mesos-server:5050
+```
+Full install and configuration documentation is available [here](https://vektorlab.github.io/mesos-cli/getting-started/)
 
-# Distinctive Features & Roadmap
+## Commands
+cmd | description
+--- | ---
+[agents][usage_agents] | List Mesos Agents
+[list][usage_list] | List files in a Mesos sandbox
+[local][usage_local] | Run a local Mesos cluster
+[read][usage_read] | Read the contents of a file
+[run][usage_run] | Run tasks on Mesos
+[tasks][usage_tasks] | List Mesos tasks
+[top][usage_top] | Display a Mesos top interface
+
+## Distinctive Features & Roadmap
 
 | Feature                                                                             |ready|roadmap|
 |-------------------------------------------------------------------------------------|-----|-------|
@@ -25,3 +44,10 @@ Check out the documentation for mesos-cli [here](https://vektorlab.github.io/mes
 | Subscribe to and monitor master event stream                                        |     |✓      |
 | Run docker-compose files directly against Mesos                                     |     |✓      |
 
+[usage_agents]: https://vektorlab.github.io/mesos-cli/usage/agents
+[usage_list]: https://vektorlab.github.io/mesos-cli/usage/list
+[usage_local]: https://vektorlab.github.io/mesos-cli/usage/local
+[usage_read]: https://vektorlab.github.io/mesos-cli/usage/read
+[usage_run]: https://vektorlab.github.io/mesos-cli/usage/run
+[usage_tasks]: https://vektorlab.github.io/mesos-cli/usage/tasks
+[usage_top]: https://vektorlab.github.io/mesos-cli/usage/top
