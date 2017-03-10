@@ -13,7 +13,7 @@ Check out the documentation for mesos-cli [here](https://vektorlab.github.io/mes
 ## Quickstart
 Simply run `mesos-cli` via the official Docker image to get started:
 ```bash
-docker run --rm -ti quay.io/vektorcloud/mesos-cli:latest tasks --master http://your-mesos-server:5050
+docker run --rm -ti quay.io/vektorlab/mesos-cli:latest tasks --master http://your-mesos-server:5050
 ```
 Full install and configuration documentation is available [here](https://vektorlab.github.io/mesos-cli/getting-started/)
 

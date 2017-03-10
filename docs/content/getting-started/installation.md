@@ -19,5 +19,5 @@ You can download binary packages for your platform (linux/darwin) from the [rele
 
 A Docker container is also available for download:
  
-    docker pull quay.io/vektorcloud/mesos-cli
-    docker run --rm -ti quay.io/vektorcloud/mesos-cli tasks --master http://your-mesos-server:5050
+    docker pull quay.io/vektorlab/mesos-cli
+    docker run --rm -ti quay.io/vektorlab/mesos-cli tasks --master http://your-mesos-server:5050

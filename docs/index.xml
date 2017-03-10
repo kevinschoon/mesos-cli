@@ -119,7 +119,7 @@
 &lt;pre&gt;&lt;code&gt; # With a binary installation
  echo &amp;quot;alias mesos=mesos-cli&amp;quot; &amp;gt;&amp;gt; $HOME/.bashrc
  # With a Docker installation
- echo &amp;quot;alias mesos=docker run --rm -ti -v $HOME/.meoss-cli.json:/root/.mesos-cli.json --net host quay.io/vektorcloud/mesos-cli &amp;gt;&amp;gt; $HOME/.bashrc&amp;quot;
+ echo &amp;quot;alias mesos=docker run --rm -ti -v $HOME/.meoss-cli.json:/root/.mesos-cli.json --net host quay.io/vektorlab/mesos-cli &amp;gt;&amp;gt; $HOME/.bashrc&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;test-your-installation&#34;&gt;Test Your Installation&lt;/h3&gt;
@@ -339,8 +339,8 @@ ID                                      HOSTNAME                CPUS    MEM     
 
 &lt;p&gt;A Docker container is also available for download:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;docker pull quay.io/vektorcloud/mesos-cli
-docker run --rm -ti quay.io/vektorcloud/mesos-cli tasks --master http://your-mesos-server:5050
+&lt;pre&gt;&lt;code&gt;docker pull quay.io/vektorlab/mesos-cli
+docker run --rm -ti quay.io/vektorlab/mesos-cli tasks --master http://your-mesos-server:5050
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
