@@ -1,4 +1,5 @@
 # mesos-cli
+[![Build](https://img.shields.io/circleci/project/github/vektorlab/mesos-cli.svg)](https://circleci.com/gh/vektorlab/mesos-cli)
 
 Featureful commandline interface for [Apache Mesos](http://mesos.apache.com).
 
