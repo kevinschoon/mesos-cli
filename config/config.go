@@ -28,6 +28,7 @@ type Profile struct {
 	Master  string `json:"master"`
 	Debug   bool   `json:"debug"`
 	Restart bool   `json:"restart"`
+	Sync    bool   `json:"sync"`
 	log     *zap.Logger
 }
 
@@ -161,6 +162,12 @@ func Debug(debug bool) Option {
 func Restart(restart bool) Option {
 	return func(p *Profile) {
 		p.Restart = restart
+	}
+}
+
+func Sync(sync bool) Option {
+	return func(p *Profile) {
+		p.Sync = sync
 	}
 }
 

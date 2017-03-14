@@ -31,17 +31,21 @@ type State struct {
 	states  map[string]mesos.TaskState
 	pending chan *mesos.TaskInfo
 	updates chan mesos.TaskStatus
+	last    mesos.TaskState
 	restart bool
+	sync    bool
 	done    bool
 }
 
-func New(tasks []*mesos.TaskInfo, restart bool) *State {
+func New(tasks []*mesos.TaskInfo, restart, sync bool) *State {
 	state := &State{
 		states:  map[string]mesos.TaskState{},
 		tasks:   map[string]*mesos.TaskInfo{},
 		pending: make(chan *mesos.TaskInfo, len(tasks)),
 		updates: make(chan mesos.TaskStatus),
 		restart: restart,
+		sync:    sync,
+		last:    mesos.TASK_FINISHED,
 	}
 	for _, task := range tasks {
 		// Assign a random task id
@@ -63,15 +67,24 @@ func (s *State) Total() int {
 
 // Pending returns the next task waiting to
 // be scheduled. If a returned task is not
-// scheduled the caller must return via Append
-// or the Task will be lost.
+// scheduled the caller must return it via
+// Append or the Task will be lost.
 func (s *State) Pop() *mesos.TaskInfo {
-	select {
-	case task := <-s.pending:
-		return task
-	default:
+	// If running tasks synchronously each subsequent task must reach
+	// TASK_FINISHED before the next task is available for scheduling.
+	if s.sync && s.last != mesos.TASK_FINISHED {
 		return nil
 	}
+	select {
+	case task := <-s.pending:
+		if s.sync {
+			// Reset last to TASK_STARTING to avoid a race condition
+			s.last = mesos.TaskState(0)
+		}
+		return task
+	default:
+	}
+	return nil
 }
 
 // Append pushes the task into the pending chan.
@@ -89,7 +102,8 @@ loop:
 	for {
 		select {
 		case status := <-s.updates:
-			if terminal(*status.State) || s.restart && *status.State == mesos.TASK_FINISHED { // Status or finished and should restart
+			// Check if the state is "terminal" or if the task exited normally but should be restarted
+			if terminal(*status.State) || s.restart && *status.State == mesos.TASK_FINISHED {
 				// TODO: Need to "backoff"
 				if !s.restart {
 					// If we will not restart the task return with ErrTaskTerminal
@@ -110,7 +124,10 @@ loop:
 				s.pending <- s.tasks[task.TaskID.Value]
 				continue loop
 			}
+			// Update the state of this task
 			s.states[status.TaskID.Value] = *status.State
+			// Store the state of latest update
+			s.last = *status.State
 		}
 		if s.finished() { // All tasks have finished
 			break

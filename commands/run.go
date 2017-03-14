@@ -23,12 +23,14 @@ func (_ Run) Init(profile config.ProfileFn) func(*cli.Cmd) {
 			file     = cmd.StringArg("FILE", "Mesosfile", "File containing Mesos TaskInfos, - for stdin")
 			hostname = cmd.StringOpt("m master", "", "Mesos Master")
 			restart  = cmd.BoolOpt("restart", false, "Restart containers on failure")
+			sync     = cmd.BoolOpt("s sync", false, "Run containers synchronously")
 		)
 
 		cmd.Action = func() {
 			profile().With(
 				config.Master(*hostname),
 				config.Restart(*restart),
+				config.Sync(*sync),
 			)
 
 			tasks := []*mesos.TaskInfo{}

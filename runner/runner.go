@@ -135,8 +135,8 @@ func handler(profile *config.Profile, db *state.State, ctx *Context) events.Hand
 
 func Run(profile *config.Profile, tasks []*mesos.TaskInfo) (err error) {
 	var wg sync.WaitGroup
-	// TODO: Expand to support multiple tasks and LaunchGroups/Nested Containers
-	db := state.New(tasks, profile.Restart)
+	// TODO: Expand to support LaunchGroups/Nested Containers
+	db := state.New(tasks, profile.Restart, profile.Sync)
 	sched := controller.New()
 	ctx := &Context{
 		caller:    caller(profile),
