@@ -55,6 +55,7 @@ func Command(task *mesos.TaskInfo, cmd *cli.Cmd) {
 		Environment: &mesos.Environment{
 			Variables: []mesos.Environment_Variable{},
 		},
+		URIs: []mesos.CommandInfo_URI{},
 	}
 	value := flag{
 		set: func(v string) error {
@@ -87,6 +88,23 @@ func Command(task *mesos.TaskInfo, cmd *cli.Cmd) {
 			return s
 		},
 	}
+	uris := flag{
+		set: func(v string) error {
+			task.Command.URIs = append(
+				task.Command.URIs,
+				mesos.CommandInfo_URI{Value: v},
+			)
+			return nil
+		},
+		str: func() string {
+			var s string
+			for _, uri := range task.Command.URIs {
+				s += uri.Value
+			}
+			return s
+		},
+	}
+	cmd.VarOpt("uri", uris, "URIs to fetch")
 	cmd.VarOpt("e env", envs, "Environment variables")
 	cmd.VarArg("CMD", value, "Command to run")
 }
