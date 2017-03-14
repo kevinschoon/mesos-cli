@@ -20,6 +20,7 @@ FILE="Mesosfile"|   File containing Mesos TaskInfos, - for stdin
 Option | Description
 -------|---------------------------------------
 -m, --master=""  | Mesos Master
+-s, --sync=false | Run containers synchronously
 --restart=false  | Restart containers on failure
 
 

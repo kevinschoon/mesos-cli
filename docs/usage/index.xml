@@ -390,6 +390,11 @@ By default run will attempt to load &lt;code&gt;Mesosfile&lt;/code&gt; from the 
 &lt;/tr&gt;
 
 &lt;tr&gt;
+&lt;td&gt;-s, &amp;ndash;sync=false&lt;/td&gt;
+&lt;td&gt;Run containers synchronously&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
 &lt;td&gt;&amp;ndash;restart=false&lt;/td&gt;
 &lt;td&gt;Restart containers on failure&lt;/td&gt;
 &lt;/tr&gt;
