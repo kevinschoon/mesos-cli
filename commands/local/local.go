@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	Repository    string = "quay.io/vektorcloud/mesos:latest"
+	Repository    string = "quay.io/vektorcloud/mesos:1.2.0"
 	ContainerName string = "mesos_cli"
 )
 
