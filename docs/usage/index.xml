@@ -474,6 +474,11 @@ By default run will attempt to load &lt;code&gt;Mesosfile&lt;/code&gt; from the 
 &lt;/tr&gt;
 
 &lt;tr&gt;
+&lt;td&gt;&amp;ndash;uri=&lt;/td&gt;
+&lt;td&gt;URIs to fetch&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
 &lt;td&gt;-e, &amp;ndash;env=&lt;/td&gt;
 &lt;td&gt;Environment variables&lt;/td&gt;
 &lt;/tr&gt;
@@ -486,6 +491,26 @@ By default run will attempt to load &lt;code&gt;Mesosfile&lt;/code&gt; from the 
 &lt;tr&gt;
 &lt;td&gt;-i, &amp;ndash;image=&lt;/td&gt;
 &lt;td&gt;Image to run&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;cpu=0.000000&lt;/td&gt;
+&lt;td&gt;CPU resources for this task&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;gpu=0.000000&lt;/td&gt;
+&lt;td&gt;GPU resources for this task&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;memory=0.000000&lt;/td&gt;
+&lt;td&gt;Memory resources for this task&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;disk=0.000000&lt;/td&gt;
+&lt;td&gt;Disk resources for this task&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
@@ -516,6 +541,11 @@ By default run will attempt to load &lt;code&gt;Mesosfile&lt;/code&gt; from the 
 &lt;tr&gt;
 &lt;td&gt;&amp;ndash;docker=false&lt;/td&gt;
 &lt;td&gt;Run as a Docker container&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;role=&amp;ldquo;&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;Mesos role&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;

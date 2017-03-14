@@ -19,18 +19,25 @@ CMD=""          |   Command to run
 
 Option              | Description
 --------------------|---------------------------------------
---name=mesos-cli    | Friendly task name
+  --name=mesos-cli  |   Friendly task name
   --user="root"     |   User to run as
   --shell=false     |   Run as a shell command
+  --uri=            |   URIs to fetch
   -e, --env=        |   Environment variables
   -v, --volume=     |   Container volumes
   -i, --image=      |   Image to run
-  --privileged=false|  Run Docker in privileged mode
+  --cpu=0.000000    |   CPU resources for this task
+  --gpu=0.000000    |   GPU resources for this task
+  --memory=0.000000 |   Memory resources for this task
+  --disk=0.000000   |   Disk resources for this task
+  --privileged=false|   Run Docker in privileged mode
   -p, --port=       |   Port mappings [Docker only]
   --param=          |   Docker parameters [Docker only]
   --net=BRIDGE      |   Network Mode [Docker only]
   --encoding="json" |   Output encoding [json/yaml]
   --docker=false    |   Run as a Docker container
+  --role=""         |   Mesos role
+
 
 
 ### Examples
