@@ -4,6 +4,7 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/jawher/mow.cli"
 	"github.com/mesos/mesos-go"
+	"github.com/vektorlab/mesos-cli/commands/options"
 	"github.com/vektorlab/mesos-cli/config"
 	"github.com/vektorlab/mesos-cli/runner"
 	"io/ioutil"
@@ -44,6 +45,15 @@ func (_ Run) Init(profile config.ProfileFn) func(*cli.Cmd) {
 				failOnErr(err)
 				failOnErr(yaml.Unmarshal(raw, &tasks))
 			}
+
+			for _, task := range tasks {
+				options.Apply(
+					task,
+					options.WithDefaultResources(),
+					options.WithPorts(),
+				)
+			}
+
 			failOnErr(runner.Run(profile(), tasks))
 		}
 	}
