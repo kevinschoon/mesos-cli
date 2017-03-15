@@ -1,0 +1,101 @@
+# Download the input video file and save it to shared storage.
+- name: download
+  command:
+    environment:
+      variables:
+      - name: INPUT_FILE
+        value: /data/input.mkv
+    uris:
+      -
+        value: http://localhost:8000/examples/input.mkv
+    shell: true
+    value: cp -v $MESOS_SANDBOX/input.mkv $INPUT_FILE
+    user: root
+  container:
+    type: MESOS
+    volumes:
+    - container_path: /data
+      host_path: /data
+      mode: RW
+
+# Generate a Palette file
+- name: palette_gen
+  command:
+    uris:
+      -
+        value: /data/input.mkv
+    environment:
+      variables:
+        - name: INPUT_FILE
+          value: /data/input.mkv
+        - name: OUTPUT_FILE
+          value: /data/palette.png
+        - name: FILTERS
+          value: fps=15,scale=320:-1:flags=lanczos
+    shell: true
+    value: ffmpeg -v warning -i $INPUT_FILE -vf "$FILTERS,palettegen"  -y $OUTPUT_FILE
+    user: root
+  container:
+    type: MESOS
+    mesos:
+      image:
+        type: DOCKER
+        docker:
+          name: jrottenberg/ffmpeg:3.2
+    volumes:
+    - container_path: /data
+      host_path: /data
+      mode: RW
+
+# Generate a gif based on the palette
+- name: palette_gen
+  command:
+    uris:
+      -
+        value: /data/input.mkv
+    environment:
+      variables:
+        - name: INPUT_FILE
+          value: /data/input.mkv
+        - name: PALETTE_FILE
+          value: /data/palette.png
+        - name: OUTPUT_FILE
+          value: /data/output.gif
+        - name: FILTERS
+          value: fps=15,scale=320:-1:flags=lanczos
+    shell: true
+    value: ffmpeg -v warning -i $INPUT_FILE -i $PALETTE_FILE -lavfi "$FILTERS [x]; [x][1:v] paletteuse" -y $OUTPUT_FILE
+    user: root
+  container:
+    type: MESOS
+    mesos:
+      image:
+        type: DOCKER
+        docker:
+          name: jrottenberg/ffmpeg:3.2
+    volumes:
+    - container_path: /data
+      host_path: /data
+      mode: RW
+
+# Upload the output to Giphy
+- name: upload_to_giphy
+  command:
+    uris:
+      -
+        value: /data/output.gif
+    environment:
+      variables:
+        - name: API_KEY
+          value: dc6zaTOxFJmzC
+        - name: OUTPUT_FILE
+          value: /data/output.gif
+    shell: true
+    value:  curl -F "file=@$OUTPUT_FILE"  -F "api_key=$API_KEY" "http://upload.giphy.com/v1/gifs" > upload.json
+    user: root
+  container:
+    type: MESOS
+    volumes:
+    - container_path: /data
+      host_path: /data
+      mode: RW
