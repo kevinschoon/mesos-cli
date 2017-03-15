@@ -92,7 +92,8 @@ func (c Client) CreateContainer(name string, image string, envs []string) (*type
 		},
 		&container.HostConfig{
 			NetworkMode: container.NetworkMode("host"),
-			Binds:       []string{"/var/run/docker.sock:/var/run/docker.sock"},
+			Binds:       []string{"/var/run/docker.sock:/var/run/docker.sock", "/sys:/sys"},
+			Privileged:  true,
 		},
 		&network.NetworkingConfig{}, name,
 	)
