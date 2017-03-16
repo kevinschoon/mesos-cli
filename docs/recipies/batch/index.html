@@ -301,9 +301,9 @@
 
 <p>In this example we generate a GIF from a video file and upload it to <a href="https://giphy.com">giphy.com</a>. We use <a href="http://ffmpeg.org/">ffmpeg</a>
 for optimization and conversion of the video file. The process is borrowed from <a href="http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html">this</a>
-excellent tutorial where you can learn a little bit more about what is actually happening. The process can be broken down into four steps where each step is run within a seperate container and is dependent on the subsequent step. We will call each step in this process a <em>task</em> and call the
-collection of tasks a <em>job</em>. This very simple and linear process can be visuallized with a dag:
-<img src="http://localhost:1313/mesos-cli/img/linear.svg" alt="dag" /></p>
+excellent tutorial where you can learn a little bit more about what is actually happening. The process can be broken down into four steps where each step is run within a separate container and is dependent on the subsequent step. We will call each step in this process a <em>task</em> and call the
+collection of tasks a <em>job</em>. This very simple and linear process can be visualized with a dag:
+<img src="/mesos-cli/img/linear.svg" alt="dag" /></p>
 
 <h4 id="storage-considerations">Storage considerations</h4>
 

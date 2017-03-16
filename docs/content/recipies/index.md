@@ -8,7 +8,7 @@ next = "/recipies/batch"
 
 # Recipies
 
-The majority of workloads that are run on cloud infrastructure can be broken down into three major catagories: **batch**, **long running**, or **repeated**. We provide examples of running each of these workloads below:
+The majority of workloads that are run on cloud infrastructure can be broken down into three major categories: **batch**, **long running**, or **repeated**. We provide examples of running each of these workloads below:
 
 #### [Batch](/mesos-cli/recipies/batch)
 

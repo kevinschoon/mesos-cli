@@ -424,7 +424,7 @@ By default run will attempt to load &lt;code&gt;Mesosfile&lt;/code&gt; from the 
       <guid>https://vektorlab.github.io/mesos-cli/usage/task/</guid>
       <description>
 
-&lt;p&gt;Task generates a valid mesos TaskInfo &lt;a href=&#34;https://github.com/apache/mesos/blob/master/include/mesos/v1/mesos.proto#L1551&#34;&gt;protobuf object&lt;/a&gt; and encodes it in JSON (or YAML). It (soon!) will support flags for the entire gamut of options available to a Mesos scheduler. It is intended that this command be conconvenient for use wih the &lt;a href=&#34;https://vektorlab.github.io/mesos-cli/mesos-cli/usage/run&#34;&gt;run&lt;/a&gt; command.&lt;/p&gt;
+&lt;p&gt;Task generates a valid mesos TaskInfo &lt;a href=&#34;https://github.com/apache/mesos/blob/master/include/mesos/v1/mesos.proto#L1551&#34;&gt;protobuf object&lt;/a&gt; and encodes it in JSON (or YAML). It (soon!) will support flags for the entire gamut of options available to a Mesos scheduler. It is intended that this command be convenient for use with the &lt;a href=&#34;https://vektorlab.github.io/mesos-cli/mesos-cli/usage/run&#34;&gt;run&lt;/a&gt; command.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;Usage: mesos-cli task [OPTIONS] [CMD]
 &lt;/code&gt;&lt;/pre&gt;

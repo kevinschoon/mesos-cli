@@ -11,9 +11,9 @@ next = "/notice"
 
 In this example we generate a GIF from a video file and upload it to [giphy.com](https://giphy.com). We use [ffmpeg](http://ffmpeg.org/)
 for optimization and conversion of the video file. The process is borrowed from [this](http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html) 
-excellent tutorial where you can learn a little bit more about what is actually happening. The process can be broken down into four steps where each step is run within a seperate container and is dependent on the subsequent step. We will call each step in this process a *task* and call the 
-collection of tasks a *job*. This very simple and linear process can be visuallized with a dag: 
-![dag](http://localhost:1313/mesos-cli/img/linear.svg)
+excellent tutorial where you can learn a little bit more about what is actually happening. The process can be broken down into four steps where each step is run within a separate container and is dependent on the subsequent step. We will call each step in this process a *task* and call the 
+collection of tasks a *job*. This very simple and linear process can be visualized with a dag: 
+![dag](/mesos-cli/img/linear.svg)
 
 #### Storage considerations
 

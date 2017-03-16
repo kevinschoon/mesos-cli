@@ -4,7 +4,7 @@ next = "/usage/run"
 prev = "/usage/tasks"
 +++
 
-Task generates a valid mesos TaskInfo [protobuf object](https://github.com/apache/mesos/blob/master/include/mesos/v1/mesos.proto#L1551) and encodes it in JSON (or YAML). It (soon!) will support flags for the entire gamut of options available to a Mesos scheduler. It is intended that this command be conconvenient for use wih the [run](/mesos-cli/usage/run) command.
+Task generates a valid mesos TaskInfo [protobuf object](https://github.com/apache/mesos/blob/master/include/mesos/v1/mesos.proto#L1551) and encodes it in JSON (or YAML). It (soon!) will support flags for the entire gamut of options available to a Mesos scheduler. It is intended that this command be convenient for use with the [run](/mesos-cli/usage/run) command.
 
 ```
 Usage: mesos-cli task [OPTIONS] [CMD]

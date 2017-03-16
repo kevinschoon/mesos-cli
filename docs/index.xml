@@ -116,7 +116,7 @@
 
 &lt;h1 id=&#34;recipies&#34;&gt;Recipies&lt;/h1&gt;
 
-&lt;p&gt;The majority of workloads that are run on cloud infrastructure can be broken down into three major catagories: &lt;strong&gt;batch&lt;/strong&gt;, &lt;strong&gt;long running&lt;/strong&gt;, or &lt;strong&gt;repeated&lt;/strong&gt;. We provide examples of running each of these workloads below:&lt;/p&gt;
+&lt;p&gt;The majority of workloads that are run on cloud infrastructure can be broken down into three major categories: &lt;strong&gt;batch&lt;/strong&gt;, &lt;strong&gt;long running&lt;/strong&gt;, or &lt;strong&gt;repeated&lt;/strong&gt;. We provide examples of running each of these workloads below:&lt;/p&gt;
 
 &lt;h4 id=&#34;batch-mesos-cli-recipies-batch&#34;&gt;&lt;a href=&#34;https://vektorlab.github.io/mesos-cli/mesos-cli/recipies/batch&#34;&gt;Batch&lt;/a&gt;&lt;/h4&gt;
 
@@ -199,9 +199,9 @@ ID                                      HOSTNAME                CPUS    MEM     
 
 &lt;p&gt;In this example we generate a GIF from a video file and upload it to &lt;a href=&#34;https://giphy.com&#34;&gt;giphy.com&lt;/a&gt;. We use &lt;a href=&#34;http://ffmpeg.org/&#34;&gt;ffmpeg&lt;/a&gt;
 for optimization and conversion of the video file. The process is borrowed from &lt;a href=&#34;http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html&#34;&gt;this&lt;/a&gt;
-excellent tutorial where you can learn a little bit more about what is actually happening. The process can be broken down into four steps where each step is run within a seperate container and is dependent on the subsequent step. We will call each step in this process a &lt;em&gt;task&lt;/em&gt; and call the
-collection of tasks a &lt;em&gt;job&lt;/em&gt;. This very simple and linear process can be visuallized with a dag:
-&lt;img src=&#34;http://localhost:1313/mesos-cli/img/linear.svg&#34; alt=&#34;dag&#34; /&gt;&lt;/p&gt;
+excellent tutorial where you can learn a little bit more about what is actually happening. The process can be broken down into four steps where each step is run within a separate container and is dependent on the subsequent step. We will call each step in this process a &lt;em&gt;task&lt;/em&gt; and call the
+collection of tasks a &lt;em&gt;job&lt;/em&gt;. This very simple and linear process can be visualized with a dag:
+&lt;img src=&#34;https://vektorlab.github.io/mesos-cli/mesos-cli/img/linear.svg&#34; alt=&#34;dag&#34; /&gt;&lt;/p&gt;
 
 &lt;h4 id=&#34;storage-considerations&#34;&gt;Storage considerations&lt;/h4&gt;
 
@@ -869,7 +869,7 @@ By default run will attempt to load &lt;code&gt;Mesosfile&lt;/code&gt; from the 
       <guid>https://vektorlab.github.io/mesos-cli/usage/task/</guid>
       <description>
 
-&lt;p&gt;Task generates a valid mesos TaskInfo &lt;a href=&#34;https://github.com/apache/mesos/blob/master/include/mesos/v1/mesos.proto#L1551&#34;&gt;protobuf object&lt;/a&gt; and encodes it in JSON (or YAML). It (soon!) will support flags for the entire gamut of options available to a Mesos scheduler. It is intended that this command be conconvenient for use wih the &lt;a href=&#34;https://vektorlab.github.io/mesos-cli/mesos-cli/usage/run&#34;&gt;run&lt;/a&gt; command.&lt;/p&gt;
+&lt;p&gt;Task generates a valid mesos TaskInfo &lt;a href=&#34;https://github.com/apache/mesos/blob/master/include/mesos/v1/mesos.proto#L1551&#34;&gt;protobuf object&lt;/a&gt; and encodes it in JSON (or YAML). It (soon!) will support flags for the entire gamut of options available to a Mesos scheduler. It is intended that this command be convenient for use with the &lt;a href=&#34;https://vektorlab.github.io/mesos-cli/mesos-cli/usage/run&#34;&gt;run&lt;/a&gt; command.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;Usage: mesos-cli task [OPTIONS] [CMD]
 &lt;/code&gt;&lt;/pre&gt;
