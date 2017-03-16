@@ -1,7 +1,7 @@
 +++
 title = "Notice"
 chapter = true
-prev = "/recipies/batch"
+prev = "/recipes/batch"
 +++
 
 # Credits

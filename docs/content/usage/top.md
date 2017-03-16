@@ -1,7 +1,7 @@
 +++
 title = "top"
 prev = "/usage/tasks"
-next = "/recipies"
+next = "/recipes"
 +++
 
 Display a Mesos top interface

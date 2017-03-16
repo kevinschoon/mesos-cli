@@ -1,7 +1,7 @@
 +++
 title = "Batch Jobs"
 chapter = false
-prev = "/recipies"
+prev = "/recipes"
 next = "/notice"
 +++
 
