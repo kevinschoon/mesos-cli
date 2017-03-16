@@ -6,7 +6,15 @@
   </url>
   
   <url>
+    <loc>https://vektorlab.github.io/mesos-cli/recipies/</loc>
+  </url>
+  
+  <url>
     <loc>https://vektorlab.github.io/mesos-cli/getting-started/configuration/</loc>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/recipies/batch/</loc>
   </url>
   
   <url>
@@ -20,6 +28,11 @@
   
   <url>
     <loc>https://vektorlab.github.io/mesos-cli/notice/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://vektorlab.github.io/mesos-cli/recipies/</loc>
     <priority>0</priority>
   </url>
   

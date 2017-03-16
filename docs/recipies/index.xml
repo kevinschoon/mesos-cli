@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Recipies on mesos-cli</title>
+    <link>https://vektorlab.github.io/mesos-cli/recipies/index.xml</link>
+    <description>Recent content in Recipies on mesos-cli</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="https://vektorlab.github.io/mesos-cli/recipies/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Recipies</title>
+      <link>https://vektorlab.github.io/mesos-cli/recipies/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/recipies/</guid>
+      <description>
+
+&lt;h1 id=&#34;recipies&#34;&gt;Recipies&lt;/h1&gt;
+
+&lt;p&gt;The majority of workloads that are run on cloud infrastructure can be broken down into three major catagories: &lt;strong&gt;batch&lt;/strong&gt;, &lt;strong&gt;long running&lt;/strong&gt;, or &lt;strong&gt;repeated&lt;/strong&gt;. We provide examples of running each of these workloads below:&lt;/p&gt;
+
+&lt;h4 id=&#34;batch-mesos-cli-recipies-batch&#34;&gt;&lt;a href=&#34;https://vektorlab.github.io/mesos-cli/mesos-cli/recipies/batch&#34;&gt;Batch&lt;/a&gt;&lt;/h4&gt;
+
+&lt;p&gt;Run on-demand, are usually synchronous, and produce some fixed result like a transformed file.&lt;/p&gt;
+
+&lt;h4 id=&#34;long-running-coming-soon&#34;&gt;Long Running (coming soon)&lt;/h4&gt;
+
+&lt;p&gt;Long running workloads are often server processes which need to be restarted if they fail.&lt;/p&gt;
+
+&lt;h4 id=&#34;repeated-coming-soon&#34;&gt;Repeated (coming soon)&lt;/h4&gt;
+
+&lt;p&gt;Repeated workloads run at some fixed interval and are scheduled with a system like cron.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Batch Jobs</title>
+      <link>https://vektorlab.github.io/mesos-cli/recipies/batch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://vektorlab.github.io/mesos-cli/recipies/batch/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://i.giphy.com/3og0IO9FUngqYxdBnO.gif&#34; alt=&#34;image&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;generate-an-optimized-gif-on-mesos&#34;&gt;Generate an optimized GIF on Mesos&lt;/h3&gt;
+
+&lt;p&gt;In this example we generate a GIF from a video file and upload it to &lt;a href=&#34;https://giphy.com&#34;&gt;giphy.com&lt;/a&gt;. We use &lt;a href=&#34;http://ffmpeg.org/&#34;&gt;ffmpeg&lt;/a&gt;
+for optimization and conversion of the video file. The process is borrowed from &lt;a href=&#34;http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html&#34;&gt;this&lt;/a&gt;
+excellent tutorial where you can learn a little bit more about what is actually happening. The process can be broken down into four steps where each step is run within a seperate container and is dependent on the subsequent step. We will call each step in this process a &lt;em&gt;task&lt;/em&gt; and call the
+collection of tasks a &lt;em&gt;job&lt;/em&gt;. This very simple and linear process can be visuallized with a dag:
+&lt;img src=&#34;http://localhost:1313/mesos-cli/img/linear.svg&#34; alt=&#34;dag&#34; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;storage-considerations&#34;&gt;Storage considerations&lt;/h4&gt;
+
+&lt;p&gt;One of the most challenging aspects of running containerized workloads is how to manage application state. Traditionally an application is run on a single server with some fixed storage device that retains all of it&amp;rsquo;s data. When running in containerized environment applications often move across several machines and need to have access to consistent storage. There are many approaches for dealing with this in Mesos which we will not cover here. It is assumed going forward that all Mesos agents have access to a shared storage path at &lt;code&gt;/mnt&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;tasks&#34;&gt;Tasks&lt;/h4&gt;
+
+&lt;p&gt;Each task is described in the batch processing example &lt;a href=&#34;https://raw.githubusercontent.com/vektorlab/mesos-cli/master/examples/batch_processing/Mesosfile&#34;&gt;Mesosfile&lt;/a&gt; in the &lt;strong&gt;mesos-cli&lt;/strong&gt; source directory.&lt;/p&gt;
+
+&lt;h5 id=&#34;download&#34;&gt;Download&lt;/h5&gt;
+
+&lt;p&gt;We use the Mesos &lt;a href=&#34;http://mesos.apache.org/documentation/latest/fetcher/&#34;&gt;fetcher&lt;/a&gt; to download a video file from Wikimedia and then copy it onto shared storage.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;- name: Download Source  # A friendly name given to each task
+  command:
+    environment:  # Array of environment variables exposed inside the container.
+      variables:
+      - name: OUTPUT_FILE
+        value: /mnt/input.ogv
+    uris:
+      -
+        # The URL to the source file we are converting
+        value: https://upload.wikimedia.org/wikipedia/commons/2/2c/WorldSunshine.ogv
+        # The name we give to the downloaded file
+        output_file: input.ogv
+    # Execute the value as a shell command e.g. /bin/sh -c $value
+    shell: true
+    # Copy the downloaded file onto our shared storage path
+    value: cp -v $MESOS_SANDBOX/input.ogv $OUTPUT_FILE
+    user: root
+  container:
+    type: MESOS
+    volumes:
+    # Expose a path on the host within the container
+    - container_path: /mnt
+      host_path: /mnt
+      mode: RW
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;generate-a-palette-file&#34;&gt;Generate a palette file&lt;/h4&gt;
+
+&lt;p&gt;GIFs are limited to a palette of 256 colors which may not necessarily be optimized for the underlying images.
+We use ffmpeg to generate a png palette file from the source video which is then used as a backing color palette
+of our GIF. The resulting palette file is saved to the shared &lt;code&gt;/mnt&lt;/code&gt; path.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;- name: Generate Palette
+  command:
+    uris:
+      -
+        value: /mnt/input.ogv
+    environment:
+      variables:
+        - name: INPUT_FILE
+          value: /mnt/input.ogv
+        - name: OUTPUT_FILE
+          value: /mnt/palette.png
+        - name: FILTERS
+          value: fps=10,scale=1200:-1:flags=lanczos
+    shell: true
+    value: ffmpeg -v warning -i $INPUT_FILE -vf &amp;quot;$FILTERS,palettegen&amp;quot;  -y $OUTPUT_FILE
+    user: root
+  container:
+    type: MESOS
+    mesos:
+      image:
+        type: DOCKER
+        docker:
+          name: jrottenberg/ffmpeg:3.2
+    volumes:
+    - container_path: /mnt
+      host_path: /mnt
+      mode: RW
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;generate-the-gif-from-the-video-file-with-the-reference-palette&#34;&gt;Generate the GIF from the video file with the reference palette&lt;/h4&gt;
+
+&lt;p&gt;Next we take the video file, the generated palette, and create a GIF from our video file saving the output to the shared &lt;code&gt;/mnt&lt;/code&gt; path.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;- name: Transform to GIF
+  command:
+    uris:
+      -
+        value: /mnt/input.ogv
+    environment:
+      variables:
+        - name: INPUT_FILE
+          value: /mnt/input.ogv
+        - name: PALETTE_FILE
+          value: /mnt/palette.png
+        - name: OUTPUT_FILE
+          value: /mnt/output.gif
+        - name: FILTERS
+          value: fps=10,scale=1200:-1:flags=lanczos
+    shell: true
+    value: ffmpeg -v warning -i $INPUT_FILE -i $PALETTE_FILE -lavfi &amp;quot;$FILTERS [x]; [x][1:v] paletteuse&amp;quot; -y $OUTPUT_FILE
+    user: root
+  container:
+    type: MESOS
+    mesos:
+      image:
+        type: DOCKER
+        docker:
+          name: jrottenberg/ffmpeg:3.2
+    volumes:
+    - container_path: /mnt
+      host_path: /mnt
+      mode: RW
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;upload-the-generated-gif-to-giphy&#34;&gt;Upload the generated GIF to Giphy&lt;/h4&gt;
+
+&lt;p&gt;In the final step we take the newly created GIF file and upload it to giphy.com. The API key used below is provided by their &lt;a href=&#34;https://github.com/Giphy/GiphyAPI&#34;&gt;beta API&lt;/a&gt;. We also record the API response to a file so we can generate a link to the uploaded file.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;# Upload the output to Giphy
+- name: Upload to Giphy
+  command:
+    uris:
+      -
+        value: /mnt/output.gif
+    environment:
+      variables:
+        - name: API_KEY
+          value: dc6zaTOxFJmzC
+        - name: OUTPUT_FILE
+          value: /mnt/output.gif
+    shell: true
+    value:  curl -F &amp;quot;file=@$OUTPUT_FILE&amp;quot;  -F &amp;quot;api_key=$API_KEY&amp;quot; &amp;quot;http://upload.giphy.com/v1/gifs&amp;quot; &amp;gt; upload.json
+    user: root
+  container:
+    type: MESOS
+    volumes:
+    - container_path: /mnt
+      host_path: /mnt
+      mode: RW
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;run-the-job&#34;&gt;Run the job!&lt;/h4&gt;
+
+&lt;p&gt;We can run the job from the mesos-cli examples &lt;a href=&#34;https://github.com/vektorlab/mesos-cli/tree/master/examples/batch_processing&#34;&gt;directory&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;Mesosfile&lt;/code&gt; will be automatically chosen loaded, we use the &lt;code&gt;--sync&lt;/code&gt; flag to ensure each task is run synchronously and without failure.
+We can also include the &lt;code&gt;--restart&lt;/code&gt; which will retry each task automatically if it fails.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ cd mesos-cli/examples/batch_processing
+$ ls -la
+total 12
+drwxr-xr-x 2 kevin kevin 4096 Mar 16 17:06 .
+drwxr-xr-x 3 kevin kevin 4096 Mar 15 17:17 ..
+-rw-r--r-- 1 kevin kevin 2466 Mar 16 16:59 Mesosfile
+$ mesos run --sync --restart
+2017-03-16T16:59:33.229+0700	INFO	CALL	{&amp;quot;type&amp;quot;: &amp;quot;SUBSCRIBE&amp;quot;, &amp;quot;framework&amp;quot;: &amp;quot;&amp;amp;FrameworkInfo{User:root,Name:mesos-cli,ID:&amp;amp;FrameworkID{Value:,},FailoverTimeout:nil,Checkpoint:nil,Role:nil,Hostname:nil,Principal:nil,WebuiUrl:nil,Capabilities:[],Labels:nil,}&amp;quot;}
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we can look at all of the tasks ran with &lt;strong&gt;mesos-cli&lt;/strong&gt; or with the Mesos UI.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mesos tasks --all
+ID                                  	NAME            	FRAMEWORK	STATE        	CPU	MEM	GPU	DISK
+16f66b16-0889-4f22-8c9f-d797a034e4ef	Download Source 	3ae4ade2 	TASK_FINISHED	0.1	64 	0  	64  
+449f1384-16ca-4bc2-8378-e427d1a662ba	Generate Palette	3ae4ade2 	TASK_FINISHED	0.1	64 	0  	64  
+bbf68b38-47e9-4cae-b7f2-5d1167fbcfa2	Transform To GIF	3ae4ade2 	TASK_FINISHED	0.1	64 	0  	64  
+71228718-22fb-4453-8b0d-f2d836835b62	Upload to Giphy 	3ae4ade2 	TASK_FINISHED	0.1	64 	0  	64
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally we can browse the sandbox directory of the final task and read it&amp;rsquo;s output to determine the URL for Gliphy&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mesos list 3ae4ade2-a512-4819-8d32-ff7c9b4df0a0-S0 /mesos/agents/0/slaves/3ae4ade2-a512-4819-8d32-ff7c9b4df0a0-S0/frameworks/3ae4ade2-a512-4819-8d32-ff7c9b4df0a0-0000/executors/71228718-22fb-4453-8b0d-f2d836835b62/runs/ba88d0e7-27b1-43ba-b4d3-71a5ef707822
+UID 	GID 	MODE 	MODIFIED	SIZE	PATH       
+root	root	33188	TODO    	253 	output.gif 
+root	root	33188	TODO    	247 	stderr     
+root	root	33188	TODO    	246 	stdout     
+root	root	33188	TODO    	251 	upload.json
+
+$ mesos read 3ae4ade2-a512-4819-8d32-ff7c9b4df0a0-S0 /mesos/agents/0/slaves/3ae4ade2-a512-4819-8d32-ff7c9b4df0a0-S0/frameworks/3ae4ade2-a512-4819-8d32-ff7c9b4df0a0-0000/executors/71228718-22fb-4453-8b0d-f2d836835b62/runs/ba88d0e7-27b1-43ba-b4d3-71a5ef707822/upload.json |jq .
+{
+  &amp;quot;data&amp;quot;: {
+    &amp;quot;id&amp;quot;: &amp;quot;3og0IO9FUngqYxdBnO&amp;quot; &amp;lt;-- Here is what we want
+  },
+  &amp;quot;meta&amp;quot;: {
+    &amp;quot;status&amp;quot;: 200,
+    &amp;quot;msg&amp;quot;: &amp;quot;OK&amp;quot;,
+    &amp;quot;response_id&amp;quot;: &amp;quot;58ca62bfa940de891bba28d1&amp;quot;
+  }
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally we can construct a URL: &lt;code&gt;https://giphy.com/gifs/3og0IO9FUngqYxdBnO&lt;/code&gt; and&amp;hellip; voilà! :&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://media.giphy.com/media/3og0IO9FUngqYxdBnO/source.gif&#34; alt=&#34;output&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
