@@ -50,7 +50,7 @@ func (_ Tasks) Init(profile config.ProfileFn) func(*cli.Cmd) {
 			}
 
 			table := uitable.New()
-			table.AddRow("ID", "FRAMEWORK", "STATE", "CPU", "MEM", "GPU", "DISK")
+			table.AddRow("ID", "NAME", "FRAMEWORK", "STATE", "CPU", "MEM", "GPU", "DISK")
 
 			for _, task := range filter.AsTasks(filter.FromMaster(resp).FindMany(filters...)) {
 				frameworkID := task.FrameworkID.Value
@@ -59,6 +59,7 @@ func (_ Tasks) Init(profile config.ProfileFn) func(*cli.Cmd) {
 				}
 				table.AddRow(
 					task.TaskID.Value,
+					task.Name,
 					frameworkID,
 					task.GetState().String(),
 					Scalar("cpus", task.Resources),
