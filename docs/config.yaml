@@ -3,4 +3,4 @@ title: "mesos-cli"
 baseurl: "https://vektorlab.github.io/mesos-cli"
 theme: "hugo-theme-learn"
 params:
-  menu: ["getting-started", "usage", "notice"]
+  menu: ["getting-started", "usage", "recipies", "notice"]

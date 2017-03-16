@@ -1,37 +1,38 @@
 # Download the input video file and save it to shared storage.
-- name: download
+- name: Download Source
   command:
     environment:
       variables:
-      - name: INPUT_FILE
-        value: /data/input.mkv
+      - name: OUTPUT_FILE
+        value: /mnt/input.ogv
     uris:
       -
-        value: http://localhost:8000/examples/input.mkv
+        value: https://upload.wikimedia.org/wikipedia/commons/2/2c/WorldSunshine.ogv
+        output_file: input.ogv
     shell: true
-    value: cp -v $MESOS_SANDBOX/input.mkv $INPUT_FILE
+    value: cp -v $MESOS_SANDBOX/input.ogv $OUTPUT_FILE
     user: root
   container:
     type: MESOS
     volumes:
-    - container_path: /data
-      host_path: /data
+    - container_path: /mnt
+      host_path: /mnt
       mode: RW
 
 # Generate a Palette file
-- name: palette_gen
+- name: Generate Palette
   command:
     uris:
       -
-        value: /data/input.mkv
+        value: /mnt/input.ogv
     environment:
       variables:
         - name: INPUT_FILE
-          value: /data/input.mkv
+          value: /mnt/input.ogv
         - name: OUTPUT_FILE
-          value: /data/palette.png
+          value: /mnt/palette.png
         - name: FILTERS
-          value: fps=15,scale=320:-1:flags=lanczos
+          value: fps=10,scale=1200:-1:flags=lanczos
     shell: true
     value: ffmpeg -v warning -i $INPUT_FILE -vf "$FILTERS,palettegen"  -y $OUTPUT_FILE
     user: root
@@ -43,26 +44,26 @@
         docker:
           name: jrottenberg/ffmpeg:3.2
     volumes:
-    - container_path: /data
-      host_path: /data
+    - container_path: /mnt
+      host_path: /mnt
       mode: RW
 
 # Generate a gif based on the palette
-- name: palette_gen
+- name: Transform To GIF
   command:
     uris:
       -
-        value: /data/input.mkv
+        value: /mnt/input.ogv
     environment:
       variables:
         - name: INPUT_FILE
-          value: /data/input.mkv
+          value: /mnt/input.ogv
         - name: PALETTE_FILE
-          value: /data/palette.png
+          value: /mnt/palette.png
         - name: OUTPUT_FILE
-          value: /data/output.gif
+          value: /mnt/output.gif
         - name: FILTERS
-          value: fps=15,scale=320:-1:flags=lanczos
+          value: fps=10,scale=1200:-1:flags=lanczos
     shell: true
     value: ffmpeg -v warning -i $INPUT_FILE -i $PALETTE_FILE -lavfi "$FILTERS [x]; [x][1:v] paletteuse" -y $OUTPUT_FILE
     user: root
@@ -74,28 +75,28 @@
         docker:
           name: jrottenberg/ffmpeg:3.2
     volumes:
-    - container_path: /data
-      host_path: /data
+    - container_path: /mnt
+      host_path: /mnt
       mode: RW
 
 # Upload the output to Giphy
-- name: upload_to_giphy
+- name: Upload to Giphy
   command:
     uris:
       -
-        value: /data/output.gif
+        value: /mnt/output.gif
     environment:
       variables:
         - name: API_KEY
           value: dc6zaTOxFJmzC
         - name: OUTPUT_FILE
-          value: /data/output.gif
+          value: /mnt/output.gif
     shell: true
     value:  curl -F "file=@$OUTPUT_FILE"  -F "api_key=$API_KEY" "http://upload.giphy.com/v1/gifs" > upload.json
     user: root
   container:
     type: MESOS
     volumes:
-    - container_path: /data
-      host_path: /data
+    - container_path: /mnt
+      host_path: /mnt
       mode: RW
