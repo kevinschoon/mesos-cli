@@ -1,5 +1,5 @@
 hash: 4442a19d6ba63589e7ad4ac7b336e438a45aa9c2c71b5eb7164f533ccaa733c8
-updated: 2017-03-08T14:22:26.785141597+07:00
+updated: 2017-03-17T15:10:59.973635289+07:00
 imports:
 - name: github.com/docker/distribution
   version: 08b06dc023674763e7b36d404cf0c7664cee1f5e
@@ -36,11 +36,11 @@ imports:
 - name: github.com/ghodss/yaml
   version: 04f313413ffd65ce25f2541bfd2b2ceec5c0908c
 - name: github.com/gizak/termui
-  version: 798ffb9cbbe4073ef1f88e6069ca4a2c6aa6676b
+  version: 24acd523c756fd9728824cdfac66aad9d8982fb7
   subpackages:
   - extra
 - name: github.com/gogo/protobuf
-  version: 909568be09de550ed094403c2bf8a261b5bb730a
+  version: 100ba4e885062801d56799d78530b73b178a78f3
   subpackages:
   - proto
 - name: github.com/gosuri/uitable
@@ -57,7 +57,7 @@ imports:
 - name: github.com/mattn/go-runewidth
   version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
 - name: github.com/mesos/mesos-go
-  version: 156693d3ee524473464229fedfb853f5527d22ee
+  version: 358daef757aea92b33b6a5edde7563104e9450b2
   repo: https://github.com/vektorlab/mesos-go.git
   vcs: git
   subpackages:
@@ -90,27 +90,27 @@ imports:
 - name: github.com/opencontainers/go-digest
   version: aa2ec055abd10d26d539eb630a92241b781ce4bc
 - name: github.com/pkg/errors
-  version: bfd5150e4e41705ded2129ec33379de1cb90b513
+  version: ff09b135c25aae272398c51a07235b90a75aa4f0
 - name: github.com/pquerna/ffjson
-  version: 3d026ef03048958e4dd62b23e09bea58eeeedb9a
+  version: f60b597ded7e7542b36fe20999dfd48166abd5ae
   subpackages:
   - fflib/v1
   - fflib/v1/internal
 - name: github.com/satori/go.uuid
   version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/Sirupsen/logrus
-  version: 0208149b40d863d2c1a2f8fe5753096a9cf2cc8b
+  version: 1deb2db2a6fff8a35532079061b903c3a25eed52
 - name: github.com/vektorlab/toplib
-  version: e8e7c28c2fb29b638a3924613f97beb001d2596b
+  version: eca66e8f0e9122edc09f50d054bb8b8d2a1e3913
   subpackages:
   - cursor
   - sample
   - section
   - toggle
 - name: go.uber.org/atomic
-  version: 0c9e689d64f004564b79d9a663634756df322902
+  version: 3b8db5e93c4c02efbc313e17b2e796b0914a01fb
 - name: go.uber.org/zap
-  version: 4e517d38b2138e59475d6468e7a6b626eecdaa66
+  version: 4257c7cf05477d92ec25c31cfd3d60e89575f18a
   subpackages:
   - buffer
   - internal/bufferpool
@@ -119,13 +119,13 @@ imports:
   - internal/multierror
   - zapcore
 - name: golang.org/x/net
-  version: d379faa25cbdc04d653984913a2ceb43b0bc46d7
+  version: a6577fac2d73be281a500b310739095313165611
   subpackages:
   - context
   - context/ctxhttp
   - proxy
 - name: golang.org/x/sys
-  version: d67a3279aecd76a65c4c9e6c352c888f5b3a574a
+  version: 99f16d856c9836c42d24e7ab64ea72916925fa97
   subpackages:
   - unix
   - windows
