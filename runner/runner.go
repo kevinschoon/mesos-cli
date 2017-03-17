@@ -12,7 +12,6 @@ import (
 	"github.com/mesos/mesos-go/scheduler/calls"
 	"github.com/mesos/mesos-go/scheduler/events"
 	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/state"
 	"go.uber.org/zap"
 	"math/rand"
 	"net/http"
@@ -26,7 +25,7 @@ func (e ErrRunnerFailed) Error() string {
 	return fmt.Sprintf("Runner failed [%s]", e.Type.String())
 }
 
-func Mux(db *state.State, c *Context) events.Handler {
+func Mux(db *State, c *Context) events.Handler {
 	return events.NewMux(
 		events.DefaultHandler(
 			events.HandlerFunc(
@@ -119,7 +118,7 @@ func caller(profile *config.Profile) calls.Caller {
 	)
 }
 
-func handler(profile *config.Profile, db *state.State, ctx *Context) events.Handler {
+func handler(profile *config.Profile, db *State, ctx *Context) events.Handler {
 	wrap := events.Decorator(
 		func(h events.Handler) events.Handler {
 			return events.HandlerFunc(
@@ -135,8 +134,7 @@ func handler(profile *config.Profile, db *state.State, ctx *Context) events.Hand
 
 func Run(profile *config.Profile, tasks []*mesos.TaskInfo) (err error) {
 	var wg sync.WaitGroup
-	// TODO: Expand to support LaunchGroups/Nested Containers
-	db := state.New(tasks, profile.Restart, profile.Sync)
+	db := NewState(tasks, profile.Restart, profile.Sync)
 	sched := controller.New()
 	ctx := &Context{
 		caller:    caller(profile),

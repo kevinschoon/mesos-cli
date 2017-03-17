@@ -1,10 +1,9 @@
-package state
+package runner
 
 import (
 	"fmt"
 	"github.com/mesos/mesos-go"
 	"github.com/satori/go.uuid"
-	"github.com/vektorlab/mesos-cli/config"
 )
 
 type ErrTaskTerminal struct {
@@ -38,7 +37,7 @@ type State struct {
 	done    bool
 }
 
-func New(tasks []*mesos.TaskInfo, restart, sync bool) *State {
+func NewState(tasks []*mesos.TaskInfo, restart, sync bool) *State {
 	state := &State{
 		states:  map[string]mesos.TaskState{},
 		tasks:   map[string]*mesos.TaskInfo{},
