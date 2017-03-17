@@ -3,7 +3,6 @@ package commands
 import (
 	"github.com/ghodss/yaml"
 	"github.com/jawher/mow.cli"
-	"github.com/mesos/mesos-go"
 	"github.com/vektorlab/mesos-cli/commands/options"
 	"github.com/vektorlab/mesos-cli/config"
 	"github.com/vektorlab/mesos-cli/runner"
@@ -34,19 +33,19 @@ func (_ Run) Init(profile config.ProfileFn) func(*cli.Cmd) {
 				config.Sync(*sync),
 			)
 
-			tasks := []*mesos.TaskInfo{}
+			mf := &config.Mesosfile{}
 
 			if *file == "-" {
 				raw, err := ioutil.ReadAll(os.Stdin)
 				failOnErr(err)
-				failOnErr(yaml.Unmarshal(raw, &tasks))
+				failOnErr(yaml.Unmarshal(raw, &mf))
 			} else {
 				raw, err := ioutil.ReadFile(*file)
 				failOnErr(err)
-				failOnErr(yaml.Unmarshal(raw, &tasks))
+				failOnErr(yaml.Unmarshal(raw, &mf))
 			}
 
-			for _, task := range tasks {
+			for _, task := range mf.Tasks() {
 				options.Apply(
 					task,
 					options.WithDefaultResources(),
@@ -54,7 +53,7 @@ func (_ Run) Init(profile config.ProfileFn) func(*cli.Cmd) {
 				)
 			}
 
-			failOnErr(runner.Run(profile(), tasks))
+			failOnErr(runner.Run(profile(), mf.Tasks()))
 		}
 	}
 }

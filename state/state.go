@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/mesos/mesos-go"
 	"github.com/satori/go.uuid"
+	"github.com/vektorlab/mesos-cli/config"
 )
 
 type ErrTaskTerminal struct {

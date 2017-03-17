@@ -1,49 +1,13 @@
 # vi:syntax=yaml
-- agent_id:
-    value: ""
-  command:
-    environment:
-      variables: []
-    shell: false
-    uris: null
-    user: root
-  container:
-    docker:
-      image: nginx:latest
-      network: BRIDGE
-      parameters: []
-      port_mappings:
-      - container_port: 80
-        host_port: 31000
-        protocol: tcp
-      privileged: false
-    network_infos: null
-    type: DOCKER
-    volumes: null
-  name: mesos-cli
-  resources:
-  - name: ports
-    ranges:
-      range:
-      - begin: 31000
-        end: 31000
-    role: '*'
-    type: RANGES
-  - name: cpus
-    role: '*'
-    scalar:
-      value: 0.1
-    type: SCALAR
-  - name: mem
-    role: '*'
-    scalar:
-      value: 64
-    type: SCALAR
-  - name: disk
-    role: '*'
-    scalar:
-      value: 64
-    type: SCALAR
-  task_id:
-    value: ""
-
+groups:
+  - tasks:
+    - name: Hello
+      command:
+        value: echo Hello
+      container:
+        type: MESOS
+    - name: World
+      command:
+        value: echo World
+      container:
+        type: MESOS
