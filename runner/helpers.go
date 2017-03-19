@@ -26,24 +26,13 @@ func LogEvent(e *scheduler.Event, log *zap.Logger) {
 			zap.String("FrameworkID", framework.Value),
 		)
 	case scheduler.Event_UPDATE:
-		log.Info(
-			"EVENT",
-			eventType,
-			//zap.String("data", string(e.Update.Status.Data)),
-			zap.String("state", e.Update.Status.State.String()),
-			zap.String("message", e.Update.Status.Message),
-		)
-	case scheduler.Event_OFFERS:
-		log.Info(
-			"EVENT",
-			eventType,
-			//zap.Any("offers", e.Offers.Offers),
-		)
-	default:
-		log.Info(
-			"EVENT",
-			eventType,
-		)
+		if terminal(*e.Update.Status.State) {
+			log.Warn(
+				"EVENT",
+				eventType,
+				zap.Any("event", e),
+			)
+		}
 	}
 }
 
@@ -64,17 +53,16 @@ func LogCall(c *scheduler.Call, log *zap.Logger) {
 			zap.Any("framework", c.Subscribe.FrameworkInfo),
 		)
 	case scheduler.Call_ACCEPT:
-		log.Info(
-			"CALL",
-			callType,
-			zap.Any("operations", c.Accept.Operations),
-			zap.Any("offers", c.Accept.OfferIDs),
-		)
-	default:
-		log.Info(
-			"CALL",
-			callType,
-		)
+		if len(c.Accept.Operations) > 0 {
+			for _, op := range c.Accept.Operations {
+				log.Info(
+					"OPERATION",
+					callType,
+					zap.Any("operation", op),
+					zap.Any("offers", c.Accept.OfferIDs),
+				)
+			}
+		}
 	}
 }
 
