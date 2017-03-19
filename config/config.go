@@ -138,7 +138,6 @@ func zapConfig(debug bool) *zap.Config {
 }
 
 func defaults() *Profile {
-
 	return &Profile{
 		Master: "http://localhost:5050",
 	}

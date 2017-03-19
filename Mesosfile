@@ -1,13 +1,34 @@
 # vi:syntax=yaml
-groups:
-  - tasks:
+#
+
+- tasks:
     - name: Hello
       command:
-        value: echo Hello
+        value: echo Hello > ./data/hello.txt
+        shell: true
       container:
-        type: MESOS
+        volumes:
+          -
+            mode: RW
+            container_path: data
+            source:
+              type: SANDBOX_PATH
+              sandbox_path:
+                type: PARENT
+                path: /data
+            
     - name: World
       command:
-        value: echo World
+        value: echo $(cat ./data/hello.txt) World!
+        shell: true
       container:
-        type: MESOS
+        volumes:
+          - 
+            mode: RW
+            container_path: data
+            source:
+              type: SANDBOX_PATH
+              sandbox_path:
+                type: PARENT
+                path: /data
+

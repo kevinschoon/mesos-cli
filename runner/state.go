@@ -3,7 +3,7 @@ package runner
 import (
 	"fmt"
 	"github.com/mesos/mesos-go"
-	"github.com/satori/go.uuid"
+	"github.com/vektorlab/mesos-cli/mesosfile"
 )
 
 type ErrTaskTerminal struct {
@@ -27,9 +27,9 @@ func (e ErrTaskTerminal) Error() string {
 // specified during the creation of State it will
 // panic.
 type State struct {
-	tasks   map[string]*mesos.TaskInfo
+	groups  []*mesosfile.Group
 	states  map[string]mesos.TaskState
-	pending chan *mesos.TaskInfo
+	pending chan *mesosfile.Group
 	updates chan mesos.TaskStatus
 	last    mesos.TaskState
 	restart bool
@@ -37,59 +37,59 @@ type State struct {
 	done    bool
 }
 
-func NewState(tasks []*mesos.TaskInfo, restart, sync bool) *State {
+func NewState(groups []*mesosfile.Group, restart, sync bool) *State {
 	state := &State{
+		groups:  groups,
 		states:  map[string]mesos.TaskState{},
-		tasks:   map[string]*mesos.TaskInfo{},
-		pending: make(chan *mesos.TaskInfo, len(tasks)),
+		pending: make(chan *mesosfile.Group, len(groups)),
 		updates: make(chan mesos.TaskStatus),
 		restart: restart,
 		sync:    sync,
 		last:    mesos.TASK_FINISHED,
 	}
-	for _, task := range tasks {
-		// Assign a random task id
-		task.TaskID.Value = uuid.NewV4().String()
-		// Push the task into pending chan
-		state.pending <- task
-		// Record the TaskID
-		state.tasks[task.TaskID.Value] = task
-		// Sets the task as state "TASK_STARTING"
-		state.states[task.TaskID.Value] = mesos.TaskState(0)
+	for _, group := range groups {
+		// Reset Task and executor UUIDs
+		group.Reset()
+		for _, task := range group.Tasks {
+			// Set state to TASK_STARTING
+			state.states[task.TaskID.Value] = mesos.TaskState(0)
+		}
+		// Push the group into pending chan
+		state.pending <- group
 	}
 	return state
 }
 
-// Total returns the total number of tasks.
+// Total returns the total number of task groups.
 func (s *State) Total() int {
-	return len(s.tasks)
+	return len(s.groups)
 }
 
-// Pending returns the next task waiting to
-// be scheduled. If a returned task is not
+// Pending returns the next task group waiting
+// to be scheduled. If a returned group is not
 // scheduled the caller must return it via
-// Append or the Task will be lost.
-func (s *State) Pop() *mesos.TaskInfo {
-	// If running tasks synchronously each subsequent task must reach
+// Append or it will be lost.
+func (s *State) Pop() *mesosfile.Group {
+	// If running task groups synchronously each subsequent group (and task) must reach
 	// TASK_FINISHED before the next task is available for scheduling.
 	if s.sync && s.last != mesos.TASK_FINISHED {
 		return nil
 	}
 	select {
-	case task := <-s.pending:
+	case group := <-s.pending:
 		if s.sync {
 			// Reset last to TASK_STARTING to avoid a race condition
 			s.last = mesos.TaskState(0)
 		}
-		return task
+		return group
 	default:
 	}
 	return nil
 }
 
-// Append pushes the task into the pending chan.
-func (s *State) Append(task *mesos.TaskInfo) {
-	s.pending <- task
+// Append pushes the group into the pending chan.
+func (s *State) Append(group *mesosfile.Group) {
+	s.pending <- group
 }
 
 // Update places the TaskStatus into the updates channel
@@ -110,18 +110,16 @@ loop:
 					err = ErrTaskTerminal{status.TaskID, status}
 					break loop
 				}
-
-				task := s.tasks[status.TaskID.Value]
-				// Remove the old ID
-				delete(s.tasks, task.TaskID.Value)
-				delete(s.states, task.TaskID.Value)
-				// Generate a new ID
-				task.TaskID.Value = uuid.NewV4().String()
-				// Reset the task state
-				s.tasks[task.TaskID.Value] = task
-				s.states[task.TaskID.Value] = mesos.TaskState(0)
-				// Push the task back into the pending chan
-				s.pending <- s.tasks[task.TaskID.Value]
+				// Tasks will be restarted
+				group := s.find(status.TaskID.Value)
+				// Remove all recorded states
+				s.purge(group)
+				// Reset UUIDs
+				group.Reset()
+				// Insert new states
+				s.insert(group)
+				// Push the group back into the pending chan
+				s.pending <- group
 				continue loop
 			}
 			// Update the state of this task
@@ -144,36 +142,33 @@ func (s *State) Done() {
 	s.done = true
 }
 
+func (s *State) find(id string) *mesosfile.Group {
+	for _, group := range s.groups {
+		if task := group.Find(id); task != nil {
+			return group
+		}
+	}
+	panic(fmt.Sprintf("orphaned task %s", id))
+}
+
+func (s *State) purge(g *mesosfile.Group) {
+	for _, task := range g.Tasks {
+		delete(s.states, task.TaskID.Value)
+	}
+}
+
+func (s *State) insert(g *mesosfile.Group) {
+	for _, task := range g.Tasks {
+		s.states[task.TaskID.Value] = mesos.TaskState(0)
+	}
+}
+
 // Finished checks if all tasks are in state TASK_FINISHED
 func (s *State) finished() bool {
-	for _, task := range s.tasks {
-		if s.states[task.TaskID.Value] != mesos.TASK_FINISHED {
+	for _, state := range s.states {
+		if state != mesos.TASK_FINISHED {
 			return false
 		}
 	}
 	return true
-}
-
-func terminal(state mesos.TaskState) bool {
-	switch state {
-	case mesos.TASK_FAILED:
-		return true
-	case mesos.TASK_KILLED:
-		return true
-	case mesos.TASK_ERROR:
-		return true
-	case mesos.TASK_LOST:
-		return true
-	case mesos.TASK_DROPPED:
-		return true
-	//case mesos.TASK_UNREACHABLE:
-	//	return true
-	case mesos.TASK_GONE:
-		return true
-	case mesos.TASK_GONE_BY_OPERATOR:
-		return true
-	case mesos.TASK_UNKNOWN:
-		return true
-	}
-	return false
 }

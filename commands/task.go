@@ -7,8 +7,8 @@ import (
 	"github.com/jawher/mow.cli"
 	"github.com/mesos/mesos-go"
 	"github.com/vektorlab/mesos-cli/commands/flags"
-	"github.com/vektorlab/mesos-cli/commands/options"
 	"github.com/vektorlab/mesos-cli/config"
+	"github.com/vektorlab/mesos-cli/mesosfile"
 )
 
 type Task struct{}
@@ -21,18 +21,7 @@ func (_ Task) Init(_ config.ProfileFn) func(*cli.Cmd) {
 
 		cmd.Spec = "[OPTIONS] [CMD]"
 
-		task := &mesos.TaskInfo{
-			Name: "mesos-cli",
-			Container: &mesos.ContainerInfo{
-				Mesos: &mesos.ContainerInfo_MesosInfo{},
-				Docker: &mesos.ContainerInfo_DockerInfo{
-					Network:      mesos.ContainerInfo_DockerInfo_BRIDGE.Enum(),
-					PortMappings: []mesos.ContainerInfo_DockerInfo_PortMapping{},
-					Parameters:   []mesos.Parameter{},
-				},
-			},
-			Resources: []mesos.Resource{},
-		}
+		task := mesosfile.NewTask()
 
 		for _, flag := range flags.Flags {
 			flag(task, cmd)
@@ -40,21 +29,20 @@ func (_ Task) Init(_ config.ProfileFn) func(*cli.Cmd) {
 
 		var (
 			encoding = cmd.StringOpt("encoding", "json", "Output encoding [json/yaml]")
-			asDocker = cmd.BoolOpt("docker", false, "Run as a Docker container")
+			docker   = cmd.BoolOpt("docker", false, "Run as a Docker container")
 			role     = cmd.StringOpt("role", "*", "Mesos role")
 		)
 
 		cmd.Action = func() {
-
-			options.Apply(
-				task,
-				options.WithContainerizer(*asDocker),
-				options.WithPorts(),
-				options.WithDefaultResources(),
-				options.WithRole(*role),
+			group := &mesosfile.Group{Tasks: []*mesos.TaskInfo{task}}
+			group = group.With(
+				mesosfile.Init(),
+				mesosfile.Role(*role),
+				mesosfile.Docker(*docker),
 			)
 
-			out := []*mesos.TaskInfo{task}
+			out := mesosfile.Mesosfile{group}
+
 			switch *encoding {
 			case "json":
 				raw, err := json.Marshal(&out)

@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"github.com/mesos/mesos-go"
 	"github.com/mesos/mesos-go/scheduler"
 	"go.uber.org/zap"
 )
@@ -75,4 +76,28 @@ func LogCall(c *scheduler.Call, log *zap.Logger) {
 			callType,
 		)
 	}
+}
+
+func terminal(state mesos.TaskState) bool {
+	switch state {
+	case mesos.TASK_FAILED:
+		return true
+	case mesos.TASK_KILLED:
+		return true
+	case mesos.TASK_ERROR:
+		return true
+	case mesos.TASK_LOST:
+		return true
+	case mesos.TASK_DROPPED:
+		return true
+	//case mesos.TASK_UNREACHABLE:
+	//	return true
+	case mesos.TASK_GONE:
+		return true
+	case mesos.TASK_GONE_BY_OPERATOR:
+		return true
+	case mesos.TASK_UNKNOWN:
+		return true
+	}
+	return false
 }

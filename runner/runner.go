@@ -12,6 +12,7 @@ import (
 	"github.com/mesos/mesos-go/scheduler/calls"
 	"github.com/mesos/mesos-go/scheduler/events"
 	"github.com/vektorlab/mesos-cli/config"
+	"github.com/vektorlab/mesos-cli/mesosfile"
 	"go.uber.org/zap"
 	"math/rand"
 	"net/http"
@@ -44,23 +45,31 @@ func Mux(db *State, c *Context) events.Handler {
 			scheduler.Event_OFFERS: func(e *scheduler.Event) (err error) {
 			loop:
 				for _, offer := range e.GetOffers().GetOffers() {
-					tasks := []mesos.TaskInfo{}
-					flattened := mesos.Resources(offer.Resources).Flatten()
+					ops := []mesos.Offer_Operation{}
+					// Resources available with this offer
+					offered := mesos.Resources(offer.Resources).Flatten()
 					for i := 0; i < db.Total(); i++ {
-						task := db.Pop()
-						if task == nil {
+						group := db.Pop()
+						if group == nil {
 							break
 						}
-						if flattened.ContainsAll(mesos.Resources(task.Resources).Flatten()) {
-							task.AgentID = offer.GetAgentID()
-							tasks = append(tasks, *task)
-							flattened.Subtract(task.Resources...)
+						// Validate the offer is sufficent
+						if offered.ContainsAll(group.Resources()) {
+							// Set the AgentID for each task
+							ops = append(ops, group.With(
+								mesosfile.AgentID(offer.AgentID.Value),
+								mesosfile.FrameworkID(c.framework.ID.Value),
+							).LaunchOp())
+							// Subtract used resources from the offer
+							for _, resource := range group.Resources() {
+								offered.Subtract(resource)
+							}
 						} else {
-							db.Append(task)
+							// Push unsatisfiable tasks back to the pending channel
+							db.Append(group)
 						}
 					}
-					accept := calls.Accept(calls.OfferOperations{calls.OpLaunch(tasks...)}.WithOffers(offer.ID))
-					_, err = c.caller.Call(accept)
+					_, err = c.caller.Call(calls.Accept(calls.OfferOperations(ops).WithOffers(offer.ID)))
 					if err != nil {
 						break loop
 					}
@@ -132,7 +141,7 @@ func handler(profile *config.Profile, db *State, ctx *Context) events.Handler {
 	return wrap.Apply(Mux(db, ctx))
 }
 
-func Run(profile *config.Profile, tasks []*mesos.TaskInfo) (err error) {
+func Run(profile *config.Profile, tasks []*mesosfile.Group) (err error) {
 	var wg sync.WaitGroup
 	db := NewState(tasks, profile.Restart, profile.Sync)
 	sched := controller.New()
@@ -193,6 +202,7 @@ type Context struct {
 	done      bool
 	err       error
 	framework *mesos.FrameworkInfo
+	executor  *mesos.ExecutorInfo
 	random    *rand.Rand
 }
 

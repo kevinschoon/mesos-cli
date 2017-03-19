@@ -1,13 +1,10 @@
 package commands
 
 import (
-	"github.com/ghodss/yaml"
 	"github.com/jawher/mow.cli"
-	"github.com/vektorlab/mesos-cli/commands/options"
 	"github.com/vektorlab/mesos-cli/config"
+	"github.com/vektorlab/mesos-cli/mesosfile"
 	"github.com/vektorlab/mesos-cli/runner"
-	"io/ioutil"
-	"os"
 )
 
 type Run struct{}
@@ -20,7 +17,7 @@ func (_ Run) Init(profile config.ProfileFn) func(*cli.Cmd) {
 		cmd.Spec = "[OPTIONS] [FILE]"
 
 		var (
-			file     = cmd.StringArg("FILE", "Mesosfile", "File containing Mesos TaskInfos, - for stdin")
+			file     = cmd.StringArg("FILE", "Mesosfile", "File containing Mesos Task information, - for stdin")
 			hostname = cmd.StringOpt("m master", "", "Mesos Master")
 			restart  = cmd.BoolOpt("restart", false, "Restart containers on failure")
 			sync     = cmd.BoolOpt("s sync", false, "Run containers synchronously")
@@ -33,27 +30,10 @@ func (_ Run) Init(profile config.ProfileFn) func(*cli.Cmd) {
 				config.Sync(*sync),
 			)
 
-			mf := &config.Mesosfile{}
+			mf, err := mesosfile.Load(*file)
+			failOnErr(err)
 
-			if *file == "-" {
-				raw, err := ioutil.ReadAll(os.Stdin)
-				failOnErr(err)
-				failOnErr(yaml.Unmarshal(raw, &mf))
-			} else {
-				raw, err := ioutil.ReadFile(*file)
-				failOnErr(err)
-				failOnErr(yaml.Unmarshal(raw, &mf))
-			}
-
-			for _, task := range mf.Tasks() {
-				options.Apply(
-					task,
-					options.WithDefaultResources(),
-					options.WithPorts(),
-				)
-			}
-
-			failOnErr(runner.Run(profile(), mf.Tasks()))
+			failOnErr(runner.Run(profile(), mf))
 		}
 	}
 }
