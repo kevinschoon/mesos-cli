@@ -101,7 +101,7 @@ imports:
 - name: github.com/Sirupsen/logrus
   version: 1deb2db2a6fff8a35532079061b903c3a25eed52
 - name: github.com/vektorlab/toplib
-  version: eca66e8f0e9122edc09f50d054bb8b8d2a1e3913
+  version: 093db92eb6b8d64150adff8d7be63dc5a4dbb33b
   subpackages:
   - cursor
   - sample
