@@ -2,6 +2,7 @@ package top
 
 import (
 	"github.com/mesos/mesos-go"
+	agent "github.com/mesos/mesos-go/agent/calls"
 	"github.com/mesos/mesos-go/httpcli/operator"
 	master "github.com/mesos/mesos-go/master/calls"
 	"github.com/vektorlab/mesos-cli/config"
@@ -10,20 +11,49 @@ import (
 	"github.com/vektorlab/toplib"
 	"github.com/vektorlab/toplib/sample"
 	"github.com/vektorlab/toplib/section"
-	"time"
 )
 
-func collect(caller operator.Caller) ([]*sample.Sample, error) {
+func getContainers(profile *config.Profile, caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
+	resp, err := caller.CallMaster(master.GetAgents())
+	if err != nil {
+		return nil, err
+	}
 	samples := []*sample.Sample{}
-	// NOTE: On large clusters this may be quite slow because the entire
-	// Task state must be downloaded.
+	// TODO: Reduce several redundant calls here
+	for _, agnt := range filter.AsAgents(filter.FromMaster(resp).FindMany()) {
+		ac, err := helper.NewAgentCaller(profile, agnt.ID.Value)
+		if err != nil {
+			return nil, err
+		}
+		// TODO: Handle concurrently, will choke with many agents
+		resp, err := ac.CallAgent(agent.GetContainers())
+		if err != nil {
+			return nil, err
+		}
+		if resp.GetContainers != nil {
+			for _, container := range resp.GetContainers.Containers {
+				smpl := sample.NewSample(container.ContainerId.Value, namespace)
+				smpl.SetFloat64("CPU_USR", *container.ResourceStatistics.CpusUserTimeSecs)
+				smpl.SetFloat64("CPU_SYS", *container.ResourceStatistics.CpusSystemTimeSecs)
+				smpl.SetFloat64("MEM_RSS", float64(*container.ResourceStatistics.MemRssBytes))
+				smpl.SetFloat64("MEM_AVL", float64(*container.ResourceStatistics.MemTotalBytes))
+				samples = append(samples, smpl)
+			}
+		}
+	}
+	return samples, nil
+}
+
+func getTasks(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
 	resp, err := caller.CallMaster(master.GetTasks())
 	if err != nil {
 		return nil, err
 	}
+	samples := []*sample.Sample{}
 	filters := []filter.Filter{filter.TaskStateFilter([]*mesos.TaskState{mesos.TASK_RUNNING.Enum()})}
 	for _, task := range filter.AsTasks(filter.FromMaster(resp).FindMany(filters...)) {
-		smpl := sample.NewSample(task.TaskID.Value)
+		smpl := sample.NewSample(task.TaskID.Value, namespace)
+		smpl.SetString("NAME", task.Name)
 		smpl.SetString("AGENT", task.AgentID.Value)
 		resources := mesos.Resources(task.Resources)
 		cpus, _ := resources.CPUs()
@@ -37,30 +67,63 @@ func collect(caller operator.Caller) ([]*sample.Sample, error) {
 	return samples, nil
 }
 
+func getAgents(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
+	resp, err := caller.CallMaster(master.GetAgents())
+	if err != nil {
+		return nil, err
+	}
+	samples := []*sample.Sample{}
+	for _, agent := range filter.AsAgents(filter.FromMaster(resp).FindMany()) {
+		smpl := sample.NewSample(agent.ID.Value, namespace)
+		resources := mesos.Resources(agent.Resources)
+		cpus, _ := resources.CPUs()
+		mem, _ := resources.Memory()
+		disk, _ := resources.Disk()
+		smpl.SetFloat64("CPU", cpus)
+		smpl.SetFloat64("MEM", float64(mem))
+		smpl.SetFloat64("DISK", float64(disk))
+		samples = append(samples, smpl)
+	}
+	return samples, nil
+}
+
+func getFrameworks(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
+	resp, err := caller.CallMaster(master.GetFrameworks())
+	if err != nil {
+		return nil, err
+	}
+	samples := []*sample.Sample{}
+	for _, framework := range filter.AsFrameworks(filter.FromMaster(resp).FindMany()) {
+		smpl := sample.NewSample(framework.ID.Value, namespace)
+		smpl.SetString("NAME", framework.Name)
+		smpl.SetString("ROLE", *framework.Role)
+		smpl.SetString("HOSTNAME", *framework.Hostname)
+		samples = append(samples, smpl)
+	}
+	return samples, nil
+}
+
 func Run(profile *config.Profile) error {
 	caller := helper.NewCaller(profile)
 	// TODO: Add more sections like Agents, framework, etc.
+	namespaces := map[string]sample.Namespace{
+		"containers": sample.Namespace("containers"),
+		"tasks":      sample.Namespace("tasks"),
+		"agents":     sample.Namespace("agents"),
+		"frameworks": sample.Namespace("frameworks"),
+	}
 	sections := []toplib.Section{
-		section.NewSamples("tasks", "ID", "AGENT", "CPU", "MEM", "DISK"),
+		section.NewSamples(namespaces["containers"], "ID", "CPU_USR", "CPU_SYS", "MEM_RSS", "MEM_AVL"),
+		section.NewSamples(namespaces["tasks"], "ID", "NAME", "AGENT", "CPU", "MEM", "DISK"),
+		section.NewSamples(namespaces["agents"], "ID", "CPU", "MEM", "DISK"),
+		section.NewSamples(namespaces["frameworks"], "ID", "NAME", "ROLE", "HOSTNAME"),
 	}
 	top := toplib.NewTop(sections)
-	tick := time.NewTicker(1500 * time.Millisecond)
-	go func() {
-	loop:
-		for {
-			select {
-			case <-top.Exit:
-				close(top.Samples)
-				break loop
-			case <-tick.C:
-				samples, err := collect(caller)
-				if err != nil {
-					break loop
-				}
-				top.Samples <- samples
-			}
-		}
-		tick.Stop()
-	}()
-	return toplib.Run(top)
+	return toplib.Run(
+		top,
+		func() ([]*sample.Sample, error) { return getContainers(profile, caller, namespaces["containers"]) },
+		func() ([]*sample.Sample, error) { return getTasks(caller, namespaces["tasks"]) },
+		func() ([]*sample.Sample, error) { return getAgents(caller, namespaces["agents"]) },
+		func() ([]*sample.Sample, error) { return getAgents(caller, namespaces["frameworks"]) },
+	)
 }
