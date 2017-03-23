@@ -57,7 +57,7 @@ imports:
 - name: github.com/mattn/go-runewidth
   version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
 - name: github.com/mesos/mesos-go
-  version: 358daef757aea92b33b6a5edde7563104e9450b2
+  version: 48215ce5c2f41b490b55bd5f7864443fa03582b4
   repo: https://github.com/vektorlab/mesos-go.git
   vcs: git
   subpackages:
