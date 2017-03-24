@@ -102,6 +102,11 @@ loop:
 	for {
 		select {
 		case status := <-s.updates:
+			group := s.find(status.TaskID.Value)
+			// Discard updates from orphaned tasks
+			if group == nil {
+				continue loop
+			}
 			// Check if the state is "terminal" or if the task exited normally but should be restarted
 			if terminal(*status.State) || s.restart && *status.State == mesos.TASK_FINISHED {
 				// TODO: Need to "backoff"
@@ -110,8 +115,6 @@ loop:
 					err = ErrTaskTerminal{status.TaskID, status}
 					break loop
 				}
-				// Tasks will be restarted
-				group := s.find(status.TaskID.Value)
 				// Remove all recorded states
 				s.purge(group)
 				// Reset UUIDs
@@ -142,13 +145,13 @@ func (s *State) Done() {
 	s.done = true
 }
 
-func (s *State) find(id string) *mesosfile.Group {
+func (s *State) find(id string) (g *mesosfile.Group) {
 	for _, group := range s.groups {
 		if task := group.Find(id); task != nil {
-			return group
+			g = group
 		}
 	}
-	panic(fmt.Sprintf("orphaned task %s", id))
+	return g
 }
 
 func (s *State) purge(g *mesosfile.Group) {
