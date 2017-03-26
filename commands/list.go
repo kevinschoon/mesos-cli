@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"github.com/gosuri/uitable"
 	"github.com/jawher/mow.cli"
-	agent "github.com/mesos/mesos-go/agent/calls"
 	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/helper"
+	"github.com/vektorlab/mesos-cli/filter"
 	"strings"
 )
 
@@ -23,18 +22,16 @@ func (_ List) Init(profile config.ProfileFn) func(*cli.Cmd) {
 		cmd.Spec = "[OPTIONS] ID PATH"
 		var (
 			agentID  = cmd.StringArg("ID", "", "AgentID")
-			path     = cmd.StringArg("PATH", "", "path to list")
+			filePath = cmd.StringArg("PATH", "", "path to list")
 			relative = cmd.BoolOpt("relative", true, "Display the relative sandbox path")
 			hostname = cmd.StringOpt("master", "", "Mesos master")
 		)
 		cmd.Action = func() {
-			caller, err := helper.NewAgentCaller(profile().With(config.Master(*hostname)), *agentID)
-			failOnErr(err)
-			resp, err := caller.CallAgent(agent.ListFiles(*path))
+			msgs, err := filter.Find(profile().With(config.Master(*hostname)), filter.Criteria{Target: filter.FILES, AgentID: *agentID, FilePath: *filePath})
 			failOnErr(err)
 			table := uitable.New()
 			table.AddRow("UID", "GID", "MODE", "MODIFIED", "SIZE", "PATH")
-			for _, info := range resp.ListFiles.FileInfos {
+			for _, info := range filter.AsFileInfos(msgs) {
 				path := info.Path
 				if *relative {
 					split := strings.Split(path, "/")

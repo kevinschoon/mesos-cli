@@ -10,10 +10,6 @@ var (
 	ErrTooManyResults = errors.New("Too many results")
 )
 
-// Filter is used to query a State and match
-// a single protobuf message.
-type Filter func(proto.Message) bool
-
 // Messages is a filterable array of protobuf.Message.
 type Messages []proto.Message
 

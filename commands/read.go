@@ -3,6 +3,7 @@ package commands
 import (
 	"github.com/jawher/mow.cli"
 	"github.com/vektorlab/mesos-cli/config"
+	"github.com/vektorlab/mesos-cli/filter"
 	"github.com/vektorlab/mesos-cli/helper"
 	"github.com/vektorlab/mesos-cli/pailer"
 	"os"
@@ -24,14 +25,19 @@ func (_ Read) Init(profile config.ProfileFn) func(*cli.Cmd) {
 			hostname = cmd.StringOpt("m master", "", "mesos master")
 		)
 		cmd.Action = func() {
-			caller, err := helper.NewAgentCaller(profile().With(config.Master(*hostname)), *agentID)
+			msgs, err := filter.Find(
+				profile().With(config.Master(*hostname)),
+				filter.Criteria{Target: filter.AGENTS, AgentID: *agentID},
+			)
+			failOnErr(err)
+			agent, err := filter.AsAgent(msgs.FindOne())
 			failOnErr(err)
 			pg := &pailer.FilePaginator{
 				Path:   *path,
 				Follow: *follow,
 				Max:    uint64(*lines),
 			}
-			failOnErr(pailer.Monitor(caller, os.Stdout, -1, pg))
+			failOnErr(pailer.Monitor(helper.NewAgentCaller(profile().With(config.Master(*hostname)), agent), os.Stdout, -1, pg))
 		}
 	}
 }

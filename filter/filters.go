@@ -1,99 +1,14 @@
 package filter
 
 import (
-	"fmt"
 	"github.com/gogo/protobuf/proto"
 	"github.com/mesos/mesos-go"
 	"strings"
 )
 
-// ErrInvalidMessage is returned when we expect
-// one type of proto.Message but get another.
-type ErrInvalidMessage struct {
-	msg proto.Message
-}
-
-func (e ErrInvalidMessage) Error() string {
-	return fmt.Sprintf("Unexpected message: %s", e.msg.String())
-}
-
-func AsTask(msg proto.Message, err error) (*mesos.Task, error) {
-	if err != nil {
-		return nil, err
-	}
-	task, ok := msg.(*mesos.Task)
-	if !ok {
-		return nil, ErrInvalidMessage{msg}
-	}
-	return task, nil
-}
-
-func AsTasks(msgs []proto.Message) []*mesos.Task {
-	tasks := []*mesos.Task{}
-	for _, msg := range msgs {
-		if task, ok := msg.(*mesos.Task); ok {
-			tasks = append(tasks, task)
-		}
-	}
-	return tasks
-}
-
-func AsFramework(msg proto.Message, err error) (*mesos.FrameworkInfo, error) {
-	framework, ok := msg.(*mesos.FrameworkInfo)
-	if !ok {
-		return nil, ErrInvalidMessage{msg}
-	}
-	return framework, nil
-}
-
-func AsFrameworks(msgs []proto.Message) []*mesos.FrameworkInfo {
-	frameworks := []*mesos.FrameworkInfo{}
-	for _, msg := range msgs {
-		if framework, ok := msg.(*mesos.FrameworkInfo); ok {
-			frameworks = append(frameworks, framework)
-		}
-	}
-	return frameworks
-}
-
-func AsExecutor(msg proto.Message, err error) (*mesos.ExecutorInfo, error) {
-	executor, ok := msg.(*mesos.ExecutorInfo)
-	if !ok {
-		return nil, ErrInvalidMessage{msg}
-	}
-	return executor, nil
-}
-
-func AsExecutors(msgs []proto.Message) []*mesos.ExecutorInfo {
-	executors := []*mesos.ExecutorInfo{}
-	for _, msg := range msgs {
-		if executor, ok := msg.(*mesos.ExecutorInfo); ok {
-			executors = append(executors, executor)
-		}
-	}
-	return executors
-}
-
-func AsAgent(msg proto.Message, err error) (*mesos.AgentInfo, error) {
-	if err != nil {
-		return nil, err
-	}
-	agent, ok := msg.(*mesos.AgentInfo)
-	if !ok {
-		return nil, ErrInvalidMessage{msg}
-	}
-	return agent, nil
-}
-
-func AsAgents(msgs []proto.Message) []*mesos.AgentInfo {
-	agents := []*mesos.AgentInfo{}
-	for _, msg := range msgs {
-		if agent, ok := msg.(*mesos.AgentInfo); ok {
-			agents = append(agents, agent)
-		}
-	}
-	return agents
-}
+// Filter is used to query a State and match
+// a single protobuf message.
+type Filter func(proto.Message) bool
 
 func TaskIDFilter(taskID string, fuzzy bool) Filter {
 	return func(msg proto.Message) bool {

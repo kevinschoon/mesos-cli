@@ -14,17 +14,14 @@ import (
 )
 
 func getContainers(profile *config.Profile, caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
-	resp, err := caller.CallMaster(master.GetAgents())
+	msgs, err := filter.FromMaster(caller.CallMaster(master.GetAgents()))
 	if err != nil {
 		return nil, err
 	}
 	samples := []*sample.Sample{}
 	// TODO: Reduce several redundant calls here
-	for _, agnt := range filter.AsAgents(filter.FromMaster(resp).FindMany()) {
-		ac, err := helper.NewAgentCaller(profile, agnt.ID.Value)
-		if err != nil {
-			return nil, err
-		}
+	for _, agnt := range filter.AsAgents(msgs.FindMany()) {
+		ac := helper.NewAgentCaller(profile, agnt)
 		// TODO: Handle concurrently, will choke with many agents
 		resp, err := ac.CallAgent(agent.GetContainers())
 		if err != nil {
@@ -45,13 +42,13 @@ func getContainers(profile *config.Profile, caller operator.Caller, namespace sa
 }
 
 func getTasks(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
-	resp, err := caller.CallMaster(master.GetTasks())
+	msgs, err := filter.FromMaster(caller.CallMaster(master.GetTasks()))
 	if err != nil {
 		return nil, err
 	}
 	samples := []*sample.Sample{}
 	filters := []filter.Filter{filter.TaskStateFilter([]*mesos.TaskState{mesos.TASK_RUNNING.Enum()})}
-	for _, task := range filter.AsTasks(filter.FromMaster(resp).FindMany(filters...)) {
+	for _, task := range filter.AsTasks(msgs.FindMany(filters...)) {
 		smpl := sample.NewSample(task.TaskID.Value, namespace)
 		smpl.SetString("NAME", task.Name)
 		smpl.SetString("AGENT", task.AgentID.Value)
@@ -68,12 +65,12 @@ func getTasks(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sam
 }
 
 func getAgents(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
-	resp, err := caller.CallMaster(master.GetAgents())
+	msgs, err := filter.FromMaster(caller.CallMaster(master.GetAgents()))
 	if err != nil {
 		return nil, err
 	}
 	samples := []*sample.Sample{}
-	for _, agent := range filter.AsAgents(filter.FromMaster(resp).FindMany()) {
+	for _, agent := range filter.AsAgents(msgs.FindMany()) {
 		smpl := sample.NewSample(agent.ID.Value, namespace)
 		resources := mesos.Resources(agent.Resources)
 		cpus, _ := resources.CPUs()
@@ -88,12 +85,12 @@ func getAgents(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sa
 }
 
 func getFrameworks(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
-	resp, err := caller.CallMaster(master.GetFrameworks())
+	msgs, err := filter.FromMaster(caller.CallMaster(master.GetFrameworks()))
 	if err != nil {
 		return nil, err
 	}
 	samples := []*sample.Sample{}
-	for _, framework := range filter.AsFrameworks(filter.FromMaster(resp).FindMany()) {
+	for _, framework := range filter.AsFrameworks(msgs.FindMany()) {
 		smpl := sample.NewSample(framework.ID.Value, namespace)
 		smpl.SetString("NAME", framework.Name)
 		smpl.SetString("ROLE", *framework.Role)

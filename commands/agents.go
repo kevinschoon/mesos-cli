@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"github.com/gosuri/uitable"
 	"github.com/jawher/mow.cli"
-	master "github.com/mesos/mesos-go/master/calls"
 	"github.com/vektorlab/mesos-cli/config"
 	"github.com/vektorlab/mesos-cli/filter"
-	"github.com/vektorlab/mesos-cli/helper"
 )
 
 type Agents struct{}
@@ -20,13 +18,14 @@ func (_ Agents) Init(profile config.ProfileFn) func(*cli.Cmd) {
 		cmd.Spec = "[OPTIONS]"
 		hostname := cmd.StringOpt("master", "", "Mesos Master")
 		cmd.Action = func() {
-			resp, err := helper.NewCaller(profile().With(
-				config.Master(*hostname),
-			)).CallMaster(master.GetAgents())
+			msgs, err := filter.Find(
+				profile().With(config.Master(*hostname)),
+				filter.Criteria{Target: filter.AGENTS},
+			)
 			failOnErr(err)
 			table := uitable.New()
 			table.AddRow("ID", "HOSTNAME", "CPUS", "MEM", "GPUS", "DISK")
-			for _, agent := range filter.AsAgents(filter.FromMaster(resp).FindMany()) {
+			for _, agent := range filter.AsAgents(msgs) {
 				table.AddRow(
 					agent.GetID().GetValue(),
 					agent.GetHostname(),
