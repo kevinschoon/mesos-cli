@@ -21,6 +21,7 @@ func (_ Tasks) Init(profile config.ProfileFn) func(*cli.Cmd) {
 			hostname = cmd.StringOpt("master", "", "Mesos master")
 			truncate = cmd.BoolOpt("truncate", true, "Truncate long values")
 			taskID   = cmd.StringOpt("task", "", "Filter by task id")
+			name     = cmd.StringOpt("name", "", "Filter by Task name")
 			fuzzy    = cmd.BoolOpt("fuzzy", true, "Fuzzy matching on string values")
 			all      = cmd.BoolOpt("a all", false, "Show all tasks")
 			states   = states([]*mesos.TaskState{})
@@ -31,6 +32,7 @@ func (_ Tasks) Init(profile config.ProfileFn) func(*cli.Cmd) {
 			criteria := filter.Criteria{
 				Target:     filter.TASKS,
 				TaskID:     *taskID,
+				TaskName:   *name,
 				Fuzzy:      *fuzzy,
 				TaskStates: []*mesos.TaskState{},
 			}

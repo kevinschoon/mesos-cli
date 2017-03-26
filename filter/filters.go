@@ -10,6 +10,19 @@ import (
 // a single protobuf message.
 type Filter func(proto.Message) bool
 
+func TaskNameFilter(name string, fuzzy bool) Filter {
+	return func(msg proto.Message) bool {
+		task, _ := AsTask(msg, nil)
+		if task == nil {
+			return false
+		}
+		if fuzzy {
+			return strings.HasPrefix(task.GetName(), name)
+		}
+		return task.GetName() == name
+	}
+}
+
 func TaskIDFilter(taskID string, fuzzy bool) Filter {
 	return func(msg proto.Message) bool {
 		task, _ := AsTask(msg, nil)

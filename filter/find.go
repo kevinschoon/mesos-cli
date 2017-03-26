@@ -28,6 +28,7 @@ type Criteria struct {
 	AgentID     string
 	FrameworkID string
 	TaskID      string
+	TaskName    string
 	FilePath    string
 	TaskStates  []*mesos.TaskState
 }
@@ -75,6 +76,14 @@ func FindTasks(profile *config.Profile, criteria Criteria) (Messages, error) {
 		filters = append(filters, TaskStateFilter(criteria.TaskStates))
 	}
 	switch {
+	// Caller is seaching by TaskName
+	case criteria.TaskName != "":
+		msgs, err := FromMaster(caller.CallMaster(master.GetTasks()))
+		if err != nil {
+			return nil, err
+		}
+		filters = append(filters, TaskNameFilter(criteria.TaskName, criteria.Fuzzy))
+		return msgs.FindMany(filters...), nil
 	// Caller is explicitly searching for a task or tasks that match a string
 	case criteria.TaskID != "":
 		msgs, err := FromMaster(caller.CallMaster(master.GetTasks()))
