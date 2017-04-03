@@ -10,7 +10,7 @@ It is recommended that you create a bash alias for mesos-cli, note that if the d
      # With a binary installation
      echo "alias mesos=mesos-cli" >> $HOME/.bashrc
      # With a Docker installation
-     echo "alias mesos=docker run --rm -ti -v $HOME/.meoss-cli.json:/root/.mesos-cli.json --net host quay.io/vektorlab/mesos-cli >> $HOME/.bashrc"
+     echo "alias mesos=docker run --rm -ti -v $HOME/.mesos-cli.json:/root/.mesos-cli.json --net host quay.io/vektorlab/mesos-cli >> $HOME/.bashrc"
 
 
 ### Test Your Installation
