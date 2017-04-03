@@ -30,10 +30,12 @@ func getContainers(profile *config.Profile, caller operator.Caller, namespace sa
 		if resp.GetContainers != nil {
 			for _, container := range resp.GetContainers.Containers {
 				smpl := sample.NewSample(container.ContainerId.Value, namespace)
-				smpl.SetFloat64("CPU_USR", *container.ResourceStatistics.CpusUserTimeSecs)
-				smpl.SetFloat64("CPU_SYS", *container.ResourceStatistics.CpusSystemTimeSecs)
-				smpl.SetFloat64("MEM_RSS", float64(*container.ResourceStatistics.MemRssBytes))
-				smpl.SetFloat64("MEM_AVL", float64(*container.ResourceStatistics.MemTotalBytes))
+				if stats := container.GetResourceStatistics(); stats != nil {
+					smpl.SetFloat64("CPU_USR", *stats.CpusUserTimeSecs)
+					smpl.SetFloat64("CPU_SYS", *stats.CpusSystemTimeSecs)
+					smpl.SetFloat64("MEM_RSS", float64(*stats.MemRssBytes))
+					smpl.SetFloat64("MEM_AVL", float64(*stats.MemTotalBytes))
+				}
 				samples = append(samples, smpl)
 			}
 		}
