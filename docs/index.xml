@@ -566,8 +566,8 @@ $ mesos read 3ae4ade2-a512-4819-8d32-ff7c9b4df0a0-S0 /mesos/agents/0/slaves/3ae4
 &lt;p&gt;You can download binary packages for your platform (linux/darwin) from the &lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases&#34;&gt;releases&lt;/a&gt; section on Github or below:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.7/mesos-cli-linux-amd64-v0.0.7&#34;&gt;Linux&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.7/mesos-cli-darwin-amd64-v0.0.7&#34;&gt;OSX/Darwin&lt;/a&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.8/mesos-cli-linux-amd64-v0.0.8&#34;&gt;Linux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/vektorlab/mesos-cli/releases/download/v0.0.8/mesos-cli-darwin-amd64-v0.0.8&#34;&gt;OSX/Darwin&lt;/a&gt;
 
 &lt;br /&gt;&lt;/li&gt;
 &lt;/ul&gt;
