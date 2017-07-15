@@ -7,7 +7,7 @@ DARWIN_PACKAGE ?= mesos-cli-darwin-amd64
 
 
 .PHONY: all
-all: test docs build
+all: test release
 
 .PHONY: test
 test:
@@ -19,7 +19,7 @@ test:
 docs:
 	cd docs && hugo -d .
 
-.PHONY: build
+.PHONY: release
 build:
 	if ! [ -d ./release ]; then mkdir ./release ; fi
 	@GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o ./release/$(LINUX_PACKAGE)-$(VERSION)
