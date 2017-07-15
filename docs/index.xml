@@ -55,12 +55,6 @@
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td&gt;Effortlessly run a local Mesos cluster&lt;/td&gt;
-&lt;td&gt;✓&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
 &lt;td&gt;Pure integration with Apache Mesos outside of the DC/OS ecosystem&lt;/td&gt;
 &lt;td&gt;✓&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
@@ -145,7 +139,7 @@
 &lt;pre&gt;&lt;code&gt; # With a binary installation
  echo &amp;quot;alias mesos=mesos-cli&amp;quot; &amp;gt;&amp;gt; $HOME/.bashrc
  # With a Docker installation
- echo &amp;quot;alias mesos=docker run --rm -ti -v $HOME/.meoss-cli.json:/root/.mesos-cli.json --net host quay.io/vektorlab/mesos-cli &amp;gt;&amp;gt; $HOME/.bashrc&amp;quot;
+ echo &amp;quot;alias mesos=docker run --rm -ti -v $HOME/.mesos-cli.json:/root/.mesos-cli.json --net host quay.io/vektorlab/mesos-cli &amp;gt;&amp;gt; $HOME/.bashrc&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;test-your-installation&#34;&gt;Test Your Installation&lt;/h3&gt;
@@ -490,11 +484,6 @@ $ mesos read 3ae4ade2-a512-4819-8d32-ff7c9b4df0a0-S0 /mesos/agents/0/slaves/3ae4
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td&gt;local&lt;/td&gt;
-&lt;td&gt;Run a local Mesos cluster&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
 &lt;td&gt;read&lt;/td&gt;
 &lt;td&gt;Read the contents of a file&lt;/td&gt;
 &lt;/tr&gt;
@@ -579,6 +568,13 @@ $ mesos read 3ae4ade2-a512-4819-8d32-ff7c9b4df0a0-S0 /mesos/agents/0/slaves/3ae4
 &lt;pre&gt;&lt;code&gt;docker pull quay.io/vektorlab/mesos-cli
 docker run --rm -ti quay.io/vektorlab/mesos-cli tasks --master http://your-mesos-server:5050
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;running-a-local-mesos-cluster&#34;&gt;Running a Local Mesos Cluster&lt;/h3&gt;
+
+&lt;p&gt;You can run a local Mesos cluster for testing and development with our Docker image: &lt;a href=&#34;https://github.com/vektorcloud/mesos&#34;&gt;quay.io/vektorcloud/mesos&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;docker run --rm -ti --net host --privileged quay.io/vektorcloud/mesos
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
@@ -656,82 +652,6 @@ UID 	GID 	MODE      	MODIFIED                     	SIZE  	PATH
 root	root	-rw-r--r--	2017-01-07 22:35:46 -0500 EST	1527  	stderr
 root	root	-rw-r--r--	2017-01-08 17:39:03 -0500 EST	642717	stdout
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>local</title>
-      <link>https://vektorlab.github.io/mesos-cli/usage/local/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://vektorlab.github.io/mesos-cli/usage/local/</guid>
-      <description>
-
-&lt;p&gt;Launch a local Mesos cluster for development and testing purposes. This command requires that you have Docker installed locally, and uses the &lt;a href=&#34;https://github.com/vektorcloud/mesos&#34;&gt;vektorcloud/mesos&lt;/a&gt; image.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;mesos-cli local [OPTIONS] COMMAND [arg...]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;options&#34;&gt;Options&lt;/h2&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Option&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&amp;ndash;profile&lt;/td&gt;
-&lt;td&gt;Profile to load&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&amp;ndash;config&lt;/td&gt;
-&lt;td&gt;Path to load config from&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&amp;ndash;level&lt;/td&gt;
-&lt;td&gt;Level of verbosity&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&#34;subcommands&#34;&gt;Subcommands&lt;/h3&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Command&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;up&lt;/td&gt;
-&lt;td&gt;Start the local cluster&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;down&lt;/td&gt;
-&lt;td&gt;Stop the local cluster&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;status&lt;/td&gt;
-&lt;td&gt;Display the status of the local cluster&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;rm&lt;/td&gt;
-&lt;td&gt;Remove the local cluster&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
 </description>
     </item>
     

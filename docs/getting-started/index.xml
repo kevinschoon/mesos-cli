@@ -55,12 +55,6 @@
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td&gt;Effortlessly run a local Mesos cluster&lt;/td&gt;
-&lt;td&gt;✓&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
 &lt;td&gt;Pure integration with Apache Mesos outside of the DC/OS ecosystem&lt;/td&gt;
 &lt;td&gt;✓&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
@@ -134,6 +128,13 @@
 &lt;pre&gt;&lt;code&gt;docker pull quay.io/vektorlab/mesos-cli
 docker run --rm -ti quay.io/vektorlab/mesos-cli tasks --master http://your-mesos-server:5050
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;running-a-local-mesos-cluster&#34;&gt;Running a Local Mesos Cluster&lt;/h3&gt;
+
+&lt;p&gt;You can run a local Mesos cluster for testing and development with our Docker image: &lt;a href=&#34;https://github.com/vektorcloud/mesos&#34;&gt;quay.io/vektorcloud/mesos&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;docker run --rm -ti --net host --privileged quay.io/vektorcloud/mesos
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
@@ -150,7 +151,7 @@ docker run --rm -ti quay.io/vektorlab/mesos-cli tasks --master http://your-mesos
 &lt;pre&gt;&lt;code&gt; # With a binary installation
  echo &amp;quot;alias mesos=mesos-cli&amp;quot; &amp;gt;&amp;gt; $HOME/.bashrc
  # With a Docker installation
- echo &amp;quot;alias mesos=docker run --rm -ti -v $HOME/.meoss-cli.json:/root/.mesos-cli.json --net host quay.io/vektorlab/mesos-cli &amp;gt;&amp;gt; $HOME/.bashrc&amp;quot;
+ echo &amp;quot;alias mesos=docker run --rm -ti -v $HOME/.mesos-cli.json:/root/.mesos-cli.json --net host quay.io/vektorlab/mesos-cli &amp;gt;&amp;gt; $HOME/.bashrc&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;test-your-installation&#34;&gt;Test Your Installation&lt;/h3&gt;
