@@ -1,4 +1,4 @@
-FROM quay.io/vektorcloud/base:3.4
+FROM quay.io/vektorcloud/base:3.6
 
 COPY release/mesos-cli-alpine /bin/mesos
 
