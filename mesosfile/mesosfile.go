@@ -106,7 +106,7 @@ func (g *Group) With(opts ...Option) *Group {
 
 func (g *Group) LaunchOp() mesos.Offer_Operation {
 	if len(g.Tasks) > 1 {
-		return calls.OpLaunchGroup(*g.executor, mesos.TaskGroupInfo{g.Tasks})
+		return calls.OpLaunchGroup(*g.executor, mesos.TaskGroupInfo{Tasks: g.Tasks})
 	}
 	if len(g.Tasks) == 1 {
 		return calls.OpLaunch(*g.Tasks[0])
