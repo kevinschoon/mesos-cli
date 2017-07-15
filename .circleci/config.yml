@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/build
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: |
+          DOCKER_TAG=""
+          if [[ "$CIRCLE_BRANCH" == "master" ]]; then
+            DOCKER_TAG=quay.io/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
+          else
+            DOCKER_TAG=quay.io/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}
+          fi
+          docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io
+          docker build -t $DOCKER_TAG .
+          docker push $DOCKER_TAG
