@@ -1,0 +1,30 @@
+hash: a142f9b5c014a26d479838122cf381b0dfc9a3054f9cb519ca5c3160fb6615ca
+updated: 2017-03-08T14:07:12.405568469+07:00
+imports:
+- name: github.com/gizak/termui
+  version: 24acd523c756fd9728824cdfac66aad9d8982fb7
+  subpackages:
+  - extra
+- name: github.com/maruel/panicparse
+  version: 25bcac0d793cf4109483505a0d66e066a3a90a80
+  subpackages:
+  - stack
+- name: github.com/mattn/go-runewidth
+  version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
+- name: github.com/mitchellh/go-wordwrap
+  version: ad45545899c7b13c020ea92b2072220eefad42b8
+- name: github.com/nsf/termbox-go
+  version: 91bae1bb5fa9ee504905ecbe7043fa30e92feaa3
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert

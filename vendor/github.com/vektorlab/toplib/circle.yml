@@ -1,0 +1,17 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker pull quay.io/vektorcloud/go:1.8
+    - docker run --rm -ti -v $PWD:/go/src/github.com/vektorlab/toplib -w /go/src/github.com/vektorlab/toplib quay.io/vektorcloud/go:1.8 glide install
+
+test:
+  override:
+    - docker run --rm -ti -v $PWD:/go/src/github.com/vektorlab/toplib -w /go/src/github.com/vektorlab/toplib quay.io/vektorcloud/go:1.8 make
+
+compile:
+  override:
+    - echo

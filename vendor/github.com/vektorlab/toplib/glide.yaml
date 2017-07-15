@@ -1,0 +1,11 @@
+package: github.com/vektorlab/toplib
+import:
+- package: github.com/gizak/termui
+  version: ^2.2.0
+  subpackages:
+  - extra
+testImport:
+- package: github.com/stretchr/testify
+  version: ^1.1.4
+  subpackages:
+  - assert

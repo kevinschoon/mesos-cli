@@ -25,7 +25,4 @@ _testmain.go
 
 *.swp
 
-vendor
 release
-
-.glide
