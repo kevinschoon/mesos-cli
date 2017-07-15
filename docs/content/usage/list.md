@@ -1,6 +1,6 @@
 +++
 title = "list"
-next = "/usage/local"
+next = "/usage/read"
 prev = "/usage/agents"
 +++
 

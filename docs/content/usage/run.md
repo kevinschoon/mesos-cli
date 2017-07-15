@@ -1,6 +1,6 @@
 +++
 title = "run"
-next = "/usage/tasks"
+next = "/usage/task"
 prev = "/usage/read"
 +++
 

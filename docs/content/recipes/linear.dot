@@ -2,8 +2,8 @@ digraph G {
 	subgraph cluster_0 {
 		style=filled;
 		color=lightgrey;
-		label = "job";
+		label = "order";
 		node [style=filled,color=white];
-    "Task 0" -> "Task 1" -> "Task 2" -> "Task 3"
+    "task-0" -> "task-2" -> "task-1";
 	}
 }

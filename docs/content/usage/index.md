@@ -24,7 +24,6 @@ Command| Description
 ------| --------------
 agents| List Mesos Agents
 list  | List files in a Mesos sandbox
-local | Run a local Mesos cluster
 read  | Read the contents of a file
 run   | Run tasks on Mesos
 tasks | List Mesos tasks

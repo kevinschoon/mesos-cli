@@ -21,3 +21,15 @@ A Docker container is also available for download:
  
     docker pull quay.io/vektorlab/mesos-cli
     docker run --rm -ti quay.io/vektorlab/mesos-cli tasks --master http://your-mesos-server:5050
+
+
+### Running a Local Mesos Cluster
+
+You can run a local Mesos cluster for testing and development with our Docker image: [quay.io/vektorcloud/mesos](https://github.com/vektorcloud/mesos).
+
+```bash
+docker run --rm -ti --net host --privileged quay.io/vektorcloud/mesos
+```
+
+
+

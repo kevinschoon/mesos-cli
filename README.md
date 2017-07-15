@@ -23,7 +23,6 @@ cmd | description
 --- | ---
 [agents][usage_agents] | List Mesos Agents
 [list][usage_list] | List files in a Mesos sandbox
-[local][usage_local] | Run a local Mesos cluster
 [read][usage_read] | Read the contents of a file
 [run][usage_run] | Run tasks on Mesos
 [tasks][usage_tasks] | List Mesos tasks
@@ -36,7 +35,6 @@ cmd | description
 | Built ontop of the new Mesos HTTP V1 API                                            |✓    |       |
 | Simple installation without platform specific libmesos drivers                      |✓    |       |
 | Streamimg sandbox file content content to console (including task stdout and stderr)|✓    |       |
-| Effortlessly run a local Mesos cluster                                              |✓    |       |
 | Pure integration with Apache Mesos outside of the DC/OS ecosystem                   |✓    |       |
 | Lightweight scheduler for running arbitrary containers                              |✓    |       |
 | Top-like interface for monitoring a cluster                                         |✓    |       |
@@ -47,7 +45,6 @@ cmd | description
 
 [usage_agents]: https://vektorlab.github.io/mesos-cli/usage/agents
 [usage_list]: https://vektorlab.github.io/mesos-cli/usage/list
-[usage_local]: https://vektorlab.github.io/mesos-cli/usage/local
 [usage_read]: https://vektorlab.github.io/mesos-cli/usage/read
 [usage_run]: https://vektorlab.github.io/mesos-cli/usage/run
 [usage_tasks]: https://vektorlab.github.io/mesos-cli/usage/tasks

@@ -1,7 +1,7 @@
 +++
 title = "tasks"
 next = "/usage/top"
-prev = "/usage/run"
+prev = "/usage/task"
 +++
 
 List and filter tasks on the target cluster.

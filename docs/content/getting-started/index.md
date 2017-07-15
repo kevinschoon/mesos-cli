@@ -21,7 +21,6 @@ By interacting entirely with the new Mesos [HTTP scheduler API](http://mesos.apa
 | Built ontop of the new Mesos HTTP V1 API                                            |✓    |       |
 | Simple installation without platform specific libmesos drivers                      |✓    |       |
 | Streamimg sandbox file content content to console (including task stdout and stderr)|✓    |       |
-| Effortlessly run a local Mesos cluster                                              |✓    |       |
 | Pure integration with Apache Mesos outside of the DC/OS ecosystem                   |✓    |       |
 | Lightweight scheduler for running arbitrary containers                              |✓    |       |
 | Top-like interface for monitoring a cluster                                         |✓    |       |

@@ -1,7 +1,7 @@
 +++
 title = "read"
 next = "/usage/run"
-prev = "/usage/local"
+prev = "/usage/list"
 +++
 
 Read the contents of a file on the given agent at the given path
