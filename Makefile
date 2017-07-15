@@ -17,7 +17,7 @@ test:
 
 .PHONY: docs
 docs:
-	cd docs && hugo -d .
+	cd docs_src && hugo -d ../docs
 
 .PHONY: release
 build:
