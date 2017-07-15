@@ -1,0 +1,39 @@
+- networks: null
+  tasks:
+  - agent_id:
+      value: ""
+    command:
+      environment:
+        variables: []
+      shell: false
+      uris: []
+      user: root
+    container:
+      mesos:
+        image:
+          type: DOCKER
+          docker:
+            name: nginx:latest
+      network_infos: null
+      type: MESOS
+      volumes: null
+    name: mesos-cli
+    resources:
+    - name: cpus
+      role: '*'
+      scalar:
+        value: 0.1
+      type: SCALAR
+    - name: mem
+      role: '*'
+      scalar:
+        value: 32
+      type: SCALAR
+    - name: disk
+      role: '*'
+      scalar:
+        value: 32
+      type: SCALAR
+    task_id:
+      value: ""
+
