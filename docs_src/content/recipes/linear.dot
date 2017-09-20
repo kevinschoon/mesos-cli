@@ -1,9 +1,0 @@
-digraph G {
-	subgraph cluster_0 {
-		style=filled;
-		color=lightgrey;
-		label = "order";
-		node [style=filled,color=white];
-    "task-0" -> "task-2" -> "task-1";
-	}
-}
