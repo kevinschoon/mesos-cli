@@ -1,13 +1,13 @@
 package top
 
 import (
+	"github.com/mesanine/mesos-cli/config"
+	"github.com/mesanine/mesos-cli/filter"
+	"github.com/mesanine/mesos-cli/helper"
 	"github.com/mesos/mesos-go"
 	agent "github.com/mesos/mesos-go/agent/calls"
 	"github.com/mesos/mesos-go/httpcli/operator"
 	master "github.com/mesos/mesos-go/master/calls"
-	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/filter"
-	"github.com/vektorlab/mesos-cli/helper"
 	"github.com/vektorlab/toplib"
 	"github.com/vektorlab/toplib/sample"
 	"github.com/vektorlab/toplib/section"

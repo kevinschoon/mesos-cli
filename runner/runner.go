@@ -2,6 +2,8 @@ package runner
 
 import (
 	"fmt"
+	"github.com/mesanine/mesos-cli/config"
+	"github.com/mesanine/mesos-cli/mesosfile"
 	"github.com/mesos/mesos-go"
 	"github.com/mesos/mesos-go/backoff"
 	"github.com/mesos/mesos-go/encoding"
@@ -11,8 +13,6 @@ import (
 	"github.com/mesos/mesos-go/scheduler"
 	"github.com/mesos/mesos-go/scheduler/calls"
 	"github.com/mesos/mesos-go/scheduler/events"
-	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/mesosfile"
 	"go.uber.org/zap"
 	"math/rand"
 	"net/http"

@@ -2,11 +2,11 @@ package filter
 
 import (
 	"errors"
+	"github.com/mesanine/mesos-cli/config"
+	"github.com/mesanine/mesos-cli/helper"
 	"github.com/mesos/mesos-go"
 	agent "github.com/mesos/mesos-go/agent/calls"
 	master "github.com/mesos/mesos-go/master/calls"
-	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/helper"
 )
 
 // Target represents the expected type of result, e.g. TaskInfo, AgentInfo, etc.

@@ -2,8 +2,8 @@ package runner
 
 import (
 	"fmt"
+	"github.com/mesanine/mesos-cli/mesosfile"
 	"github.com/mesos/mesos-go"
-	"github.com/vektorlab/mesos-cli/mesosfile"
 )
 
 type ErrTaskTerminal struct {

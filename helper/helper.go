@@ -3,10 +3,10 @@ package helper
 import (
 	"bytes"
 	"fmt"
+	"github.com/mesanine/mesos-cli/config"
 	"github.com/mesos/mesos-go"
 	"github.com/mesos/mesos-go/httpcli"
 	"github.com/mesos/mesos-go/httpcli/operator"
-	"github.com/vektorlab/mesos-cli/config"
 	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"

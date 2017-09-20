@@ -2,8 +2,8 @@ package commands
 
 import (
 	"github.com/jawher/mow.cli"
-	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/top"
+	"github.com/mesanine/mesos-cli/config"
+	"github.com/mesanine/mesos-cli/top"
 )
 
 type Top struct{}

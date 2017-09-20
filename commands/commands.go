@@ -2,7 +2,7 @@ package commands
 
 import (
 	"github.com/jawher/mow.cli"
-	"github.com/vektorlab/mesos-cli/config"
+	"github.com/mesanine/mesos-cli/config"
 )
 
 var Commands = []Command{

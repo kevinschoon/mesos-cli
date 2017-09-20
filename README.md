@@ -1,5 +1,5 @@
 # mesos-cli
-[![Build](https://img.shields.io/circleci/project/github/vektorlab/mesos-cli.svg)](https://circleci.com/gh/vektorlab/mesos-cli)
+[![Build](https://img.shields.io/circleci/project/github/mesanine/mesos-cli.svg)](https://circleci.com/gh/mesanine/mesos-cli)
 
 Featureful commandline interface for [Apache Mesos](http://mesos.apache.com).
 
@@ -9,14 +9,14 @@ Featureful commandline interface for [Apache Mesos](http://mesos.apache.com).
 
 By interacting entirely with the new Mesos [HTTP scheduler API](http://mesos.apache.org/documentation/latest/scheduler-http-api/), `mesos-cli` does not require a direct network connection to the Mesos Master server, which makes it more flexible than other frameworks.
 
-Check out the documentation for mesos-cli [here](https://vektorlab.github.io/mesos-cli).
+Check out the documentation for mesos-cli [here](https://mesanine.co/mesos-cli).
 
 ## Quickstart
 Simply run `mesos-cli` via the official Docker image to get started:
 ```bash
-docker run --rm -ti quay.io/vektorlab/mesos-cli:latest tasks --master http://your-mesos-server:5050
+docker run --rm -ti quay.io/mesanine/mesos-cli:latest tasks --master http://your-mesos-server:5050
 ```
-Full install and configuration documentation is available [here](https://vektorlab.github.io/mesos-cli/getting-started/)
+Full install and configuration documentation is available [here](https://mesanine.co/mesos-cli/getting-started/)
 
 ## Commands
 cmd | description
@@ -43,9 +43,9 @@ cmd | description
 | Subscribe to and monitor master event stream                                        |     |✓      |
 | Run docker-compose files directly against Mesos                                     |     |✓      |
 
-[usage_agents]: https://vektorlab.github.io/mesos-cli/usage/agents
-[usage_list]: https://vektorlab.github.io/mesos-cli/usage/list
-[usage_read]: https://vektorlab.github.io/mesos-cli/usage/read
-[usage_run]: https://vektorlab.github.io/mesos-cli/usage/run
-[usage_tasks]: https://vektorlab.github.io/mesos-cli/usage/tasks
-[usage_top]: https://vektorlab.github.io/mesos-cli/usage/top
+[usage_agents]: https://mesanine.co/mesos-cli/usage#agents
+[usage_list]: https://mesanine.co/mesos-cli/usage#list
+[usage_read]: https://mesanine.co/mesos-cli/usage#read
+[usage_run]: https://mesanine.co/mesos-cli/usage#run
+[usage_tasks]: https://mesanine.co/mesos-cli/usage#tasks
+[usage_top]: https://mesanine.co/mesos-cli/usage#top

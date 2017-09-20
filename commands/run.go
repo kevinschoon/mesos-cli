@@ -2,9 +2,9 @@ package commands
 
 import (
 	"github.com/jawher/mow.cli"
-	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/mesosfile"
-	"github.com/vektorlab/mesos-cli/runner"
+	"github.com/mesanine/mesos-cli/config"
+	"github.com/mesanine/mesos-cli/mesosfile"
+	"github.com/mesanine/mesos-cli/runner"
 )
 
 type Run struct{}

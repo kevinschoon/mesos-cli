@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/gosuri/uitable"
 	"github.com/jawher/mow.cli"
+	"github.com/mesanine/mesos-cli/config"
+	"github.com/mesanine/mesos-cli/filter"
 	"github.com/mesos/mesos-go"
-	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/filter"
 )
 
 type Tasks struct{}

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/ghodss/yaml"
 	"github.com/jawher/mow.cli"
+	"github.com/mesanine/mesos-cli/commands/flags"
+	"github.com/mesanine/mesos-cli/config"
+	"github.com/mesanine/mesos-cli/mesosfile"
 	"github.com/mesos/mesos-go"
-	"github.com/vektorlab/mesos-cli/commands/flags"
-	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/mesosfile"
 )
 
 type Task struct{}

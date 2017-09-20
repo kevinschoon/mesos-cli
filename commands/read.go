@@ -2,10 +2,10 @@ package commands
 
 import (
 	"github.com/jawher/mow.cli"
-	"github.com/vektorlab/mesos-cli/config"
-	"github.com/vektorlab/mesos-cli/filter"
-	"github.com/vektorlab/mesos-cli/helper"
-	"github.com/vektorlab/mesos-cli/pailer"
+	"github.com/mesanine/mesos-cli/config"
+	"github.com/mesanine/mesos-cli/filter"
+	"github.com/mesanine/mesos-cli/helper"
+	"github.com/mesanine/mesos-cli/pailer"
 	"os"
 )
 

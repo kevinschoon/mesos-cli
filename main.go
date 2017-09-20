@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/jawher/mow.cli"
-	"github.com/vektorlab/mesos-cli/commands"
-	"github.com/vektorlab/mesos-cli/config"
+	"github.com/mesanine/mesos-cli/commands"
+	"github.com/mesanine/mesos-cli/config"
 
 	"os"
 )
