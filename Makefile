@@ -4,23 +4,18 @@ GITSHA ?= $(shell git rev-parse HEAD)
 LDFLAGS ?= -w -s -X main.Version=$(VERSION) -X main.GitSHA=$(GITSHA)
 LINUX_PACKAGE ?= mesos-cli-linux-amd64
 DARWIN_PACKAGE ?= mesos-cli-darwin-amd64
+DOCKER_IMAGE := mesanine/mesos-cli
 
+.PHONY: test release docker deploy
 
-.PHONY: all
-all: test release
+all: test
 
-.PHONY: test
 test:
 	go $@ -v $(PACKAGES)
 	go vet $(PACKAGES)
 	cd filter && go test -test.bench Messages*
 
-.PHONY: docs
-docs:
-	cd docs_src && hugo -d ../docs
-
-.PHONY: release
-build:
+release:
 	if ! [ -d ./release ]; then mkdir ./release ; fi
 	@GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o ./release/$(LINUX_PACKAGE)-$(VERSION)
 	if [ -h ./release/$(LINUX_PACKAGE) ]; then rm -v ./release/$(LINUX_PACKAGE); fi
@@ -29,4 +24,11 @@ build:
 	if [ -h ./release/$(DARWIN_PACKAGE) ]; then rm -v ./release/$(DARWIN_PACKAGE); fi
 	cd ./release && ln -sv $(DARWIN_PACKAGE)-$(VERSION) $(DARWIN_PACKAGE)
 
+docker:
+	$@ build -t $(DOCKER_IMAGE):$(VERSION) .
+	$@ tag $(DOCKER_IMAGE):$(VERSION) $(DOCKER_IMAGE):latest
 
+deploy:
+	docker login -u $$DOCKER_LOGIN -p $$DOCKER_PASSWORD
+	docker push $(DOCKER_IMAGE):$(VERSION)
+	docker push $(DOCKER_IMAGE):latest
