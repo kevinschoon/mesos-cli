@@ -3,8 +3,8 @@ package mesosfile
 import (
 	"encoding/json"
 	"github.com/ghodss/yaml"
-	"github.com/mesos/mesos-go"
-	"github.com/mesos/mesos-go/scheduler/calls"
+	mesos "github.com/mesos/mesos-go/api/v1/lib"
+	"github.com/mesos/mesos-go/api/v1/lib/scheduler/calls"
 	"io/ioutil"
 	"os"
 )

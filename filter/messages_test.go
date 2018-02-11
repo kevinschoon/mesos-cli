@@ -3,7 +3,7 @@ package filter
 import (
 	"fmt"
 	"github.com/gogo/protobuf/proto"
-	mesos "github.com/mesos/mesos-go"
+	mesos "github.com/mesos/mesos-go/api/v1/lib"
 	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"

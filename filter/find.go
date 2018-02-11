@@ -4,9 +4,10 @@ import (
 	"errors"
 	"github.com/mesanine/mesos-cli/config"
 	"github.com/mesanine/mesos-cli/helper"
-	"github.com/mesos/mesos-go"
-	agent "github.com/mesos/mesos-go/agent/calls"
-	master "github.com/mesos/mesos-go/master/calls"
+	mesos "github.com/mesos/mesos-go/api/v1/lib"
+	agent "github.com/mesos/mesos-go/api/v1/lib/agent/calls"
+	"github.com/mesos/mesos-go/api/v1/lib/httpcli/httpmaster"
+	master "github.com/mesos/mesos-go/api/v1/lib/master/calls"
 )
 
 // Target represents the expected type of result, e.g. TaskInfo, AgentInfo, etc.
@@ -35,6 +36,7 @@ type Criteria struct {
 
 // FindAgents finds AgentInfos which match the given Criteria
 func FindAgents(profile *config.Profile, criteria Criteria) (Messages, error) {
+	httpmaster.NewSender().Send()
 	caller := helper.NewCaller(profile)
 	switch {
 	// Caller is attempting to resolve the agent based on a TaskID

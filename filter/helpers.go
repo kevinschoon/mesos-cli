@@ -3,9 +3,9 @@ package filter
 import (
 	"fmt"
 	"github.com/gogo/protobuf/proto"
-	"github.com/mesos/mesos-go"
-	"github.com/mesos/mesos-go/agent"
-	"github.com/mesos/mesos-go/master"
+	mesos "github.com/mesos/mesos-go/api/v1/lib"
+	"github.com/mesos/mesos-go/api/v1/lib/agent"
+	"github.com/mesos/mesos-go/api/v1/lib/master"
 )
 
 // ErrInvalidMessage is returned when we expect

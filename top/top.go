@@ -4,16 +4,16 @@ import (
 	"github.com/mesanine/mesos-cli/config"
 	"github.com/mesanine/mesos-cli/filter"
 	"github.com/mesanine/mesos-cli/helper"
-	"github.com/mesos/mesos-go"
-	agent "github.com/mesos/mesos-go/agent/calls"
-	"github.com/mesos/mesos-go/httpcli/operator"
-	master "github.com/mesos/mesos-go/master/calls"
+	mesos "github.com/mesos/mesos-go/api/v1/lib"
+	agent "github.com/mesos/mesos-go/api/v1/lib/agent/calls"
+	"github.com/mesos/mesos-go/api/v1/lib/httpcli"
+	master "github.com/mesos/mesos-go/api/v1/lib/master/calls"
 	"github.com/vektorlab/toplib"
 	"github.com/vektorlab/toplib/sample"
 	"github.com/vektorlab/toplib/section"
 )
 
-func getContainers(profile *config.Profile, caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
+func getContainers(profile *config.Profile, caller *httpcli.Client, namespace sample.Namespace) ([]*sample.Sample, error) {
 	msgs, err := filter.FromMaster(caller.CallMaster(master.GetAgents()))
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func getContainers(profile *config.Profile, caller operator.Caller, namespace sa
 	return samples, nil
 }
 
-func getTasks(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
+func getTasks(caller *httpcli.Client, namespace sample.Namespace) ([]*sample.Sample, error) {
 	msgs, err := filter.FromMaster(caller.CallMaster(master.GetTasks()))
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func getTasks(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sam
 	return samples, nil
 }
 
-func getAgents(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
+func getAgents(caller *httpcli.Client, namespace sample.Namespace) ([]*sample.Sample, error) {
 	msgs, err := filter.FromMaster(caller.CallMaster(master.GetAgents()))
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func getAgents(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sa
 	return samples, nil
 }
 
-func getFrameworks(caller operator.Caller, namespace sample.Namespace) ([]*sample.Sample, error) {
+func getFrameworks(caller *httpcli.Client, namespace sample.Namespace) ([]*sample.Sample, error) {
 	msgs, err := filter.FromMaster(caller.CallMaster(master.GetFrameworks()))
 	if err != nil {
 		return nil, err

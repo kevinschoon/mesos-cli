@@ -2,7 +2,7 @@ package mesosfile
 
 import (
 	"github.com/gogo/protobuf/proto"
-	"github.com/mesos/mesos-go"
+	mesos "github.com/mesos/mesos-go/api/v1/lib"
 )
 
 const (

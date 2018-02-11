@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
-	"github.com/mesos/mesos-go/agent"
-	"github.com/mesos/mesos-go/agent/calls"
-	"github.com/mesos/mesos-go/httpcli/operator"
+	"github.com/mesos/mesos-go/api/v1/lib/agent"
+	"github.com/mesos/mesos-go/api/v1/lib/agent/calls"
+	"github.com/mesos/mesos-go/api/v1/lib/httpcli"
 	"io"
 	"sync"
 	"time"
@@ -35,8 +35,9 @@ type FilePaginator struct {
 	Path   string                        // Path to file
 }
 
-func (f *FilePaginator) init(caller operator.Caller) error {
-	resp, err := caller.CallAgent(calls.ReadFile(f.Path, uint64(0), uint64(0)))
+func (f *FilePaginator) init(caller *httpcli.Client) error {
+	caller.Send
+	resp, err := caller.CallAgent(calls.ReadFileWithLength(f.Path, uint64(0), uint64(0)))
 	if err != nil {
 		return err
 	}
@@ -57,7 +58,7 @@ func (f *FilePaginator) init(caller operator.Caller) error {
 	return nil
 }
 
-func (f *FilePaginator) Next(caller operator.Caller) error {
+func (f *FilePaginator) Next(caller *httpcli.Client) error {
 	select {
 	case <-f.cancel:
 		return ErrEndPagination
@@ -134,7 +135,7 @@ loop:
 	return err
 }
 
-func Monitor(caller operator.Caller, w io.Writer, lines int, pag *FilePaginator) (err error) {
+func Monitor(caller *httpcli.Client, w io.Writer, lines int, pag *FilePaginator) (err error) {
 	if err = pag.init(caller); err != nil {
 		return err
 	}

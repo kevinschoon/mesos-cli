@@ -2,7 +2,7 @@ package mesosfile
 
 import (
 	"encoding/json"
-	"github.com/mesos/mesos-go"
+	mesos "github.com/mesos/mesos-go/api/v1/lib"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

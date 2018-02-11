@@ -3,7 +3,7 @@ package pailer
 import (
 	"bytes"
 	"fmt"
-	"github.com/mesos/mesos-go/agent"
+	"github.com/mesos/mesos-go/api/v1/lib/agent"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"testing"

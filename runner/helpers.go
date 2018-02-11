@@ -1,8 +1,8 @@
 package runner
 
 import (
-	"github.com/mesos/mesos-go"
-	"github.com/mesos/mesos-go/scheduler"
+	mesos "github.com/mesos/mesos-go/api/v1/lib"
+	"github.com/mesos/mesos-go/api/v1/lib/scheduler"
 	"go.uber.org/zap"
 )
 
